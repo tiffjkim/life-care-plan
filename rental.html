@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>189 Hamilton St — Rental Hold Model</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#FAFAF8;--bg2:#F0EFEB;--bg3:#E8E6E1;--text:#1A1A18;--text2:#6B6A65;--text3:#9C9B95;--border:#D4D3CD;--border2:#E8E6E1;--blue:#2563EB;--blue-bg:#EFF6FF;--blue-text:#1E40AF;--green:#059669;--green-bg:#ECFDF5;--green-text:#065F46;--amber:#D97706;--amber-bg:#FFFBEB;--amber-text:#92400E;--red:#DC2626;--red-bg:#FEF2F2;--red-text:#991B1B;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;--r:10px;--rl:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#141413;--bg2:#1E1E1C;--bg3:#282826;--text:#E8E6E1;--text2:#9C9B95;--text3:#6B6A65;--border:#3A3A37;--border2:#2A2A28;--blue:#60A5FA;--blue-bg:#1E293B;--blue-text:#93C5FD;--green:#34D399;--green-bg:#064E3B;--green-text:#6EE7B7;--amber:#FBBF24;--amber-bg:#451A03;--amber-text:#FCD34D;--red:#F87171;--red-bg:#450A0A;--red-text:#FCA5A5}}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.c{max-width:800px;margin:0 auto;padding:2rem 1.5rem 4rem}
+@media(max-width:600px){.c{padding:1.25rem 1rem 3rem}}
+.hdr{margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.hdr h1{font-size:1.35rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.1rem}
+.hdr p{font-size:.8rem;color:var(--text2)}
+.badge{display:inline-block;font-size:.65rem;font-weight:500;padding:2px 9px;border-radius:16px;margin-top:.35rem}
+.b-b{background:var(--blue-bg);color:var(--blue-text)}.b-g{background:var(--green-bg);color:var(--green-text)}
+h2{font-size:1rem;font-weight:600;margin:1.75rem 0 .6rem;padding-top:1.25rem;border-top:1px solid var(--border2)}
+h2:first-of-type{border:none;padding:0;margin-top:0}
+h3{font-size:.88rem;font-weight:500;margin:1rem 0 .35rem}
+p{font-size:.8rem;color:var(--text2);margin:3px 0}
+.ctrl{display:flex;align-items:center;gap:10px;margin:7px 0;flex-wrap:wrap}
+.cl{font-size:.76rem;color:var(--text2);min-width:150px;font-weight:500}
+.cv{font-family:var(--mono);font-size:.8rem;font-weight:500;min-width:60px;text-align:right;color:var(--text)}
+input[type=range]{flex:1;min-width:80px;height:5px;-webkit-appearance:none;background:var(--bg3);border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);cursor:pointer;border:3px solid var(--bg)}
+select{padding:6px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);font-size:.8rem}
+.ms{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.m{background:var(--bg2);border-radius:var(--r);padding:10px 12px;flex:1;min-width:125px;border-left:3px solid var(--border)}
+.m.bl{border-left-color:var(--blue)}.m.gn{border-left-color:var(--green)}.m.am{border-left-color:var(--amber)}.m.rd{border-left-color:var(--red)}
+.m .ml{font-size:.63rem;color:var(--text2);margin-bottom:2px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.m .mv{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--text)}
+.m .mn{font-size:.65rem;color:var(--text3);margin-top:1px}
+.cd{background:var(--bg2);border-radius:var(--rl);padding:.85rem 1rem;margin:8px 0;font-size:.8rem;line-height:1.55}
+.cd.bd{border-left:3px solid var(--border)}.cd.bl{border-left-color:var(--blue);background:var(--blue-bg)}.cd.gn{border-left-color:var(--green);background:var(--green-bg)}.cd.am{border-left-color:var(--amber);background:var(--amber-bg)}.cd.rd{border-left-color:var(--red);background:var(--red-bg)}
+.cd strong{font-weight:600}.cd p{margin:0;color:var(--text)}
+.tw{overflow-x:auto;margin:8px 0}
+table{width:100%;font-size:.7rem;border-collapse:collapse}
+th,td{padding:5px 6px;text-align:left;border-bottom:1px solid var(--border2)}
+th{font-weight:500;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.yg{color:var(--green);font-weight:600}.yw{color:var(--amber);font-weight:600}.yr{color:var(--red);font-weight:600}
+.units{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:8px 0}
+@media(max-width:600px){.units{grid-template-columns:1fr}}
+.u{background:var(--bg2);border-radius:var(--r);padding:9px 11px;border:1px solid var(--border2)}
+.u .ul{font-size:.63rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.u .uv{font-size:.85rem;font-weight:600;margin-top:1px;color:var(--text)}.u .un{font-size:.65rem;color:var(--text3)}.u.dim{opacity:.45}
+/* Concession bar */
+.conc-bar{height:28px;border-radius:var(--r);display:flex;overflow:hidden;margin:6px 0;position:relative}
+.conc-fill{height:100%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;transition:width .2s}
+.conc-labels{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text3);margin:2px 0 8px}
+.btn{padding:9px 18px;border-radius:var(--r);font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);transition:.15s}
+.btn:hover{background:var(--bg2)}.btn-p{background:var(--text);color:var(--bg);border-color:var(--text)}
+.br{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.ft{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border2);font-size:.68rem;color:var(--text3);line-height:1.7}
+@media print{body{background:#fff;color:#000;font-size:9px}.c{max-width:100%;padding:.5rem}input[type=range],select,.br.np{display:none!important}.m,.cd,.u{break-inside:avoid}.cv{border:1px solid #ccc;padding:2px 4px;border-radius:3px}}
+</style>
+</head>
+<body>
+<div class="c">
+<div class="hdr">
+<h1>189-191 Hamilton St — Rental Hold Model</h1>
+<p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903 · Perpetual affordable hold</p>
+<span class="badge b-b">Investor Model</span> <span class="badge b-g">Tool A: Rental</span>
+<p style="margin-top:6px"><a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ Switch to Tool B: Condo Sale Model</a></p>
+</div>
+
+<div class="units">
+<div class="u dim"><div class="ul">Unit 1 — Steve (life tenancy)</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 1 · No revenue</div></div>
+<div class="u"><div class="ul">Unit 2 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 2 · Income-producing</div></div>
+<div class="u"><div class="ul">Unit 3 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 3 · Income-producing</div></div>
+</div>
+
+<h2>Renovation capital (investor outlay)</h2>
+<div class="ctrl"><span class="cl">Construction $/SF</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
+<div class="ctrl"><span class="cl">Soft costs (% of construction)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
+<div class="ctrl"><span class="cl">Financing costs (% of hard)</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
+<div id="capOut"></div>
+
+<h2>Rental income & affordability</h2>
+
+<div class="ctrl"><span class="cl">AMI tier</span>
+<select id="ami" onchange="go()">
+<option value="0">50% AMI</option>
+<option value="1">60% AMI</option>
+<option value="2">70% AMI</option>
+<option value="3" selected>80% AMI</option>
+<option value="4">90% AMI</option>
+<option value="5">100% AMI</option>
+<option value="6">110% AMI</option>
+<option value="7">120% AMI</option>
+<option value="8">130% AMI</option>
+</select></div>
+
+<div class="ctrl"><span class="cl">Post-reno market rent (2BR)</span><input type="range" min="2800" max="3800" step="50" value="3100" id="mkt" oninput="go()"><span class="cv" id="o_mkt">$3,100</span></div>
+
+<div id="rentOut"></div>
+
+<h3>Concession spread (your measurable impact)</h3>
+<div id="concBar"></div>
+
+<h2>Operating assumptions</h2>
+<div class="ctrl"><span class="cl">Steve's annual care draw</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20K</span></div>
+<div class="ctrl"><span class="cl">Steve chips in expenses?</span><select id="chip" onchange="go()"><option value="0">No — zero contribution</option><option value="1" selected>Yes — 1/3 of building opex</option></select></div>
+<div class="ctrl"><span class="cl">Annual rent escalator</span><input type="range" min="0" max="5" step="0.5" value="2.5" id="rg" oninput="go()"><span class="cv" id="o_rg">2.5%</span></div>
+<div class="ctrl"><span class="cl">Annual expense escalator</span><input type="range" min="2" max="8" step="0.5" value="4" id="eg" oninput="go()"><span class="cv" id="o_eg">4.0%</span></div>
+<div class="ctrl"><span class="cl">Projection years</span><input type="range" min="5" max="20" step="1" value="10" id="yrs" oninput="go()"><span class="cv" id="o_yrs">10</span></div>
+
+<h2>Investor return metrics</h2>
+<div id="retOut"></div>
+
+<h2>Year-by-year cash flow</h2>
+<div class="tw" id="cfTbl"></div>
+
+<h2>AMI tier comparison (quick reference)</h2>
+<div class="tw" id="amiTbl"></div>
+
+<h2>Risk & structure notes</h2>
+<div id="notes"></div>
+
+<div class="br np">
+<button class="btn btn-p" onclick="copyLink()">Copy shareable link</button>
+<button class="btn" onclick="window.print()">Save as PDF</button>
+</div>
+<div id="lm" style="font-size:.7rem;color:var(--green);margin:3px 0;display:none">Link copied</div>
+
+<div class="ft">
+<strong>189-191 Hamilton St — Rental hold model (Tool A).</strong> Appraisal: Beyond Appraisals Inc, 3/20/2025, as-is value $1,610,000. Rents: MHP 2025 Boston-Cambridge-Quincy. Utility allowance: BHA Aug 2025, $385/mo for 2BR (duplex/low-rise, gas, all tenant-paid). Taxes: Cambridge FY26 $12,184. Steve Kaiser's vision: renovate without profit, preserve affordable housing in Cambridgeport. Not financial, legal, or tax advice.
+</div>
+</div>
+
+<script>
+const GBA=3940,UA=385,VAC=.05,MGMT=.08;
+const BASE_OPEX=24368; // tax 12184 + ins 3600 + repairs 4200 + reserves 2400 + util 1200 + trash 600 + snow 800 + legal 384
+const APPR=1610000;
+
+// Published 2BR rents by AMI (MHP + extrapolated from income limits for 3-person HH)
+// Rent = (income limit × 30%) / 12
+const TIERS=[
+{pct:50,label:'50%',pub:1861},
+{pct:60,label:'60%',pub:2233},
+{pct:70,label:'70%',pub:2605},
+{pct:80,label:'80%',pub:2977},
+{pct:90,label:'90%',pub:3299},
+{pct:100,label:'100%',pub:3620},
+{pct:110,label:'110%',pub:3982},
+{pct:120,label:'120%',pub:4344},
+{pct:130,label:'130%',pub:4706}
+];
+
+function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'($'+Math.abs(Math.round(n)).toLocaleString()+')':'$'+Math.round(n).toLocaleString();}
+function pct(n){return(n*100).toFixed(1)+'%';}
+
+function go(){
+const psf=+document.getElementById('psf').value;
+const softP=+document.getElementById('soft').value/100;
+const finP=+document.getElementById('fin').value/100;
+const ai=+document.getElementById('ami').value;
+const mktRent=+document.getElementById('mkt').value;
+const draw=+document.getElementById('draw').value;
+const chip=+document.getElementById('chip').value;
+const rg=+document.getElementById('rg').value/100;
+const eg=+document.getElementById('eg').value/100;
+const yrs=+document.getElementById('yrs').value;
+
+document.getElementById('o_psf').textContent='$'+psf;
+document.getElementById('o_soft').textContent=Math.round(softP*100)+'%';
+document.getElementById('o_fin').textContent=Math.round(finP*100)+'%';
+document.getElementById('o_mkt').textContent='$'+mktRent.toLocaleString();
+document.getElementById('o_draw').textContent='$'+(draw/1000).toFixed(0)+'K';
+document.getElementById('o_rg').textContent=(rg*100).toFixed(1)+'%';
+document.getElementById('o_eg').textContent=(eg*100).toFixed(1)+'%';
+document.getElementById('o_yrs').textContent=yrs;
+
+const tier=TIERS[ai];
+const constr=psf*GBA;
+const soft=Math.round(constr*softP);
+const financing=Math.round(constr*finP);
+const totalInvest=constr+soft+financing;
+
+// Capital
+document.getElementById('capOut').innerHTML=`<div class="ms">
+<div class="m am"><div class="ml">Construction</div><div class="mv">${fmt(constr)}</div><div class="mn">${GBA.toLocaleString()} SF × $${psf}</div></div>
+<div class="m am"><div class="ml">Soft costs</div><div class="mv">${fmt(soft)}</div></div>
+<div class="m am"><div class="ml">Financing costs</div><div class="mv">${fmt(financing)}</div></div>
+<div class="m rd"><div class="ml">Total investor capital</div><div class="mv">${fmt(totalInvest)}</div><div class="mn">Steve waives $1.61M equity</div></div>
+</div>`;
+
+// Rents
+const pubRent=tier.pub;
+const netRent=pubRent-UA;
+const netMkt=mktRent; // market rent assumed already net (post-reno, landlord pays utils differently or priced accordingly)
+const concession=mktRent-netRent;
+const concPct=mktRent>0?concession/mktRent:0;
+const annConc=concession*2*12;
+
+document.getElementById('rentOut').innerHTML=`<div class="ms">
+<div class="m bl"><div class="ml">Published rent (${tier.label} AMI)</div><div class="mv">${fmt(pubRent)}/mo</div><div class="mn">MHP 2025 2BR limit</div></div>
+<div class="m bl"><div class="ml">Net rent after utility allowance</div><div class="mv">${fmt(netRent)}/mo</div><div class="mn">Published − $${UA} UA = collectible rent</div></div>
+<div class="m gn"><div class="ml">Post-reno market rent</div><div class="mv">${fmt(mktRent)}/mo</div><div class="mn">What you COULD charge</div></div>
+</div>
+<div class="ms">
+<div class="m ${concession>0?'gn':'am'}"><div class="ml">Concession (per unit/mo)</div><div class="mv">${fmt(concession)}/mo</div><div class="mn">${pct(concPct)} below market</div></div>
+<div class="m ${concession>0?'gn':'am'}"><div class="ml">Annual affordability created</div><div class="mv">${fmt(annConc)}/yr</div><div class="mn">2 units × 12 months × ${fmt(concession)}</div></div>
+</div>`;
+
+// Concession bar
+const fillPct=mktRent>0?Math.round((netRent/mktRent)*100):100;
+const concPctBar=100-fillPct;
+document.getElementById('concBar').innerHTML=`
+<div class="conc-bar">
+<div class="conc-fill" style="width:${fillPct}%;background:var(--blue-bg);color:var(--blue-text)">${fmt(netRent)}</div>
+<div class="conc-fill" style="width:${concPctBar}%;background:var(--green-bg);color:var(--green-text)">${concPctBar>8?'+'+fmt(concession)+' impact':''}${concPctBar<=0?'No concession':''}</div>
+</div>
+<div class="conc-labels"><span>Affordable rent collected</span><span>Social impact (rent forgone): ${fmt(annConc)}/yr</span></div>`;
+
+// Cash flow
+let years=[];let yr1Noi=0;let piggy=0;
+for(let y=1;y<=yrs;y++){
+const rm=Math.round(netRent*Math.pow(1+rg,y-1));
+const ga=rm*2*12;
+const egi=Math.round(ga*(1-VAC));
+const ox=Math.round(BASE_OPEX*Math.pow(1+eg,y-1));
+const ro=chip?Math.round(ox*(2/3)):ox;
+const mf=Math.round(egi*MGMT);
+const totOx=ro+mf;
+const noi=egi-totOx;
+const ad=noi-draw;
+piggy+=ad;
+if(y===1)yr1Noi=noi;
+years.push({y,rm,ga,egi,totOx,noi,draw,ad,piggy});
+}
+
+const yoc=totalInvest>0?yr1Noi/totalInvest:0;
+const coc=totalInvest>0?years[0].ad/totalInvest:0;
+const lastY=years[yrs-1];
+const payback=years.findIndex(y=>y.piggy>=totalInvest);
+const paybackYr=payback>=0?years[payback].y:'Never (within projection)';
+
+const bC=v=>v>=.07?'gn':v>=.055?'gn':v>=.04?'am':'rd';
+const bL=v=>v>=.07?'Band 3: Market return':v>=.055?'Band 2: Blended impact':v>=.04?'Band 1: Concessionary':'Below all bands';
+
+document.getElementById('retOut').innerHTML=`<div class="ms">
+<div class="m ${bC(yoc)}"><div class="ml">Yield on cost</div><div class="mv">${pct(yoc)}</div><div class="mn">${bL(yoc)}</div></div>
+<div class="m ${coc>=0?'gn':'rd'}"><div class="ml">Cash-on-cash (yr 1, after draw)</div><div class="mv">${pct(coc)}</div><div class="mn">${fmt(years[0].ad)}/yr to investor</div></div>
+<div class="m bl"><div class="ml">Simple payback</div><div class="mv">${typeof paybackYr==='number'?'Year '+paybackYr:paybackYr}</div><div class="mn">Cumulative cash flow = capital</div></div>
+</div>
+<div class="ms">
+<div class="m ${lastY.piggy>=200000?'gn':lastY.piggy>=0?'am':'rd'}"><div class="ml">Yr ${yrs} cumulative surplus</div><div class="mv">${fmt(lastY.piggy)}</div><div class="mn">${lastY.piggy>=200000?'Exceeds $200K care target':'$200K care target: '+fmt(200000-lastY.piggy)+' gap'}</div></div>
+<div class="m bl"><div class="ml">Steve equity waived</div><div class="mv">${fmt(APPR)}</div><div class="mn">Social ROI: ${fmt(APPR)} community wealth preserved</div></div>
+</div>`;
+
+// CF table
+let t='<table><tr><th style="text-align:left">Yr</th><th>Rent/mo</th><th>EGI</th><th>Expenses</th><th>NOI</th><th>Care draw</th><th>Cash flow</th><th>Cumulative</th></tr>';
+years.forEach(y=>{
+const c=y.piggy>=totalInvest?'yg':y.piggy>=0?'yw':'yr';
+t+=`<tr><td style="text-align:left;font-weight:600">${y.y}</td><td>${fmt(y.rm)}</td><td>${fmt(y.egi)}</td><td>${fmt(y.totOx)}</td><td style="font-weight:500">${fmt(y.noi)}</td><td style="color:var(--red)">(${fmt(y.draw)})</td><td style="font-weight:500;color:${y.ad>=0?'var(--green)':'var(--red)'}">${fmt(y.ad)}</td><td class="${c}">${fmt(y.piggy)}</td></tr>`;
+});
+document.getElementById('cfTbl').innerHTML=t+'</table>';
+
+// AMI comparison table
+let a='<table><tr><th style="text-align:left">AMI</th><th>Published</th><th>Net rent</th><th>Annual (2 units)</th><th>Yr 1 NOI</th><th>YOC</th><th>Concession/yr</th></tr>';
+TIERS.forEach((ti,i)=>{
+const nr=ti.pub-UA;
+const anr=nr*2*12;
+const egi2=Math.round(anr*(1-VAC));
+const ox2=chip?Math.round(BASE_OPEX*(2/3)):BASE_OPEX;
+const mf2=Math.round(egi2*MGMT);
+const noi2=egi2-ox2-mf2;
+const yoc2=totalInvest>0?noi2/totalInvest:0;
+const conc2=(mktRent-nr)*2*12;
+const sel=i===ai;
+a+=`<tr style="${sel?'background:var(--blue-bg);font-weight:500':''}"><td style="text-align:left">${ti.label}</td><td>${fmt(ti.pub)}</td><td>${fmt(nr)}</td><td>${fmt(anr)}</td><td>${fmt(noi2)}</td><td style="color:${yoc2>=.055?'var(--green)':yoc2>=.04?'var(--amber)':'var(--red)'}">${pct(yoc2)}</td><td>${fmt(conc2)}</td></tr>`;
+});
+document.getElementById('amiTbl').innerHTML=a+'</table>';
+
+// Notes
+document.getElementById('notes').innerHTML=`
+<div class="cd bd am"><p><strong>Expense scissors risk:</strong> Rents grow at ${(rg*100).toFixed(1)}%/yr (AMI adjustments) but expenses at ${(eg*100).toFixed(1)}%/yr. By year ${yrs}, NOI is ${fmt(lastY.noi)} vs. year 1 ${fmt(yr1Noi)} — ${lastY.noi<yr1Noi?'declining margin. Plan for this.':'still growing, but watch the gap.'}</p></div>
+<div class="cd bd rd"><p><strong>Estate & MassHealth:</strong> Property at $1.61M+ may trigger MA estate tax ($2M threshold). MassHealth estate recovery can lien the property. Steve (mid-80s, no insurance, no SS) should apply for MassHealth immediately and structure LLC ownership with an elder law attorney BEFORE any transfers.</p></div>
+<div class="cd bd bl"><p><strong>Steve's will requires:</strong> Retain as rental at affordable levels. At least 1 unit for low-income family. Anti-speculation resale cap on any future condo sales. Right of first refusal for LLC directors. All renovations aligned with these covenants.</p></div>
+<div class="cd bd gn"><p><strong>Investor value proposition:</strong> Steve waives $1.61M in equity. Investor contributes ${fmt(totalInvest)} in renovation capital. In return: ${pct(yoc)} yield on cost, ${fmt(annConc)}/yr in measurable affordability impact, and a building preserved for community use in perpetuity. This is a mission-driven investment, not a market-rate play.</p></div>
+`;
+}
+
+function copyLink(){
+const p=new URLSearchParams();
+['psf','soft','fin','ami','mkt','draw','chip','rg','eg','yrs'].forEach(k=>p.set(k,document.getElementById(k).value));
+const url=location.origin+location.pathname+'?'+p.toString();
+navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
+
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','yrs'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
+
+loadSettings();go();
+</script>
+</body>
+</html>
