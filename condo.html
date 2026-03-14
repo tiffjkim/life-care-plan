@@ -16,18 +16,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .hdr h1{font-size:1.35rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.1rem}
 .hdr p{font-size:.8rem;color:var(--text2)}
 .badge{display:inline-block;font-size:.65rem;font-weight:500;padding:2px 9px;border-radius:16px;margin-top:.35rem}
-.b-b{background:var(--blue-bg);color:var(--blue-text)}.b-a{background:var(--amber-bg);color:var(--amber-text)}
+.b-a{background:var(--amber-bg);color:var(--amber-text)}
 h2{font-size:1rem;font-weight:600;margin:1.75rem 0 .6rem;padding-top:1.25rem;border-top:1px solid var(--border2)}
 h2:first-of-type{border:none;padding:0;margin-top:0}
 h3{font-size:.88rem;font-weight:500;margin:1rem 0 .35rem}
 p{font-size:.8rem;color:var(--text2);margin:3px 0}
 .ctrl{display:flex;align-items:center;gap:10px;margin:7px 0;flex-wrap:wrap}
-.cl{font-size:.76rem;color:var(--text2);min-width:150px;font-weight:500}
+.cl{font-size:.76rem;color:var(--text2);min-width:160px;font-weight:500}
 .cv{font-family:var(--mono);font-size:.8rem;font-weight:500;min-width:60px;text-align:right;color:var(--text)}
 input[type=range]{flex:1;min-width:80px;height:5px;-webkit-appearance:none;background:var(--bg3);border-radius:3px}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);cursor:pointer;border:3px solid var(--bg)}
-select,input[type=number]{padding:6px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);font-size:.8rem}
-input[type=number]{font-family:var(--mono);width:130px}
+select{padding:6px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);font-size:.8rem}
 .ms{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
 .m{background:var(--bg2);border-radius:var(--r);padding:10px 12px;flex:1;min-width:125px;border-left:3px solid var(--border)}
 .m.bl{border-left-color:var(--blue)}.m.gn{border-left-color:var(--green)}.m.am{border-left-color:var(--amber)}.m.rd{border-left-color:var(--red)}
@@ -47,6 +46,10 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 .u{background:var(--bg2);border-radius:var(--r);padding:9px 11px;border:1px solid var(--border2);transition:opacity .2s}
 .u .ul{font-size:.63rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
 .u .uv{font-size:.85rem;font-weight:600;margin-top:1px;color:var(--text)}.u .un{font-size:.65rem;color:var(--text3)}.u.dim{opacity:.4}
+.pos{color:var(--green)}.neg{color:var(--red)}
+.legend{margin:16px 0;padding:14px;background:var(--bg2);border-radius:var(--rl);font-size:.75rem;line-height:1.7}
+.legend dt{font-weight:600;color:var(--text);display:inline}.legend dd{display:inline;color:var(--text2);margin:0 0 0 4px}
+.legend .row{margin:4px 0}
 .btn{padding:9px 18px;border-radius:var(--r);font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);transition:.15s}
 .btn:hover{background:var(--bg2)}.btn-p{background:var(--text);color:var(--bg);border-color:var(--text)}
 .br{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
@@ -58,43 +61,77 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <div class="c">
 <div class="hdr">
 <h1>189-191 Hamilton St — Condo Sale Model</h1>
-<p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903 · Alternative: conversion & sale</p>
-<span class="badge b-b">Investor Model</span> <span class="badge b-a">Tool B: Condo</span>
-<p style="margin-top:6px"><a href="rental.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ Switch to Tool A: Rental Hold Model</a></p>
+<p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903</p>
+<span class="badge b-a">Alternative scenario: what if we sell?</span>
+<p style="margin-top:6px"><a href="rental.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ Back to Rental Hold Model (base case)</a></p>
 </div>
+
+<div class="cd bd bl"><p><strong>How to read this:</strong> <span class="pos">Green (+)</span> = money received or positive outcome. <span class="neg">Red (−)</span> = money spent or cost. This tool explores what condo conversion looks like at different price points — from affordable deed-restricted pricing to full market value.</p></div>
 
 <div class="units" id="unitCards"></div>
 
-<h2>Renovation cost (same as rental model)</h2>
-<div class="ctrl"><span class="cl">Construction $/SF</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
-<div class="ctrl"><span class="cl">Soft costs (%)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
-<div class="ctrl"><span class="cl">Financing costs (%)</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
+<h2>Renovation cost</h2>
+<div class="ctrl"><span class="cl">Construction cost per sq ft</span><input type="range" min="100" max="550" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
+<div class="ctrl"><span class="cl">Soft costs + financing (%)</span><input type="range" min="15" max="40" step="1" value="25" id="costs" oninput="go()"><span class="cv" id="o_costs">25%</span></div>
 <div id="capOut"></div>
 
-<h2>Sale scenario</h2>
-<div class="ctrl"><span class="cl">Units to sell</span><select id="sell" onchange="go()"><option value="1">Sell 1 (keep 2 as rentals)</option><option value="2" selected>Sell 2 (keep 1 as rental)</option><option value="3">Sell all 3</option></select></div>
-<div class="ctrl"><span class="cl">Steve keeps a unit?</span><select id="steve" onchange="go()"><option value="1" selected>Yes — life tenancy in 1 unit (no revenue)</option><option value="0">No — Steve has passed / relocated</option></select></div>
+<h2>What to sell</h2>
+<div class="ctrl"><span class="cl">Units to sell</span><select id="sell" onchange="go()"><option value="1">Sell 1 (keep 2)</option><option value="2" selected>Sell 2 (keep 1)</option><option value="3">Sell all 3</option></select></div>
+<div class="ctrl"><span class="cl">Steve keeps a unit?</span><select id="steve" onchange="go()"><option value="1" selected>Yes — he lives in Unit 1</option><option value="0">No — all units available</option></select></div>
 
-<h3>Pricing</h3>
-<div class="ctrl"><span class="cl">Deed-restricted price / unit</span><input type="range" min="200000" max="600000" step="10000" value="400000" id="drp" oninput="go()"><span class="cv" id="o_drp">$400K</span></div>
-<div class="ctrl"><span class="cl">Unrestricted market price / unit</span><input type="range" min="400000" max="800000" step="10000" value="600000" id="mkp" oninput="go()"><span class="cv" id="o_mkp">$600K</span></div>
-<div class="ctrl"><span class="cl">Use deed-restricted pricing?</span><select id="restrict" onchange="go()"><option value="1" selected>Yes — Steve's anti-speculation cap</option><option value="0">No — sell at market (violates will)</option></select></div>
+<h2>Pricing</h2>
+<p>Set both prices on the same scale. When they overlap, the deal looks the same either way. When apart, the gap is community equity preserved.</p>
+
+<div style="position:relative;margin:12px 0 8px">
+<div style="font-size:.68rem;color:var(--text3);margin-bottom:6px">Price per unit — $200K to $2.5M:</div>
+<div style="position:relative;height:52px">
+<div style="position:absolute;top:8px;left:0;right:0;height:5px;background:var(--bg3);border-radius:3px;z-index:0"></div>
+<div id="priceTrack" style="position:absolute;top:8px;left:0;height:5px;border-radius:3px;z-index:1"></div>
+<input type="range" min="200000" max="2500000" step="25000" value="400000" id="drp" oninput="go()" style="position:absolute;top:0;left:0;width:100%;pointer-events:none;background:transparent;z-index:3" class="dth">
+<input type="range" min="200000" max="2500000" step="25000" value="600000" id="mkp" oninput="go()" style="position:absolute;top:26px;left:0;width:100%;pointer-events:none;background:transparent;z-index:3" class="dth">
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:2px">
+<div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:50%;background:var(--green)"></div><span style="font-size:.72rem;color:var(--text2)">Affordable: <strong id="o_drp">$400K</strong></span></div>
+<div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:50%;background:var(--blue)"></div><span style="font-size:.72rem;color:var(--text2)">Market: <strong id="o_mkp">$600K</strong></span></div>
+</div>
+</div>
+<style>.dth::-webkit-slider-thumb{pointer-events:auto}.dth::-moz-range-thumb{pointer-events:auto}</style>
+<div id="priceSpread"></div>
+
+<div class="ctrl"><span class="cl">Pricing approach</span><select id="restrict" onchange="go()"><option value="1" selected>Deed-restricted (affordable)</option><option value="0">Market rate (unrestricted)</option></select></div>
 
 <h3>Transaction costs</h3>
-<div class="ctrl"><span class="cl">Conversion costs (legal, arch)</span><input type="range" min="15000" max="50000" step="1000" value="25000" id="conv" oninput="go()"><span class="cv" id="o_conv">$25K</span></div>
-<div class="ctrl"><span class="cl">Broker commission %</span><input type="range" min="0" max="6" step="0.5" value="5" id="bkr" oninput="go()"><span class="cv" id="o_bkr">5.0%</span></div>
+<div class="ctrl"><span class="cl">Condo conversion costs</span><input type="range" min="15000" max="75000" step="1000" value="25000" id="conv" oninput="go()"><span class="cv" id="o_conv">$25K</span></div>
+<div class="ctrl"><span class="cl">Broker commission</span><input type="range" min="0" max="6" step="0.5" value="5" id="bkr" oninput="go()"><span class="cv" id="o_bkr">5.0%</span></div>
 
-<h2>Sale proceeds</h2>
+<h2>Sale results</h2>
 <div id="saleOut"></div>
 
-<h2>Residual rental income (if units retained)</h2>
+<h2>Side-by-side: affordable vs. market</h2>
+<p>This shows the financial difference between selling at a deed-restricted price vs. full market value. The gap represents the community equity preserved.</p>
+<div id="compOut"></div>
+
+<h2>What happens to the units you keep?</h2>
 <div id="residOut"></div>
 
-<h2>HOA governance analysis</h2>
+<h2>Who controls the building? (HOA governance)</h2>
 <div id="hoaOut"></div>
 
-<h2>Comparison: deed-restricted vs. market</h2>
-<div id="compOut"></div>
+<h2>Key performance indicators</h2>
+<div id="kpiOut"></div>
+
+<h2>What the terms mean</h2>
+<div class="legend">
+<div class="row"><dt>Multiple on capital (MOIC)</dt><dd>— How many times you get your money back. 1.0x = break even (got back exactly what you put in). 1.5x = 50% profit. Below 1.0x = you lost money.</dd></div>
+<div class="row"><dt>Gross margin</dt><dd>— What percentage of the sale price is profit after all costs. Higher = more profitable. 20% margin on a $400K sale = $80K profit.</dd></div>
+<div class="row"><dt>Cost per unit</dt><dd>— Total renovation cost divided by number of units. Useful for comparing against the sale price to see if you're creating or destroying value.</dd></div>
+<div class="row"><dt>Price per square foot</dt><dd>— Sale price divided by the unit's size (1,313 SF each). Comparable renovated condos in Cambridgeport sell at $450–550/SF. Below $400/SF suggests deed-restricted pricing.</dd></div>
+<div class="row"><dt>Community equity preserved</dt><dd>— The dollar difference between what you could sell for (market) and what you choose to sell for (deed-restricted). This money stays in the community as affordable housing rather than being captured as market profit.</dd></div>
+<div class="row"><dt>Deed restriction</dt><dd>— A legal covenant recorded on the title that limits how much the condo can be resold for. Keeps it affordable permanently. Makes the unit harder to finance (no appreciation for the buyer) but ensures the community benefit is permanent.</dd></div>
+<div class="row"><dt>HOA (condo association)</dt><dd>— When you convert to condos, all owners share common expenses (roof, insurance, hallways). Each owner pays a monthly fee based on their percentage of the building. Decisions are made by majority vote of the owners.</dd></div>
+<div class="row"><dt>Super lien (MA law)</dt><dd>— In Massachusetts, if a condo owner doesn't pay their HOA fees, the condo association has priority over even the mortgage lender for up to 6 months of unpaid fees. Protects the building's finances but can make lenders cautious about small condos.</dd></div>
+<div class="row"><dt>Right of first refusal</dt><dd>— A provision in the master deed that gives the LLC/trust the first opportunity to buy a unit back if one of the other owners wants to sell. Helps maintain long-term control.</dd></div>
+</div>
 
 <div class="br np">
 <button class="btn btn-p" onclick="copyLink()">Copy shareable link</button>
@@ -103,19 +140,19 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <div id="lm" style="font-size:.7rem;color:var(--green);margin:3px 0;display:none">Link copied</div>
 
 <div class="ft">
-<strong>189-191 Hamilton St — Condo sale model (Tool B).</strong> Alternative scenario for comparison only. Steve's will directs the building be retained as affordable rental housing. Condo conversion is a contingency option. Appraisal: $1,610,000 as-is (3/20/2025). Not financial, legal, or tax advice.
+<strong>189-191 Hamilton St — Condo sale model.</strong> This is an alternative scenario for comparison. The base case (rental hold) is the primary model aligned with Steve's vision for the building. Appraisal: $1,610,000 as-is (3/20/2025). For planning purposes only — not financial, legal, or tax advice.
 </div>
 </div>
 
 <script>
-const GBA=3940,UA=385,APPR=1610000,BASE_OPEX=24368;
-function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'($'+Math.abs(Math.round(n)).toLocaleString()+')':'$'+Math.round(n).toLocaleString();}
+const GBA=3940,APPR=1610000,UNIT_SF=1313;
+function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'−$'+Math.abs(Math.round(n)).toLocaleString():'$'+Math.round(n).toLocaleString();}
+function fmtSign(n){if(n>0)return'+$'+Math.round(n).toLocaleString();if(n<0)return'−$'+Math.abs(Math.round(n)).toLocaleString();return'$0';}
 function pct(n){return(n*100).toFixed(1)+'%';}
 
 function go(){
 const psf=+document.getElementById('psf').value;
-const softP=+document.getElementById('soft').value/100;
-const finP=+document.getElementById('fin').value/100;
+const costsP=+document.getElementById('costs').value/100;
 const sellN=+document.getElementById('sell').value;
 const steveKeeps=+document.getElementById('steve').value;
 const drp=+document.getElementById('drp').value;
@@ -125,46 +162,60 @@ const conv=+document.getElementById('conv').value;
 const bkr=+document.getElementById('bkr').value/100;
 
 document.getElementById('o_psf').textContent='$'+psf;
-document.getElementById('o_soft').textContent=Math.round(softP*100)+'%';
-document.getElementById('o_fin').textContent=Math.round(finP*100)+'%';
-document.getElementById('o_drp').textContent='$'+(drp/1000).toFixed(0)+'K';
-document.getElementById('o_mkp').textContent='$'+(mkp/1000).toFixed(0)+'K';
+document.getElementById('o_costs').textContent=Math.round(costsP*100)+'%';
+document.getElementById('o_drp').textContent=drp>=1000000?'$'+(drp/1000000).toFixed(2)+'M':'$'+(drp/1000).toFixed(0)+'K';
+document.getElementById('o_mkp').textContent=mkp>=1000000?'$'+(mkp/1000000).toFixed(2)+'M':'$'+(mkp/1000).toFixed(0)+'K';
+// Track highlight between the two prices
+const trackMin=200000,trackMax=2500000,trackRange=trackMax-trackMin;
+const drpPctT=((drp-trackMin)/trackRange)*100;
+const mkpPctT=((mkp-trackMin)/trackRange)*100;
+const lo=Math.min(drpPctT,mkpPctT),hi=Math.max(drpPctT,mkpPctT);
+const trackEl=document.getElementById('priceTrack');
+if(Math.abs(drp-mkp)<50000){
+trackEl.style.cssText=`position:absolute;top:8px;left:${lo}%;width:4px;height:5px;border-radius:3px;background:var(--amber);z-index:1`;
+}else{
+trackEl.style.cssText=`position:absolute;top:8px;left:${lo}%;width:${hi-lo}%;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--green-bg),var(--blue-bg));z-index:1`;
+}
 document.getElementById('o_conv').textContent='$'+(conv/1000).toFixed(0)+'K';
 document.getElementById('o_bkr').textContent=(bkr*100).toFixed(1)+'%';
 
+// Price spread summary (visual is now on the dual slider above)
+const spread=mkp-drp;
+const spreadPct=mkp>0?Math.round((spread/mkp)*100):0;
+const fmtP=n=>n>=1000000?'$'+(n/1000000).toFixed(2)+'M':'$'+(n/1000).toFixed(0)+'K';
+const psEl=document.getElementById('priceSpread');
+if(spread<=0){
+psEl.innerHTML=`<div class="cd bd bl" style="margin:6px 0"><p><strong>Both prices are the same</strong> — no affordability concession at this level. The sliders overlap because there's no gap between affordable and market pricing.</p></div>`;
+}else if(spread<50000){
+psEl.innerHTML=`<div class="cd bd bl" style="margin:6px 0"><p><strong>Prices are very close</strong> — only ${fmtP(spread)} apart per unit (${spreadPct}% gap). At this level, the financial outcome is nearly identical either way.</p></div>`;
+}else{
+psEl.innerHTML=`<div class="cd bd gn" style="margin:6px 0"><p><strong>Gap: ${fmtP(spread)}/unit (${spreadPct}% below market).</strong> Across ${sellN} unit${sellN>1?'s':''}, that's <strong>${fmtP(spread*sellN)}</strong> in community equity preserved — housing value that stays affordable instead of being captured at market rate.</p></div>`;
+}
+
 const keepN=3-sellN;
-const rentalN=steveKeeps?keepN-1:keepN; // units that actually produce rent
+const rentalN=steveKeeps?Math.max(0,keepN-1):keepN;
 
 // Unit cards
 const units=[];
 for(let i=1;i<=3;i++){
 let status,dim=false;
-if(steveKeeps&&i===1){status='Steve (life tenancy)';dim=true;}
-else if(i<=sellN+(steveKeeps?1:0)&&!(steveKeeps&&i===1)){status='Sell as condo';}
+if(steveKeeps&&i===1){status="Steve's home";dim=true;}
+else if(steveKeeps&&i<=sellN+1){status='Sell as condo';}
+else if(!steveKeeps&&i<=sellN){status='Sell as condo';}
 else{status='Keep as rental';}
-if(!steveKeeps&&i<=sellN){status='Sell as condo';}
-if(!steveKeeps&&i>sellN){status='Keep as rental';}
-// Simplified: Steve is always unit 1 if he keeps. Sell from unit 2 up.
-if(steveKeeps){
-if(i===1){status='Steve (life tenancy)';dim=true;}
-else if(i<=sellN+1){status='Sell as condo';}
-else{status='Keep as rental';}
-}else{
-if(i<=sellN){status='Sell as condo';}
-else{status='Keep as rental';}
-}
 units.push(`<div class="u${dim?' dim':''}"><div class="ul">Unit ${i} — ${status}</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor ${i}</div></div>`);
 }
 document.getElementById('unitCards').innerHTML=units.join('');
 
 // Costs
 const constr=psf*GBA;
-const soft=Math.round(constr*softP);
-const financing=Math.round(constr*finP);
-const totalInvest=constr+soft+financing;
+const addCosts=Math.round(constr*costsP);
+const totalInvest=constr+addCosts;
+const costPerUnit=Math.round(totalInvest/3);
 
 document.getElementById('capOut').innerHTML=`<div class="ms">
-<div class="m rd"><div class="ml">Total investor capital</div><div class="mv">${fmt(totalInvest)}</div><div class="mn">${fmt(constr)} constr + ${fmt(soft)} soft + ${fmt(financing)} fin</div></div>
+<div class="m rd"><div class="ml">Total renovation cost</div><div class="mv">${fmt(totalInvest)}</div><div class="mn">${fmt(constr)} construction + ${fmt(addCosts)} soft/financing</div></div>
+<div class="m bl"><div class="ml">Cost per unit</div><div class="mv">${fmt(costPerUnit)}</div><div class="mn">Total ÷ 3 units</div></div>
 </div>`;
 
 // Sale
@@ -172,85 +223,105 @@ const salePrice=restricted?drp:mkp;
 const grossSale=salePrice*sellN;
 const commission=Math.round(grossSale*bkr);
 const transferTax=Math.round(grossSale/1000*4.56);
-const netSale=grossSale-commission-transferTax-conv;
-const investorProfit=netSale-totalInvest;
+const totalSellCosts=commission+transferTax+conv;
+const netSale=grossSale-totalSellCosts;
+const profit=netSale-totalInvest;
 const moic=totalInvest>0?netSale/totalInvest:0;
-const equityForgone=mkp*sellN-salePrice*sellN;
+const grossMargin=grossSale>0?profit/grossSale:0;
+const psfSale=Math.round(salePrice/UNIT_SF);
 
 document.getElementById('saleOut').innerHTML=`<div class="ms">
-<div class="m bl"><div class="ml">Gross sale (${sellN} unit${sellN>1?'s':''})</div><div class="mv">${fmt(grossSale)}</div><div class="mn">${sellN} × ${fmt(salePrice)} ${restricted?'(deed-restricted)':'(market)'}</div></div>
-<div class="m am"><div class="ml">Transaction costs</div><div class="mv">${fmt(commission+transferTax+conv)}</div><div class="mn">${fmt(commission)} broker + ${fmt(transferTax)} transfer + ${fmt(conv)} conversion</div></div>
-<div class="m gn"><div class="ml">Net sale proceeds</div><div class="mv">${fmt(netSale)}</div></div>
+<div class="m bl"><div class="ml">Gross sale (${sellN} unit${sellN>1?'s':''})</div><div class="mv">${fmt(grossSale)}</div><div class="mn">${sellN} × ${fmt(salePrice)} per unit</div></div>
+<div class="m am"><div class="ml">All selling costs</div><div class="mv"><span class="neg">${fmt(-totalSellCosts)}</span></div><div class="mn">Broker ${fmt(commission)} + transfer tax ${fmt(transferTax)} + conversion ${fmt(conv)}</div></div>
+<div class="m gn"><div class="ml">Net proceeds</div><div class="mv">${fmt(netSale)}</div></div>
 </div>
 <div class="ms">
-<div class="m ${investorProfit>=0?'gn':'rd'}"><div class="ml">Investor profit / (loss)</div><div class="mv">${fmt(investorProfit)}</div><div class="mn">Net proceeds − ${fmt(totalInvest)} capital</div></div>
-<div class="m bl"><div class="ml">Multiple on capital</div><div class="mv">${moic.toFixed(2)}x</div></div>
-${restricted?`<div class="m gn"><div class="ml">Affordability equity created</div><div class="mv">${fmt(equityForgone)}</div><div class="mn">Market value forgone to preserve affordability</div></div>`:''}
+<div class="m ${profit>=0?'gn':'rd'}"><div class="ml">Profit after renovation cost</div><div class="mv"><span class="${profit>=0?'pos':'neg'}">${fmtSign(profit)}</span></div><div class="mn">Net proceeds minus ${fmt(totalInvest)} renovation</div></div>
+<div class="m bl"><div class="ml">Multiple on capital</div><div class="mv">${moic.toFixed(2)}x</div><div class="mn">${moic>=1?'Capital returned '+(moic>=1.5?'with strong profit':'with modest return'):'Capital not fully returned from sales alone'}</div></div>
+<div class="m bl"><div class="ml">Price per sq ft</div><div class="mv">$${psfSale}/SF</div><div class="mn">Comparable renovated: $450–550/SF</div></div>
 </div>`;
 
-// Residual rental
+// Comparison
+const drpGross=drp*sellN;const mkpGross=mkp*sellN;
+const drpCosts=Math.round(drpGross*bkr)+Math.round(drpGross/1000*4.56)+conv;
+const mkpCosts=Math.round(mkpGross*bkr)+Math.round(mkpGross/1000*4.56)+conv;
+const drpNet=drpGross-drpCosts;const mkpNet=mkpGross-mkpCosts;
+const drpProfit=drpNet-totalInvest;const mkpProfit=mkpNet-totalInvest;
+const equityPreserved=mkpGross-drpGross;
+
+document.getElementById('compOut').innerHTML=`
+<div class="tw"><table>
+<tr><th style="text-align:left">Metric</th><th>Affordable (deed-restricted)</th><th>Market rate</th><th>Difference</th></tr>
+<tr><td style="text-align:left">Price per unit</td><td>${fmt(drp)}</td><td>${fmt(mkp)}</td><td>${fmt(mkp-drp)}</td></tr>
+<tr><td style="text-align:left">Price per SF</td><td>$${Math.round(drp/UNIT_SF)}/SF</td><td>$${Math.round(mkp/UNIT_SF)}/SF</td><td></td></tr>
+<tr><td style="text-align:left">Gross (${sellN} units)</td><td>${fmt(drpGross)}</td><td>${fmt(mkpGross)}</td><td>${fmt(mkpGross-drpGross)}</td></tr>
+<tr><td style="text-align:left">Net after all costs</td><td>${fmt(drpNet)}</td><td>${fmt(mkpNet)}</td><td>${fmt(mkpNet-drpNet)}</td></tr>
+<tr><td style="text-align:left;font-weight:500">Profit / (loss)</td><td style="font-weight:600"><span class="${drpProfit>=0?'pos':'neg'}">${fmtSign(drpProfit)}</span></td><td style="font-weight:600"><span class="${mkpProfit>=0?'pos':'neg'}">${fmtSign(mkpProfit)}</span></td><td></td></tr>
+<tr><td style="text-align:left;font-weight:500">Multiple on capital</td><td>${(drpNet/totalInvest).toFixed(2)}x</td><td>${(mkpNet/totalInvest).toFixed(2)}x</td><td></td></tr>
+<tr><td style="text-align:left;font-weight:500">Community equity preserved</td><td style="color:var(--green);font-weight:600">${fmt(equityPreserved)}</td><td>$0</td><td></td></tr>
+</table></div>
+<div class="cd bd gn"><p><strong>The affordability premium:</strong> Selling at ${fmt(drp)} instead of ${fmt(mkp)} per unit means ${fmt(equityPreserved)} stays as affordable housing equity in Cambridgeport. This is the quantifiable social impact — but it also means ${fmt(mkpProfit-drpProfit)} less profit. The question is: does the deal still work financially at the affordable price? ${drpProfit>=0?'At these numbers, yes — there is still a positive return.':'At these numbers, the affordable price results in a loss. The renovation would need subsidy or a lower construction cost.'}</p></div>
+<div class="cd bd am"><p><strong>Why financeability matters:</strong> Deed-restricted condos are harder to finance — buyers can't expect appreciation, so lenders see more risk. FHA and state programs (MassHousing) do finance deed-restricted properties, but the buyer pool is smaller. If the restriction makes units unsellable, the building can't be maintained. The right balance protects affordability without making the property unmarketable.</p></div>
+`;
+
+// Residual
 if(rentalN>0){
-const netRent=2592; // 80% AMI net as default
-document.getElementById('residOut').innerHTML=`<div class="cd bd gn"><p><strong>${rentalN} unit${rentalN>1?'s':''} retained as rental${rentalN>1?'s':''}.</strong> At 80% AMI (net $2,592/mo each), that's ${fmt(netRent*rentalN*12)}/yr in gross rental income. After expenses (${steveKeeps?'2/3':'full'} share of building opex + management), this provides ongoing cash flow — see the Rental Hold Model for detailed projections.</p></div>
-<div class="ms">
-<div class="m bl"><div class="ml">Rental units retained</div><div class="mv">${rentalN}</div></div>
-<div class="m bl"><div class="ml">Annual gross rent</div><div class="mv">${fmt(netRent*rentalN*12)}</div></div>
-</div>`;
+document.getElementById('residOut').innerHTML=`<div class="cd bd gn"><p><strong>${rentalN} unit${rentalN>1?'s':''} kept as rental${rentalN>1?'s':''}.</strong> These continue generating income — see the <a href="rental.html" style="color:var(--blue)">Rental Hold Model</a> for detailed projections. Combined with sale proceeds, this creates a hybrid: upfront cash from sales plus ongoing income from rentals.</p></div>`;
+}else if(steveKeeps){
+document.getElementById('residOut').innerHTML=`<div class="cd bd am"><p><strong>Steve keeps Unit 1</strong> (no revenue). All other units sold. No ongoing rental income — the sale proceeds are the full return. Steve's living expenses would need to come from the proceeds or other sources.</p></div>`;
 }else{
-document.getElementById('residOut').innerHTML=`<div class="cd bd am"><p>No rental units retained${steveKeeps?' (Steve keeps 1 unit but it produces no revenue)':''}. All income comes from sale proceeds. No ongoing cash flow.</p></div>`;
+document.getElementById('residOut').innerHTML=`<div class="cd bd bl"><p><strong>All units sold.</strong> No ongoing rental income. The sale proceeds represent the total return on investment.</p></div>`;
 }
 
 // HOA
-const llcUnits=keepN;
-const buyerUnits=sellN;
-const llcVotes=llcUnits;
-const buyerVotes=buyerUnits;
-const control=llcVotes>buyerVotes?'LLC retains majority control':llcVotes===buyerVotes?'Deadlocked — neither side has majority':'Buyers control governance';
-const controlClass=llcVotes>buyerVotes?'gn':llcVotes===buyerVotes?'am':'rd';
+const llcUnits=keepN;const buyerUnits=sellN;
+const control=llcUnits>buyerUnits;const deadlock=llcUnits===buyerUnits;
 
-document.getElementById('hoaOut').innerHTML=`
-<div class="ms">
-<div class="m ${controlClass}"><div class="ml">Governance control</div><div class="mv">${llcVotes} vs ${buyerVotes}</div><div class="mn">LLC votes vs buyer votes: ${control}</div></div>
-<div class="m bl"><div class="ml">Default % interest</div><div class="mv">33.3% each</div><div class="mn">3 identical units = equal shares</div></div>
-</div>
-${llcVotes<=buyerVotes?`
-<div class="cd bd rd"><p><strong>Loss of control warning.</strong> With ${sellN} units sold, buyers hold ${buyerVotes} of 3 votes. They can outvote the LLC on: HOA fees, special assessments, rules, management, insurance, and common area decisions.</p>
-<p style="margin-top:6px"><strong>Required master deed protections:</strong></p>
-<p style="margin-top:3px;font-size:.78rem">• Supermajority (unanimous) for assessments above $5,000<br>
-• Right of first refusal on all resales<br>
-• Owner-occupancy requirement to prevent absentee landlords<br>
-• Weighted % interest (give LLC unit 40%, buyers 30/30)<br>
-• Declarant reserved powers for specific decisions<br>
-• Anti-speculation resale cap per Steve's will</p>
-<p style="margin-top:6px;font-size:.78rem;color:var(--red-text)">These must be in the master deed BEFORE recording. Cannot be added after. MA condo attorney (MGL c. 183A) essential.</p></div>
-`:`
-<div class="cd bd gn"><p><strong>LLC retains control.</strong> With ${keepN} units kept and ${sellN} sold, the LLC holds majority voting power (${llcVotes} of 3). Still recommended: draft protective provisions in the master deed for long-term governance stability.</p></div>
-`}
-<div class="cd bd bl"><p><strong>MA super lien (MGL c. 183A §6):</strong> HOA has 6-month priority lien ahead of mortgage lenders for unpaid fees. This protects building cash flow but can complicate buyer financing — some lenders won't lend on 3-unit condos or require higher down payments, potentially narrowing the buyer pool.</p></div>
-`;
+let hoaHtml=`<div class="ms">
+<div class="m ${control?'gn':deadlock?'am':'rd'}"><div class="ml">Who has the votes?</div><div class="mv">${control?'You: '+llcUnits+' vs '+buyerUnits:deadlock?'Tied: '+llcUnits+' vs '+buyerUnits:'Buyers: '+buyerUnits+' vs '+llcUnits}</div><div class="mn">${control?'You retain majority control':deadlock?'Neither side has majority — deadlock risk':'Buyers can outvote you on everything'}</div></div>
+</div>`;
 
-// Comparison table
-document.getElementById('compOut').innerHTML=`
+if(!control){
+hoaHtml+=`<div class="cd bd ${deadlock?'am':'rd'}"><p><strong>${deadlock?'Deadlock':'Loss of control'} warning.</strong> With ${sellN} unit${sellN>1?'s':''} sold, ${deadlock?'neither side has a majority — decisions require consensus':'buyers control the vote'}. They can decide on: HOA fees, special assessments for repairs, building rules, hiring/firing management, and insurance.</p>
+<p style="margin-top:6px"><strong>Protections to build into the master deed (before any sale):</strong></p>
+<p style="font-size:.78rem;margin-top:3px">• Require unanimous consent for any expense over $5,000<br>
+• Right of first refusal on all resales (you get to buy it back first)<br>
+• Owner-occupancy requirement (no absentee landlords)<br>
+• Weight your percentage interest higher (e.g., 40% vs 30/30)<br>
+• Reserve specific decisions to the original owner (declarant powers)</p>
+<p style="font-size:.78rem;margin-top:6px;color:var(--amber-text)">These must be written into the master deed before it's recorded. They cannot be added later. A Massachusetts condo attorney is essential.</p></div>`;
+}else{
+hoaHtml+=`<div class="cd bd gn"><p><strong>You retain control.</strong> With ${keepN} units kept and only ${sellN} sold, you hold the majority vote. Still recommended: include protective provisions in the master deed for long-term stability, in case any retained unit is ever sold later.</p></div>`;
+}
+document.getElementById('hoaOut').innerHTML=hoaHtml;
+
+// KPIs
+const drpMoic=totalInvest>0?drpNet/totalInvest:0;
+const mkpMoic=totalInvest>0?mkpNet/totalInvest:0;
+const drpMargin=drpGross>0?drpProfit/drpGross:0;
+const mkpMargin=mkpGross>0?mkpProfit/mkpGross:0;
+const drpPsf=Math.round(drp/UNIT_SF);
+const mkpPsf=Math.round(mkp/UNIT_SF);
+
+document.getElementById('kpiOut').innerHTML=`
 <div class="tw"><table>
-<tr><th style="text-align:left">Metric</th><th>Deed-restricted</th><th>Market price</th><th>Difference</th></tr>
-<tr><td style="text-align:left">Price per unit</td><td>${fmt(drp)}</td><td>${fmt(mkp)}</td><td>${fmt(mkp-drp)}</td></tr>
-<tr><td style="text-align:left">Gross (${sellN} units)</td><td>${fmt(drp*sellN)}</td><td>${fmt(mkp*sellN)}</td><td>${fmt((mkp-drp)*sellN)}</td></tr>
-<tr><td style="text-align:left">Net after costs</td><td>${fmt(drp*sellN-Math.round(drp*sellN*bkr)-Math.round(drp*sellN/1000*4.56)-conv)}</td><td>${fmt(mkp*sellN-Math.round(mkp*sellN*bkr)-Math.round(mkp*sellN/1000*4.56)-conv)}</td><td>${fmt((mkp-drp)*sellN-Math.round((mkp-drp)*sellN*bkr)-Math.round((mkp-drp)*sellN/1000*4.56))}</td></tr>
-<tr><td style="text-align:left">Investor profit</td><td style="font-weight:600">${fmt(drp*sellN-Math.round(drp*sellN*bkr)-Math.round(drp*sellN/1000*4.56)-conv-totalInvest)}</td><td style="font-weight:600">${fmt(mkp*sellN-Math.round(mkp*sellN*bkr)-Math.round(mkp*sellN/1000*4.56)-conv-totalInvest)}</td><td></td></tr>
-<tr><td style="text-align:left">Affordability preserved</td><td style="color:var(--green);font-weight:600">Yes — per Steve's will</td><td style="color:var(--red)">No — speculative resale allowed</td><td></td></tr>
-<tr><td style="text-align:left">Community equity forgone</td><td style="color:var(--green);font-weight:600">${fmt((mkp-drp)*sellN)}</td><td>$0</td><td></td></tr>
-</table></div>
-<div class="cd bd gn"><p><strong>The deed-restriction discount is the social impact.</strong> Selling at ${fmt(drp)} instead of ${fmt(mkp)} means ${fmt((mkp-drp)*sellN)} stays in the community as affordable housing equity rather than extracting to market. This is Steve's legacy — quantified.</p></div>
-`;
+<tr><th style="text-align:left">KPI</th><th>Affordable</th><th>Market</th><th>What it means</th></tr>
+<tr><td style="text-align:left">Multiple on capital (MOIC)</td><td style="font-weight:600">${drpMoic.toFixed(2)}x</td><td style="font-weight:600">${mkpMoic.toFixed(2)}x</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">How many times you get your money back. Above 1.0x = profit.</td></tr>
+<tr><td style="text-align:left">Gross margin</td><td>${pct(drpMargin)}</td><td>${pct(mkpMargin)}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Profit as a % of sale price. Higher = more profitable per dollar sold.</td></tr>
+<tr><td style="text-align:left">Price per SF</td><td>$${drpPsf}</td><td>$${mkpPsf}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Renovated Cambridgeport 2BR condos: $450–550/SF typical.</td></tr>
+<tr><td style="text-align:left">Renovation cost per unit</td><td colspan="2" style="text-align:center">${fmt(costPerUnit)}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Must be below sale price for the deal to create value.</td></tr>
+<tr><td style="text-align:left">Community equity</td><td style="color:var(--green);font-weight:600">${fmt(equityPreserved)}</td><td>$0</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Market value forgone to keep housing affordable.</td></tr>
+<tr><td style="text-align:left">Steve's equity waived</td><td colspan="2" style="text-align:center">${fmt(APPR)}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Building value donated. Not counted as investment cost.</td></tr>
+</table></div>`;
 }
 
 function copyLink(){
 const p=new URLSearchParams();
-['psf','soft','fin','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));
+['psf','costs','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','costs','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
 
 loadSettings();go();
 </script>
