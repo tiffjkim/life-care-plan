@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>189 Hamilton St — Condo Sale Model</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#FAFAF8;--bg2:#F0EFEB;--bg3:#E8E6E1;--text:#1A1A18;--text2:#6B6A65;--text3:#9C9B95;--border:#D4D3CD;--border2:#E8E6E1;--blue:#2563EB;--blue-bg:#EFF6FF;--blue-text:#1E40AF;--green:#059669;--green-bg:#ECFDF5;--green-text:#065F46;--amber:#D97706;--amber-bg:#FFFBEB;--amber-text:#92400E;--red:#DC2626;--red-bg:#FEF2F2;--red-text:#991B1B;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;--r:10px;--rl:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#141413;--bg2:#1E1E1C;--bg3:#282826;--text:#E8E6E1;--text2:#9C9B95;--text3:#6B6A65;--border:#3A3A37;--border2:#2A2A28;--blue:#60A5FA;--blue-bg:#1E293B;--blue-text:#93C5FD;--green:#34D399;--green-bg:#064E3B;--green-text:#6EE7B7;--amber:#FBBF24;--amber-bg:#451A03;--amber-text:#FCD34D;--red:#F87171;--red-bg:#450A0A;--red-text:#FCA5A5}}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.c{max-width:800px;margin:0 auto;padding:2rem 1.5rem 4rem}
+@media(max-width:600px){.c{padding:1.25rem 1rem 3rem}}
+.hdr{margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.hdr h1{font-size:1.35rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.1rem}
+.hdr p{font-size:.8rem;color:var(--text2)}
+.badge{display:inline-block;font-size:.65rem;font-weight:500;padding:2px 9px;border-radius:16px;margin-top:.35rem}
+.b-b{background:var(--blue-bg);color:var(--blue-text)}.b-a{background:var(--amber-bg);color:var(--amber-text)}
+h2{font-size:1rem;font-weight:600;margin:1.75rem 0 .6rem;padding-top:1.25rem;border-top:1px solid var(--border2)}
+h2:first-of-type{border:none;padding:0;margin-top:0}
+h3{font-size:.88rem;font-weight:500;margin:1rem 0 .35rem}
+p{font-size:.8rem;color:var(--text2);margin:3px 0}
+.ctrl{display:flex;align-items:center;gap:10px;margin:7px 0;flex-wrap:wrap}
+.cl{font-size:.76rem;color:var(--text2);min-width:150px;font-weight:500}
+.cv{font-family:var(--mono);font-size:.8rem;font-weight:500;min-width:60px;text-align:right;color:var(--text)}
+input[type=range]{flex:1;min-width:80px;height:5px;-webkit-appearance:none;background:var(--bg3);border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);cursor:pointer;border:3px solid var(--bg)}
+select,input[type=number]{padding:6px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);font-size:.8rem}
+input[type=number]{font-family:var(--mono);width:130px}
+.ms{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.m{background:var(--bg2);border-radius:var(--r);padding:10px 12px;flex:1;min-width:125px;border-left:3px solid var(--border)}
+.m.bl{border-left-color:var(--blue)}.m.gn{border-left-color:var(--green)}.m.am{border-left-color:var(--amber)}.m.rd{border-left-color:var(--red)}
+.m .ml{font-size:.63rem;color:var(--text2);margin-bottom:2px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.m .mv{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--text)}
+.m .mn{font-size:.65rem;color:var(--text3);margin-top:1px}
+.cd{background:var(--bg2);border-radius:var(--rl);padding:.85rem 1rem;margin:8px 0;font-size:.8rem;line-height:1.55}
+.cd.bd{border-left:3px solid var(--border)}.cd.bl{border-left-color:var(--blue);background:var(--blue-bg)}.cd.gn{border-left-color:var(--green);background:var(--green-bg)}.cd.am{border-left-color:var(--amber);background:var(--amber-bg)}.cd.rd{border-left-color:var(--red);background:var(--red-bg)}
+.cd strong{font-weight:600}.cd p{margin:0;color:var(--text)}
+.tw{overflow-x:auto;margin:8px 0}
+table{width:100%;font-size:.7rem;border-collapse:collapse}
+th,td{padding:5px 6px;text-align:left;border-bottom:1px solid var(--border2)}
+th{font-weight:500;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.units{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:8px 0}
+@media(max-width:600px){.units{grid-template-columns:1fr}}
+.u{background:var(--bg2);border-radius:var(--r);padding:9px 11px;border:1px solid var(--border2);transition:opacity .2s}
+.u .ul{font-size:.63rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.u .uv{font-size:.85rem;font-weight:600;margin-top:1px;color:var(--text)}.u .un{font-size:.65rem;color:var(--text3)}.u.dim{opacity:.4}
+.btn{padding:9px 18px;border-radius:var(--r);font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);transition:.15s}
+.btn:hover{background:var(--bg2)}.btn-p{background:var(--text);color:var(--bg);border-color:var(--text)}
+.br{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.ft{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border2);font-size:.68rem;color:var(--text3);line-height:1.7}
+@media print{body{background:#fff;color:#000;font-size:9px}.c{max-width:100%;padding:.5rem}input[type=range],select,.br.np{display:none!important}.m,.cd,.u{break-inside:avoid}.cv{border:1px solid #ccc;padding:2px 4px;border-radius:3px}}
+</style>
+</head>
+<body>
+<div class="c">
+<div class="hdr">
+<h1>189-191 Hamilton St — Condo Sale Model</h1>
+<p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903 · Alternative: conversion & sale</p>
+<span class="badge b-b">Investor Model</span> <span class="badge b-a">Tool B: Condo</span>
+<p style="margin-top:6px"><a href="rental.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ Switch to Tool A: Rental Hold Model</a></p>
+</div>
+
+<div class="units" id="unitCards"></div>
+
+<h2>Renovation cost (same as rental model)</h2>
+<div class="ctrl"><span class="cl">Construction $/SF</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
+<div class="ctrl"><span class="cl">Soft costs (%)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
+<div class="ctrl"><span class="cl">Financing costs (%)</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
+<div id="capOut"></div>
+
+<h2>Sale scenario</h2>
+<div class="ctrl"><span class="cl">Units to sell</span><select id="sell" onchange="go()"><option value="1">Sell 1 (keep 2 as rentals)</option><option value="2" selected>Sell 2 (keep 1 as rental)</option><option value="3">Sell all 3</option></select></div>
+<div class="ctrl"><span class="cl">Steve keeps a unit?</span><select id="steve" onchange="go()"><option value="1" selected>Yes — life tenancy in 1 unit (no revenue)</option><option value="0">No — Steve has passed / relocated</option></select></div>
+
+<h3>Pricing</h3>
+<div class="ctrl"><span class="cl">Deed-restricted price / unit</span><input type="range" min="200000" max="600000" step="10000" value="400000" id="drp" oninput="go()"><span class="cv" id="o_drp">$400K</span></div>
+<div class="ctrl"><span class="cl">Unrestricted market price / unit</span><input type="range" min="400000" max="800000" step="10000" value="600000" id="mkp" oninput="go()"><span class="cv" id="o_mkp">$600K</span></div>
+<div class="ctrl"><span class="cl">Use deed-restricted pricing?</span><select id="restrict" onchange="go()"><option value="1" selected>Yes — Steve's anti-speculation cap</option><option value="0">No — sell at market (violates will)</option></select></div>
+
+<h3>Transaction costs</h3>
+<div class="ctrl"><span class="cl">Conversion costs (legal, arch)</span><input type="range" min="15000" max="50000" step="1000" value="25000" id="conv" oninput="go()"><span class="cv" id="o_conv">$25K</span></div>
+<div class="ctrl"><span class="cl">Broker commission %</span><input type="range" min="0" max="6" step="0.5" value="5" id="bkr" oninput="go()"><span class="cv" id="o_bkr">5.0%</span></div>
+
+<h2>Sale proceeds</h2>
+<div id="saleOut"></div>
+
+<h2>Residual rental income (if units retained)</h2>
+<div id="residOut"></div>
+
+<h2>HOA governance analysis</h2>
+<div id="hoaOut"></div>
+
+<h2>Comparison: deed-restricted vs. market</h2>
+<div id="compOut"></div>
+
+<div class="br np">
+<button class="btn btn-p" onclick="copyLink()">Copy shareable link</button>
+<button class="btn" onclick="window.print()">Save as PDF</button>
+</div>
+<div id="lm" style="font-size:.7rem;color:var(--green);margin:3px 0;display:none">Link copied</div>
+
+<div class="ft">
+<strong>189-191 Hamilton St — Condo sale model (Tool B).</strong> Alternative scenario for comparison only. Steve's will directs the building be retained as affordable rental housing. Condo conversion is a contingency option. Appraisal: $1,610,000 as-is (3/20/2025). Not financial, legal, or tax advice.
+</div>
+</div>
+
+<script>
+const GBA=3940,UA=385,APPR=1610000,BASE_OPEX=24368;
+function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'($'+Math.abs(Math.round(n)).toLocaleString()+')':'$'+Math.round(n).toLocaleString();}
+function pct(n){return(n*100).toFixed(1)+'%';}
+
+function go(){
+const psf=+document.getElementById('psf').value;
+const softP=+document.getElementById('soft').value/100;
+const finP=+document.getElementById('fin').value/100;
+const sellN=+document.getElementById('sell').value;
+const steveKeeps=+document.getElementById('steve').value;
+const drp=+document.getElementById('drp').value;
+const mkp=+document.getElementById('mkp').value;
+const restricted=+document.getElementById('restrict').value;
+const conv=+document.getElementById('conv').value;
+const bkr=+document.getElementById('bkr').value/100;
+
+document.getElementById('o_psf').textContent='$'+psf;
+document.getElementById('o_soft').textContent=Math.round(softP*100)+'%';
+document.getElementById('o_fin').textContent=Math.round(finP*100)+'%';
+document.getElementById('o_drp').textContent='$'+(drp/1000).toFixed(0)+'K';
+document.getElementById('o_mkp').textContent='$'+(mkp/1000).toFixed(0)+'K';
+document.getElementById('o_conv').textContent='$'+(conv/1000).toFixed(0)+'K';
+document.getElementById('o_bkr').textContent=(bkr*100).toFixed(1)+'%';
+
+const keepN=3-sellN;
+const rentalN=steveKeeps?keepN-1:keepN; // units that actually produce rent
+
+// Unit cards
+const units=[];
+for(let i=1;i<=3;i++){
+let status,dim=false;
+if(steveKeeps&&i===1){status='Steve (life tenancy)';dim=true;}
+else if(i<=sellN+(steveKeeps?1:0)&&!(steveKeeps&&i===1)){status='Sell as condo';}
+else{status='Keep as rental';}
+if(!steveKeeps&&i<=sellN){status='Sell as condo';}
+if(!steveKeeps&&i>sellN){status='Keep as rental';}
+// Simplified: Steve is always unit 1 if he keeps. Sell from unit 2 up.
+if(steveKeeps){
+if(i===1){status='Steve (life tenancy)';dim=true;}
+else if(i<=sellN+1){status='Sell as condo';}
+else{status='Keep as rental';}
+}else{
+if(i<=sellN){status='Sell as condo';}
+else{status='Keep as rental';}
+}
+units.push(`<div class="u${dim?' dim':''}"><div class="ul">Unit ${i} — ${status}</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor ${i}</div></div>`);
+}
+document.getElementById('unitCards').innerHTML=units.join('');
+
+// Costs
+const constr=psf*GBA;
+const soft=Math.round(constr*softP);
+const financing=Math.round(constr*finP);
+const totalInvest=constr+soft+financing;
+
+document.getElementById('capOut').innerHTML=`<div class="ms">
+<div class="m rd"><div class="ml">Total investor capital</div><div class="mv">${fmt(totalInvest)}</div><div class="mn">${fmt(constr)} constr + ${fmt(soft)} soft + ${fmt(financing)} fin</div></div>
+</div>`;
+
+// Sale
+const salePrice=restricted?drp:mkp;
+const grossSale=salePrice*sellN;
+const commission=Math.round(grossSale*bkr);
+const transferTax=Math.round(grossSale/1000*4.56);
+const netSale=grossSale-commission-transferTax-conv;
+const investorProfit=netSale-totalInvest;
+const moic=totalInvest>0?netSale/totalInvest:0;
+const equityForgone=mkp*sellN-salePrice*sellN;
+
+document.getElementById('saleOut').innerHTML=`<div class="ms">
+<div class="m bl"><div class="ml">Gross sale (${sellN} unit${sellN>1?'s':''})</div><div class="mv">${fmt(grossSale)}</div><div class="mn">${sellN} × ${fmt(salePrice)} ${restricted?'(deed-restricted)':'(market)'}</div></div>
+<div class="m am"><div class="ml">Transaction costs</div><div class="mv">${fmt(commission+transferTax+conv)}</div><div class="mn">${fmt(commission)} broker + ${fmt(transferTax)} transfer + ${fmt(conv)} conversion</div></div>
+<div class="m gn"><div class="ml">Net sale proceeds</div><div class="mv">${fmt(netSale)}</div></div>
+</div>
+<div class="ms">
+<div class="m ${investorProfit>=0?'gn':'rd'}"><div class="ml">Investor profit / (loss)</div><div class="mv">${fmt(investorProfit)}</div><div class="mn">Net proceeds − ${fmt(totalInvest)} capital</div></div>
+<div class="m bl"><div class="ml">Multiple on capital</div><div class="mv">${moic.toFixed(2)}x</div></div>
+${restricted?`<div class="m gn"><div class="ml">Affordability equity created</div><div class="mv">${fmt(equityForgone)}</div><div class="mn">Market value forgone to preserve affordability</div></div>`:''}
+</div>`;
+
+// Residual rental
+if(rentalN>0){
+const netRent=2592; // 80% AMI net as default
+document.getElementById('residOut').innerHTML=`<div class="cd bd gn"><p><strong>${rentalN} unit${rentalN>1?'s':''} retained as rental${rentalN>1?'s':''}.</strong> At 80% AMI (net $2,592/mo each), that's ${fmt(netRent*rentalN*12)}/yr in gross rental income. After expenses (${steveKeeps?'2/3':'full'} share of building opex + management), this provides ongoing cash flow — see the Rental Hold Model for detailed projections.</p></div>
+<div class="ms">
+<div class="m bl"><div class="ml">Rental units retained</div><div class="mv">${rentalN}</div></div>
+<div class="m bl"><div class="ml">Annual gross rent</div><div class="mv">${fmt(netRent*rentalN*12)}</div></div>
+</div>`;
+}else{
+document.getElementById('residOut').innerHTML=`<div class="cd bd am"><p>No rental units retained${steveKeeps?' (Steve keeps 1 unit but it produces no revenue)':''}. All income comes from sale proceeds. No ongoing cash flow.</p></div>`;
+}
+
+// HOA
+const llcUnits=keepN;
+const buyerUnits=sellN;
+const llcVotes=llcUnits;
+const buyerVotes=buyerUnits;
+const control=llcVotes>buyerVotes?'LLC retains majority control':llcVotes===buyerVotes?'Deadlocked — neither side has majority':'Buyers control governance';
+const controlClass=llcVotes>buyerVotes?'gn':llcVotes===buyerVotes?'am':'rd';
+
+document.getElementById('hoaOut').innerHTML=`
+<div class="ms">
+<div class="m ${controlClass}"><div class="ml">Governance control</div><div class="mv">${llcVotes} vs ${buyerVotes}</div><div class="mn">LLC votes vs buyer votes: ${control}</div></div>
+<div class="m bl"><div class="ml">Default % interest</div><div class="mv">33.3% each</div><div class="mn">3 identical units = equal shares</div></div>
+</div>
+${llcVotes<=buyerVotes?`
+<div class="cd bd rd"><p><strong>Loss of control warning.</strong> With ${sellN} units sold, buyers hold ${buyerVotes} of 3 votes. They can outvote the LLC on: HOA fees, special assessments, rules, management, insurance, and common area decisions.</p>
+<p style="margin-top:6px"><strong>Required master deed protections:</strong></p>
+<p style="margin-top:3px;font-size:.78rem">• Supermajority (unanimous) for assessments above $5,000<br>
+• Right of first refusal on all resales<br>
+• Owner-occupancy requirement to prevent absentee landlords<br>
+• Weighted % interest (give LLC unit 40%, buyers 30/30)<br>
+• Declarant reserved powers for specific decisions<br>
+• Anti-speculation resale cap per Steve's will</p>
+<p style="margin-top:6px;font-size:.78rem;color:var(--red-text)">These must be in the master deed BEFORE recording. Cannot be added after. MA condo attorney (MGL c. 183A) essential.</p></div>
+`:`
+<div class="cd bd gn"><p><strong>LLC retains control.</strong> With ${keepN} units kept and ${sellN} sold, the LLC holds majority voting power (${llcVotes} of 3). Still recommended: draft protective provisions in the master deed for long-term governance stability.</p></div>
+`}
+<div class="cd bd bl"><p><strong>MA super lien (MGL c. 183A §6):</strong> HOA has 6-month priority lien ahead of mortgage lenders for unpaid fees. This protects building cash flow but can complicate buyer financing — some lenders won't lend on 3-unit condos or require higher down payments, potentially narrowing the buyer pool.</p></div>
+`;
+
+// Comparison table
+document.getElementById('compOut').innerHTML=`
+<div class="tw"><table>
+<tr><th style="text-align:left">Metric</th><th>Deed-restricted</th><th>Market price</th><th>Difference</th></tr>
+<tr><td style="text-align:left">Price per unit</td><td>${fmt(drp)}</td><td>${fmt(mkp)}</td><td>${fmt(mkp-drp)}</td></tr>
+<tr><td style="text-align:left">Gross (${sellN} units)</td><td>${fmt(drp*sellN)}</td><td>${fmt(mkp*sellN)}</td><td>${fmt((mkp-drp)*sellN)}</td></tr>
+<tr><td style="text-align:left">Net after costs</td><td>${fmt(drp*sellN-Math.round(drp*sellN*bkr)-Math.round(drp*sellN/1000*4.56)-conv)}</td><td>${fmt(mkp*sellN-Math.round(mkp*sellN*bkr)-Math.round(mkp*sellN/1000*4.56)-conv)}</td><td>${fmt((mkp-drp)*sellN-Math.round((mkp-drp)*sellN*bkr)-Math.round((mkp-drp)*sellN/1000*4.56))}</td></tr>
+<tr><td style="text-align:left">Investor profit</td><td style="font-weight:600">${fmt(drp*sellN-Math.round(drp*sellN*bkr)-Math.round(drp*sellN/1000*4.56)-conv-totalInvest)}</td><td style="font-weight:600">${fmt(mkp*sellN-Math.round(mkp*sellN*bkr)-Math.round(mkp*sellN/1000*4.56)-conv-totalInvest)}</td><td></td></tr>
+<tr><td style="text-align:left">Affordability preserved</td><td style="color:var(--green);font-weight:600">Yes — per Steve's will</td><td style="color:var(--red)">No — speculative resale allowed</td><td></td></tr>
+<tr><td style="text-align:left">Community equity forgone</td><td style="color:var(--green);font-weight:600">${fmt((mkp-drp)*sellN)}</td><td>$0</td><td></td></tr>
+</table></div>
+<div class="cd bd gn"><p><strong>The deed-restriction discount is the social impact.</strong> Selling at ${fmt(drp)} instead of ${fmt(mkp)} means ${fmt((mkp-drp)*sellN)} stays in the community as affordable housing equity rather than extracting to market. This is Steve's legacy — quantified.</p></div>
+`;
+}
+
+function copyLink(){
+const p=new URLSearchParams();
+['psf','soft','fin','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));
+const url=location.origin+location.pathname+'?'+p.toString();
+navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
+
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
+
+loadSettings();go();
+</script>
+</body>
+</html>
