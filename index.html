@@ -3,286 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Triple-Decker Life Care Plan | Cambridge, MA</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>189 Hamilton St — Investor Feasibility Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#FAFAF8;--bg2:#F0EFEB;--bg3:#E8E6E1;--text:#1A1A18;--text2:#6B6A65;--text3:#9C9B95;--border:#D4D3CD;--border2:#E8E6E1;--blue:#2563EB;--blue-bg:#EFF6FF;--blue-text:#1E40AF;--green:#059669;--green-bg:#ECFDF5;--green-text:#065F46;--amber:#D97706;--amber-bg:#FFFBEB;--amber-text:#92400E;--red:#DC2626;--red-bg:#FEF2F2;--red-text:#991B1B;--purple:#7C3AED;--purple-bg:#F5F3FF;--purple-text:#5B21B6;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;--radius:10px;--radius-lg:14px}
-@media(prefers-color-scheme:dark){:root{--bg:#141413;--bg2:#1E1E1C;--bg3:#282826;--text:#E8E6E1;--text2:#9C9B95;--text3:#6B6A65;--border:#3A3A37;--border2:#2A2A28;--blue:#60A5FA;--blue-bg:#1E293B;--blue-text:#93C5FD;--green:#34D399;--green-bg:#064E3B;--green-text:#6EE7B7;--amber:#FBBF24;--amber-bg:#451A03;--amber-text:#FCD34D;--red:#F87171;--red-bg:#450A0A;--red-text:#FCA5A5;--purple:#A78BFA;--purple-bg:#2E1065;--purple-text:#C4B5FD}}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
-.container{max-width:780px;margin:0 auto;padding:2rem 1.5rem 4rem}
-@media(max-width:600px){.container{padding:1.25rem 1rem 3rem}}
-.header{margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
-.header h1{font-size:1.5rem;font-weight:600;letter-spacing:-0.02em;margin-bottom:0.25rem}
-.header p{font-size:0.85rem;color:var(--text2)}
-.badge{display:inline-block;font-size:0.7rem;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--blue-bg);color:var(--blue-text);margin-top:0.5rem}
-h2{font-size:1.1rem;font-weight:600;letter-spacing:-0.01em;margin:2rem 0 0.75rem;padding-top:1.5rem;border-top:1px solid var(--border2)}
-h2:first-of-type{border-top:none;padding-top:0;margin-top:0}
-h3{font-size:0.95rem;font-weight:500;margin:1.25rem 0 0.5rem}
-p{font-size:0.85rem;color:var(--text2);margin:4px 0}
-.ctrl{display:flex;align-items:center;gap:12px;margin:10px 0;flex-wrap:wrap}
-.ctrl-label{font-size:0.8rem;color:var(--text2);min-width:130px;font-weight:500}
-.ctrl-val{font-family:var(--mono);font-size:0.85rem;font-weight:500;min-width:56px;text-align:right;color:var(--text)}
-input[type=range]{flex:1;min-width:100px;height:6px;-webkit-appearance:none;appearance:none;background:var(--bg3);border-radius:3px;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--text);cursor:pointer;border:3px solid var(--bg)}
-select,input[type=number]{padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);font-size:0.85rem}
-input[type=number]{font-family:var(--mono);width:130px}
-select:focus,input[type=number]:focus{outline:2px solid var(--blue);outline-offset:1px}
-.scope-wrap{position:relative;margin:6px 0 44px;padding-left:142px}
-@media(max-width:600px){.scope-wrap{padding-left:0;margin-top:10px}}
-.scope-bar{display:flex;height:30px;border-radius:var(--radius);overflow:visible;position:relative}
-.scope-zone{height:100%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;position:relative}
-.scope-zone .desc{position:absolute;top:34px;left:50%;transform:translateX(-50%);font-size:.65rem;font-weight:400;color:var(--text3);white-space:nowrap;text-align:center;line-height:1.4;text-transform:none;letter-spacing:0}
-.scope-marker{position:absolute;top:-4px;width:3px;height:38px;background:var(--text);border-radius:2px;z-index:2;transition:left .12s}
-.metrics{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap}
-.metric{background:var(--bg2);border-radius:var(--radius);padding:12px 14px;flex:1;min-width:140px;border-left:3px solid var(--border)}
-.metric.blue{border-left-color:var(--blue)}.metric.green{border-left-color:var(--green)}.metric.amber{border-left-color:var(--amber)}.metric.red{border-left-color:var(--red)}.metric.purple{border-left-color:var(--purple)}
-.metric .m-label{font-size:.7rem;color:var(--text2);margin-bottom:3px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.metric .m-val{font-family:var(--mono);font-size:1.2rem;font-weight:500;color:var(--text)}
-.metric .m-note{font-size:.7rem;color:var(--text3);margin-top:2px}
-.card{background:var(--bg2);border-radius:var(--radius-lg);padding:1rem 1.15rem;margin:10px 0;font-size:.85rem;line-height:1.6}
-.card.bordered{border-left:3px solid var(--border)}.card.blue{border-left-color:var(--blue);background:var(--blue-bg)}.card.green{border-left-color:var(--green);background:var(--green-bg)}.card.amber{border-left-color:var(--amber);background:var(--amber-bg)}.card.red{border-left-color:var(--red);background:var(--red-bg)}.card.purple{border-left-color:var(--purple);background:var(--purple-bg)}
-.card strong{font-weight:600}.card p{margin:0;color:var(--text)}
-.tbl-wrap{overflow-x:auto;margin:8px 0}
-table{width:100%;font-size:.78rem;border-collapse:collapse}
-th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--border2)}
-th{font-weight:500;font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
-td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
-.yr-good{color:var(--green);font-weight:600}.yr-warn{color:var(--amber);font-weight:600}.yr-bad{color:var(--red);font-weight:600}
-.units{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
-.unit{background:var(--bg2);border-radius:var(--radius);padding:10px 14px;flex:1;min-width:120px;border:1px solid var(--border2)}
-.unit .u-label{font-size:.68rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.unit .u-val{font-size:.95rem;font-weight:600;margin-top:2px;color:var(--text)}.unit .u-note{font-size:.7rem;color:var(--text3)}.unit.dim{opacity:.55}
-.checklist{list-style:none;padding:0;margin:8px 0}
-.checklist li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2);font-size:.82rem;line-height:1.5}
-.checklist li:last-child{border-bottom:none}
-.checklist input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:var(--green);flex-shrink:0;cursor:pointer}
-.checklist .item-title{font-weight:500;color:var(--text)}.checklist .item-desc{color:var(--text2);font-size:.75rem}
-.checklist .item-amt{font-family:var(--mono);font-weight:500;color:var(--blue);font-size:.78rem;margin-left:auto;white-space:nowrap;flex-shrink:0}
-.checklist .item-body{flex:1}
-.tabs{display:flex;gap:4px;margin:12px 0;flex-wrap:wrap}
-.tab{padding:8px 16px;border-radius:var(--radius);font-size:.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text2);transition:all .15s}
-.tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}
-.tab-content{display:none}.tab-content.active{display:block}
-.btn{padding:10px 20px;border-radius:var(--radius);font-size:.82rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);transition:all .15s}
-.btn:hover{background:var(--bg2)}.btn:active{transform:scale(.98)}
-.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}.btn-primary:hover{opacity:.9}
-.btn-row{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}
-.condo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0}
-@media(max-width:600px){.condo-grid{grid-template-columns:1fr}}
-.condo-unit{background:var(--bg2);border-radius:var(--radius);padding:12px 14px;border:1px solid var(--border2);transition:opacity .2s}
-.condo-unit.disabled{opacity:.4;pointer-events:none}
-.condo-unit .cu-label{font-size:.7rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border2);font-size:.75rem;color:var(--text3);line-height:1.7}
-@media print{body{background:#fff;color:#000;font-size:10px}.container{max-width:100%;padding:.5rem}input[type=range],select,.scope-marker,.btn-row,.tabs,.no-print{display:none!important}.tab-content{display:block!important}.metric,.card,.unit{break-inside:avoid}.ctrl-val{border:1px solid #ccc;padding:2px 6px;border-radius:4px}}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#FAFAF8;--bg2:#F0EFEB;--text:#1A1A18;--text2:#6B6A65;--border:#D4D3CD;--blue:#2563EB;--green:#059669;--green-bg:#ECFDF5;--green-text:#065F46;--amber:#D97706;--amber-bg:#FFFBEB;--amber-text:#92400E;--font:'DM Sans',system-ui,sans-serif;--r:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#141413;--bg2:#1E1E1C;--text:#E8E6E1;--text2:#9C9B95;--border:#3A3A37;--blue:#60A5FA;--green:#34D399;--green-bg:#064E3B;--green-text:#6EE7B7;--amber:#FBBF24;--amber-bg:#451A03;--amber-text:#FCD34D}}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.wrap{max-width:520px;width:100%}
+h1{font-size:1.3rem;font-weight:600;margin-bottom:.25rem}
+p{font-size:.82rem;color:var(--text2);margin:3px 0;line-height:1.6}
+.cards{display:flex;flex-direction:column;gap:12px;margin-top:1.5rem}
+a.card{display:block;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;text-decoration:none;color:var(--text);transition:all .15s}
+a.card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.card .badge{display:inline-block;font-size:.62rem;font-weight:600;padding:2px 8px;border-radius:12px;margin-bottom:8px}
+.card h2{font-size:1rem;font-weight:600;margin-bottom:4px}
+.card p{font-size:.78rem}
+.b-g{background:var(--green-bg);color:var(--green-text)}
+.b-a{background:var(--amber-bg);color:var(--amber-text)}
+.ft{margin-top:2rem;font-size:.68rem;color:var(--text2);line-height:1.6}
 </style>
 </head>
 <body>
-<div class="container">
-<div class="header"><h1>Triple-Decker Life Care Plan</h1><p>Cambridge, MA — 1BR (owner, rent-free) + 2x 2BR (rentals) · 2,800 SF total</p><span class="badge">Interactive Feasibility Tool</span></div>
-<div class="units"><div class="unit dim"><div class="u-label">Unit 1 (his)</div><div class="u-val">1BR · 600sf</div><div class="u-note">Non-revenue</div></div><div class="unit"><div class="u-label">Unit 2 (rental)</div><div class="u-val">2BR · 1,100sf</div><div class="u-note">Income-producing</div></div><div class="unit"><div class="u-label">Unit 3 (rental)</div><div class="u-val">2BR · 1,100sf</div><div class="u-note">Income-producing</div></div></div>
-<div class="tabs no-print"><div class="tab active" onclick="showTab('rental')">Rental scenario</div><div class="tab" onclick="showTab('condo')">Condo conversion</div><div class="tab" onclick="showTab('grants')">Gap funding</div></div>
-
-<!-- RENTAL TAB -->
-<div class="tab-content active" id="tab-rental">
-<h2>Assumptions</h2>
-<div class="ctrl"><span class="ctrl-label">Acquisition price</span><input type="range" min="0" max="300000" step="10000" value="150000" id="acq" oninput="calc()"><span class="ctrl-val" id="acq-out">$150K</span></div>
-<div class="ctrl"><span class="ctrl-label">Construction $/SF</span><input type="range" min="30" max="460" step="5" value="100" id="psf" oninput="calc()"><span class="ctrl-val" id="psf-out">$100</span></div>
-<div class="scope-wrap"><div class="scope-bar"><div class="scope-zone" style="width:13%;background:var(--green-bg);color:var(--green-text);border-radius:var(--radius) 0 0 var(--radius)">$48-$79<div class="desc">Home improvement<br>Paint, fixtures, flooring<br>No structural</div></div><div class="scope-zone" style="width:32%;background:var(--amber-bg);color:var(--amber-text)">$125-$219<div class="desc">Rehabilitation<br>New kitchen/bath, windows<br>Electrical, boiler</div></div><div class="scope-zone" style="width:55%;background:var(--red-bg);color:var(--red-text);border-radius:0 var(--radius) var(--radius) 0">$260-$455<div class="desc">Full renovation<br>Gut to studs. New plumbing<br>HVAC, layout, code</div></div><div class="scope-marker" id="marker"></div></div></div>
-<div class="ctrl" style="margin-top:40px"><span class="ctrl-label">AMI tier</span><select id="ami" onchange="calc()"><option value="0">60% AMI</option><option value="1" selected>80% AMI</option><option value="2">100% AMI</option><option value="3">120% AMI</option></select></div>
-<div class="ctrl"><span class="ctrl-label">His annual draw</span><input type="range" min="10000" max="40000" step="1000" value="20000" id="draw" oninput="calc()"><span class="ctrl-val" id="draw-out">$20K</span></div>
-<div class="ctrl"><span class="ctrl-label">Chips in expenses?</span><select id="chipin" onchange="calc()"><option value="0">No — pays nothing</option><option value="1" selected>Yes — 1/3 of building expenses</option></select></div>
-<div class="ctrl"><span class="ctrl-label">Expense growth/yr</span><input type="range" min="2" max="8" step="0.5" value="4" id="expgr" oninput="calc()"><span class="ctrl-val" id="expgr-out">4.0%</span></div>
-<div class="ctrl"><span class="ctrl-label">Rent growth/yr (AMI)</span><input type="range" min="1" max="5" step="0.5" value="2.5" id="rentgr" oninput="calc()"><span class="ctrl-val" id="rentgr-out">2.5%</span></div>
-<h2>Deal summary</h2><div id="summary"></div><div id="verdict"></div>
-<h2>10-year cash flow</h2><div class="tbl-wrap" id="yearTable"></div>
-<h2>Tax & estate considerations</h2><div id="taxNote"></div>
+<div class="wrap">
+<h1>189-191 Hamilton Street</h1>
+<p>Cambridgeport, Cambridge MA — Investor feasibility tools for Steve Kaiser's legacy preservation project.</p>
+<div class="cards">
+<a href="rental.html" class="card">
+<span class="badge b-g">Tool A — Base case</span>
+<h2>Rental hold model</h2>
+<p>Perpetual affordable hold aligned with Steve's will. AMI tiers 50-130%, concession spread, 10+ year cash flow, yield on cost, and Steve's care draw. This is what you show the investor.</p>
+</a>
+<a href="condo.html" class="card">
+<span class="badge b-a">Tool B — Alternative</span>
+<h2>Condo sale model</h2>
+<p>What-if analysis: sell 1, 2, or 3 units as condos. Deed-restricted vs. market pricing, HOA governance, and community equity forgone. Contingency planning for succession.</p>
+</a>
 </div>
-
-<!-- CONDO TAB -->
-<div class="tab-content" id="tab-condo">
-<h2>Condo conversion scenario</h2>
-<p style="margin-bottom:12px">Model converting to condos. Choose to sell 1 or both units.</p>
-
-<div class="ctrl"><span class="ctrl-label">Units to sell</span>
-<select id="sellCount" onchange="calcCondo()"><option value="1">Sell 1 unit (keep 1BR + rent 1 unit)</option><option value="2" selected>Sell both 2BRs (keep only 1BR)</option></select></div>
-
-<div class="condo-grid">
-<div class="condo-unit"><div class="cu-label">Unit 1 — His (keep)</div><p style="color:var(--text)">1BR · 600sf</p><p style="font-size:.75rem">Owner-occupied, not for sale</p></div>
-<div class="condo-unit" id="cu2"><div class="cu-label">Unit 2 — <span id="u2action">Sell</span></div><p style="font-size:.75rem;margin-bottom:4px">2BR · 1,100sf · Sale price:</p><input type="number" id="condo2" value="650000" step="10000" oninput="calcCondo()"></div>
-<div class="condo-unit" id="cu3"><div class="cu-label">Unit 3 — <span id="u3action">Sell</span></div><p style="font-size:.75rem;margin-bottom:4px" id="u3desc">2BR · 1,100sf · Sale price:</p><input type="number" id="condo3" value="650000" step="10000" oninput="calcCondo()"></div>
+<div class="ft">Based on appraisal by Beyond Appraisals Inc (3/20/2025). As-is value: $1,610,000. 3-unit triple-decker, 3,940 SF, built 1903. Steve Kaiser, MIT '65, owner since 1992. For planning purposes only.</div>
 </div>
-
-<div class="ctrl"><span class="ctrl-label">Conversion costs</span><input type="number" id="convCost" value="25000" step="1000" oninput="calcCondo()"><span style="font-size:.75rem;color:var(--text3);margin-left:8px">Legal, master deed, plans</span></div>
-<div class="ctrl"><span class="ctrl-label">Broker commission %</span><input type="range" min="0" max="6" step="0.5" value="5" id="broker" oninput="calcCondo()"><span class="ctrl-val" id="broker-out">5.0%</span></div>
-
-<div id="condoSummary"></div>
-<div id="condoGovern"></div>
-
-<div class="card bordered blue"><p><strong>Cambridge condo conversion:</strong> No local ordinance beyond statewide law. Your 3-unit building falls below the 4-unit threshold for enhanced tenant protections. Master deed recorded with registry of deeds, floor plans by registered architect required. Budget $15-25K for legal and filing.</p></div>
-</div>
-
-<!-- GRANTS TAB -->
-<div class="tab-content" id="tab-grants">
-<h2>Gap funding sources</h2>
-<p style="margin-bottom:8px">Check off sources as you research. Your subsidy gap from the rental scenario:</p>
-<div id="gapMetric"></div>
-<h3>Cambridge city programs</h3>
-<ul class="checklist">
-<li><input type="checkbox"><div class="item-body"><div class="item-title">Home Improvement Program (HIP)</div><div class="item-desc">Low-interest & deferred-payment rehab loans for owner-occupants of 1-4 units. CDBG funded. 80% AMI limit. Contact: homeownership@cambridgema.gov / 617-349-4622</div></div><div class="item-amt">Varies</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">Cambridge Affordable Housing Trust</div><div class="item-desc">City trust fund for affordable housing creation and preservation. Soft loans or grants.</div></div><div class="item-amt">Varies</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">Lead paint abatement assistance</div><div class="item-desc">State programs for deleading. Required before renting to families with children under 6.</div></div><div class="item-amt">Up to $20K</div></li>
-</ul>
-<h3>State programs (Massachusetts)</h3>
-<ul class="checklist">
-<li><input type="checkbox"><div class="item-body"><div class="item-title">MassHousing — Home Improvement Loan Program</div><div class="item-desc">Below-market loans for owner-occupants of 1-4 units. Covers major systems.</div></div><div class="item-amt">Up to $50K</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">Mass Save — Energy efficiency rebates</div><div class="item-desc">Rebates for insulation, heat pumps, weatherization. Available to all building owners.</div></div><div class="item-amt">$5K-$15K</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">EOHLC — HOME Investment Partnership funds</div><div class="item-desc">Federal block grant. Must maintain affordability 5-20 years.</div></div><div class="item-amt">Up to $40K/unit</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">CEDAC — Predevelopment loans</div><div class="item-desc">Early-stage financing if partnering with a nonprofit developer or CLT.</div></div><div class="item-amt">Varies</div></li>
-</ul>
-<h3>Federal programs</h3>
-<ul class="checklist">
-<li><input type="checkbox"><div class="item-body"><div class="item-title">USDA Section 504 Repair Loans & Grants</div><div class="item-desc">Loans up to $40K, grants up to $10K for very low-income homeowners (50% AMI).</div></div><div class="item-amt">$10K-$40K</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">FHA 203(k) Rehabilitation Mortgage</div><div class="item-desc">Combines purchase + renovation into single mortgage. Owner-occupants of 1-4 units.</div></div><div class="item-amt">Loan product</div></li>
-</ul>
-<h3>Other sources</h3>
-<ul class="checklist">
-<li><input type="checkbox"><div class="item-body"><div class="item-title">Community land trust partnership</div><div class="item-desc">Cambridge CLT or Homeowner's Rehab Inc may partner to unlock subsidies.</div></div><div class="item-amt">Partnership</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">CDFI loans</div><div class="item-desc">Below-market financing from mission-driven lenders. Typically 2-4% below conventional.</div></div><div class="item-amt">Below-mkt</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">Solar tax credits + Mass SMART</div><div class="item-desc">Federal 30% ITC for solar. MA SMART provides per-kWh payments.</div></div><div class="item-amt">30% ITC</div></li>
-<li><input type="checkbox"><div class="item-body"><div class="item-title">Historic preservation tax credits</div><div class="item-desc">If in historic district: MA 20% + federal 20% for certified rehab.</div></div><div class="item-amt">20% of rehab</div></li>
-</ul>
-<div class="card bordered blue"><p><strong>Strategy:</strong> Start with Cambridge HIP and Mass Save (easiest). Then FHA 203(k) for combined financing. Stack sources to close the gap.</p></div>
-</div>
-
-<!-- BUTTONS -->
-<div class="btn-row no-print">
-<button class="btn btn-primary" onclick="saveSettings()">Copy shareable link</button>
-<button class="btn" onclick="generateReport()">Save as PDF report</button>
-</div>
-<div id="linkMsg" style="font-size:.78rem;color:var(--green);margin:4px 0;display:none">Link copied to clipboard</div>
-<div class="footer"><strong>Disclaimer:</strong> For educational purposes only. Not financial, legal, or tax advice. Sources: MHP 2025 rent limits, BHA Aug 2025 utility allowances, Cambridge FY26 tax data. Consult qualified professionals.</div>
-</div>
-
-<script>
-function showTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');document.querySelector('.tab[onclick="showTab(\''+id+'\')"]').classList.add('active');}
-
-const amiTiers=[{label:'60%',r2br:2233},{label:'80%',r2br:2977},{label:'100%',r2br:3620},{label:'120%',r2br:4344}];
-const ua2br=385,vac=.05,mgmtR=.08,soft_pct=.15,fin_pct=.1,totalSF=2800,totalBaseOpex=24368;
-function fmt(n){if(n===undefined||isNaN(n))return'$0';return n<0?'($'+Math.abs(Math.round(n)).toLocaleString()+')':'$'+Math.round(n).toLocaleString();}
-
-let lastYr1Noi=0,lastTotalCost=0,lastYears=[];
-function calc(){
-const acq=+document.getElementById('acq').value,psf=+document.getElementById('psf').value,ai=+document.getElementById('ami').value,draw=+document.getElementById('draw').value,chipin=+document.getElementById('chipin').value,expgr=+document.getElementById('expgr').value/100,rentgr=+document.getElementById('rentgr').value/100,tier=amiTiers[ai];
-document.getElementById('acq-out').textContent='$'+(acq/1000).toFixed(0)+'K';
-document.getElementById('psf-out').textContent='$'+psf;
-document.getElementById('draw-out').textContent='$'+(draw/1000).toFixed(0)+'K';
-document.getElementById('expgr-out').textContent=(expgr*100).toFixed(1)+'%';
-document.getElementById('rentgr-out').textContent=(rentgr*100).toFixed(1)+'%';
-document.getElementById('marker').style.left=Math.max(0,Math.min(100,((psf-30)/430)*100))+'%';
-const constr=psf*totalSF,soft=constr*soft_pct,hard=acq+constr,fin=hard*fin_pct,tc=hard+soft+fin;
-lastTotalCost=tc;let years=[],yr1Noi=0,pb=0;
-for(let y=1;y<=10;y++){const rm=(tier.r2br*Math.pow(1+rentgr,y-1))-ua2br,ga=rm*2*12,egi=ga*(1-vac),ox=totalBaseOpex*Math.pow(1+expgr,y-1),ro=chipin?ox*(2/3):ox,mf=egi*mgmtR,noi=egi-ro-mf,ad=noi-draw;pb+=ad;if(y===1)yr1Noi=noi;years.push({yr:y,rm:Math.round(rm),egi:Math.round(egi),ox:Math.round(ro+mf),noi:Math.round(noi),draw,ad:Math.round(ad),pb:Math.round(pb)});}
-lastYr1Noi=yr1Noi;lastYears=years;
-const yoc=tc>0?yr1Noi/tc:0,y3=years[2].pb,y10=years[9].pb;
-const bc=y=>y>=.055?'green':y>=.04?'amber':'red',bl=y=>y>=.07?'Band 3':y>=.055?'Band 2':y>=.04?'Band 1':'Below threshold';
-document.getElementById('summary').innerHTML=`<div class="metrics"><div class="metric blue"><div class="m-label">Total project cost</div><div class="m-val">${fmt(tc)}</div></div><div class="metric blue"><div class="m-label">Year 1 NOI</div><div class="m-val">${fmt(yr1Noi)}</div><div class="m-note">Before his draw</div></div><div class="metric ${bc(yoc)}"><div class="m-label">Yield on cost</div><div class="m-val">${(yoc*100).toFixed(1)}%</div><div class="m-note">${bl(yoc)}</div></div></div><div class="metrics"><div class="metric ${years[0].ad>=0?'green':'red'}"><div class="m-label">Yr 1 surplus</div><div class="m-val">${fmt(years[0].ad)}</div></div><div class="metric ${y3>=40000?'green':y3>0?'amber':'red'}"><div class="m-label">Yr 3 piggy bank</div><div class="m-val">${fmt(y3)}</div></div><div class="metric ${y10>=200000?'green':y10>=0?'amber':'red'}"><div class="m-label">Yr 10 piggy bank</div><div class="m-val">${fmt(y10)}</div><div class="m-note">${y10>=200000?'Exceeds $200K':y10>=0?'Positive':'Depleted'}</div></div></div>`;
-let v='';if(y10>=200000)v=`<div class="card bordered green"><p><strong>Funds the full $200K life care plan.</strong> Accumulates ${fmt(y10)} over 10 years.</p></div>`;else if(y10>=0&&years[0].ad>=0)v=`<div class="card bordered amber"><p><strong>Partially funded.</strong> Short of $200K by ${fmt(200000-y10)}.</p></div>`;else if(years[0].ad<0)v=`<div class="card bordered red"><p><strong>Can't support ${fmt(draw)}/yr draw.</strong> NOI is only ${fmt(yr1Noi)}.</p></div>`;
-document.getElementById('verdict').innerHTML=v;
-let t='<table><tr><th style="text-align:left">Yr</th><th>Rent/mo</th><th>EGI</th><th>Expenses</th><th>NOI</th><th>Draw</th><th>Surplus</th><th>Piggy bank</th></tr>';
-years.forEach(y=>{const c=y.pb>=200000?'yr-good':y.pb>=0?'yr-warn':'yr-bad';t+=`<tr><td style="text-align:left;font-weight:600">${y.yr}</td><td>${fmt(y.rm)}</td><td>${fmt(y.egi)}</td><td>${fmt(y.ox)}</td><td style="font-weight:600">${fmt(y.noi)}</td><td style="color:var(--red)">(${fmt(y.draw)})</td><td style="font-weight:600;color:${y.ad>=0?'var(--green)':'var(--red)'}">${fmt(y.ad)}</td><td class="${c}">${fmt(y.pb)}</td></tr>`;});
-document.getElementById('yearTable').innerHTML=t+'</table>';
-document.getElementById('taxNote').innerHTML='<div class="card bordered amber"><p><strong>Residential exemption:</strong> Cambridge $510K exemption saves ~$3,400/yr. Lost if owner no longer occupies.</p></div><div class="card bordered red"><p><strong>Estate tax:</strong> MA taxes estates over $2M on the full amount (0.8%-16%). Could trigger $100K+.</p></div><div class="card bordered red"><p><strong>MassHealth estate recovery:</strong> MA can lien the property after death. Structure ownership with an elder law attorney.</p></div>';
-updateGap();}
-
-function calcCondo(){
-const sell=+document.getElementById('sellCount').value;
-const p2=+document.getElementById('condo2').value,p3=+document.getElementById('condo3').value,cv=+document.getElementById('convCost').value,bk=+document.getElementById('broker').value/100;
-document.getElementById('broker-out').textContent=(bk*100).toFixed(1)+'%';
-
-// Toggle unit 3 visibility
-const cu3=document.getElementById('cu3');
-if(sell===1){cu3.classList.add('disabled');document.getElementById('u2action').textContent='Sell';document.getElementById('u3action').textContent='Keep as rental';}
-else{cu3.classList.remove('disabled');document.getElementById('u2action').textContent='Sell';document.getElementById('u3action').textContent='Sell';}
-
-const gs=sell===1?p2:p2+p3;
-const cm=gs*bk,tx=gs/1000*4.56;
-const acq=+document.getElementById('acq').value,psf=+document.getElementById('psf').value;
-const constr=psf*totalSF,soft=constr*soft_pct,hard=acq+constr,fin=hard*fin_pct,tc=hard+soft+fin;
-const np=gs-cm-tx-cv,profit=np-tc;
-
-// If selling 1, show residual rental income from kept unit
-let residualNote='';
-if(sell===1){
-const ai=+document.getElementById('ami').value,tier=amiTiers[ai];
-const netRent=tier.r2br-ua2br;
-residualNote=`<div class="card bordered green"><p><strong>Plus ongoing rental income:</strong> Unit 3 stays as a rental at ${fmt(netRent)}/mo (${amiTiers[ai].label} AMI). That's ${fmt(netRent*12)}/yr in gross rent from the kept unit, which can fund his ongoing care after the sale proceeds.</p></div>`;
-}
-
-document.getElementById('condoSummary').innerHTML=`
-<div class="metrics">
-<div class="metric blue"><div class="m-label">Gross sale (${sell} unit${sell>1?'s':''})</div><div class="m-val">${fmt(gs)}</div></div>
-<div class="metric amber"><div class="m-label">Selling costs</div><div class="m-val">${fmt(Math.round(cm+tx+cv))}</div><div class="m-note">${fmt(Math.round(cm))} commission + ${fmt(Math.round(tx))} transfer + ${fmt(cv)} conversion</div></div>
-<div class="metric ${profit>=0?'green':'red'}"><div class="m-label">Net after all costs</div><div class="m-val">${fmt(profit)}</div><div class="m-note">${profit>=0?'Profit after project cost':'Loss'}</div></div>
-</div>${residualNote}`;
-
-// Governance section
-let gov='';
-if(sell===2){
-gov=`<div class="card bordered red" style="margin-top:12px"><p><strong>Selling 2 of 3 = loss of control</strong></p>
-<p style="margin-top:6px;font-size:.82rem;color:var(--text)">Buyers hold 2 of 3 votes. They can outvote him on: HOA fees, special assessments, rules, management, insurance, and common area changes.</p>
-<p style="margin-top:8px;font-size:.82rem;color:var(--text)"><strong>Protective measures for master deed:</strong></p>
-<p style="margin-top:4px;font-size:.78rem">• <strong>Supermajority:</strong> require unanimous consent for expenses above a threshold<br>
-• <strong>Right of first refusal:</strong> his unit gets first right on resale<br>
-• <strong>Use restrictions:</strong> lock in owner-occupancy requirements<br>
-• <strong>Weighted voting:</strong> assign his unit 40% interest (vs 30/30)<br>
-• <strong>Reserved powers:</strong> specific decisions require his consent as declarant</p>
-<p style="margin-top:8px;font-size:.78rem;color:var(--red-text)">Must be in master deed BEFORE selling. Cannot add after. Get a MA condo attorney (MGL c. 183A).</p></div>`;
-}else{
-gov=`<div class="card bordered green" style="margin-top:12px"><p><strong>Selling 1 of 3 = he retains control</strong></p>
-<p style="margin-top:6px;font-size:.82rem;color:var(--text)">He keeps 2 of 3 units, so he holds majority vote (2 of 3) on all HOA decisions. The buyer cannot outvote him. This is the safer governance structure.</p>
-<p style="margin-top:8px;font-size:.78rem">Still recommended: draft protective provisions in the master deed (supermajority for large expenses, right of first refusal, use restrictions) — because if either remaining unit is ever sold, the balance shifts.</p></div>`;
-}
-document.getElementById('condoGovern').innerHTML=gov;
-}
-
-function updateGap(){const yld=.055,mc=lastYr1Noi>0?lastYr1Noi/yld:0,gap=lastTotalCost-mc;
-const el=document.getElementById('gapMetric');if(el)el.innerHTML=`<div class="metrics"><div class="metric ${gap>0?'red':'green'}"><div class="m-label">Subsidy gap (to 5.5% yield)</div><div class="m-val">${lastYr1Noi>0?(gap>0?fmt(gap):'No gap'):'N/A'}</div><div class="m-note">Cost ${fmt(lastTotalCost)} vs max supportable ${fmt(Math.round(mc))}</div></div></div>`;}
-
-function saveSettings(){
-const p=new URLSearchParams();
-['acq','psf','ami','draw','chipin','expgr','rentgr'].forEach(k=>p.set(k,document.getElementById(k).value));
-p.set('c2',document.getElementById('condo2').value);p.set('c3',document.getElementById('condo3').value);
-p.set('sell',document.getElementById('sellCount').value);
-p.set('conv',document.getElementById('convCost').value);p.set('bkr',document.getElementById('broker').value);
-const url=location.origin+location.pathname+'?'+p.toString();
-navigator.clipboard.writeText(url).then(()=>{const m=document.getElementById('linkMsg');m.style.display='block';setTimeout(()=>m.style.display='none',3000);}).catch(()=>prompt('Copy this link:',url));}
-
-function loadSettings(){
-const p=new URLSearchParams(location.search);
-['acq','psf','ami','draw','chipin','expgr','rentgr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});
-if(p.has('c2'))document.getElementById('condo2').value=p.get('c2');
-if(p.has('c3'))document.getElementById('condo3').value=p.get('c3');
-if(p.has('sell'))document.getElementById('sellCount').value=p.get('sell');
-if(p.has('conv'))document.getElementById('convCost').value=p.get('conv');
-if(p.has('bkr'))document.getElementById('broker').value=p.get('bkr');}
-
-function generateReport(){
-// Show all tabs for printing
-document.querySelectorAll('.tab-content').forEach(t=>t.style.display='block');
-// Small delay then open print
-requestAnimationFrame(()=>{
-requestAnimationFrame(()=>{
-window.print();
-// Restore tabs after print dialog closes
-setTimeout(()=>{
-document.querySelectorAll('.tab-content').forEach(t=>t.style.display='');
-},1000);
-});
-});
-}
-
-loadSettings();calc();calcCondo();
-</script>
 </body>
 </html>
