@@ -16,13 +16,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .hdr h1{font-size:1.35rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.1rem}
 .hdr p{font-size:.8rem;color:var(--text2)}
 .badge{display:inline-block;font-size:.65rem;font-weight:500;padding:2px 9px;border-radius:16px;margin-top:.35rem}
-.b-b{background:var(--blue-bg);color:var(--blue-text)}.b-g{background:var(--green-bg);color:var(--green-text)}
+.b-g{background:var(--green-bg);color:var(--green-text)}
 h2{font-size:1rem;font-weight:600;margin:1.75rem 0 .6rem;padding-top:1.25rem;border-top:1px solid var(--border2)}
 h2:first-of-type{border:none;padding:0;margin-top:0}
 h3{font-size:.88rem;font-weight:500;margin:1rem 0 .35rem}
 p{font-size:.8rem;color:var(--text2);margin:3px 0}
 .ctrl{display:flex;align-items:center;gap:10px;margin:7px 0;flex-wrap:wrap}
-.cl{font-size:.76rem;color:var(--text2);min-width:150px;font-weight:500}
+.cl{font-size:.76rem;color:var(--text2);min-width:160px;font-weight:500}
 .cv{font-family:var(--mono);font-size:.8rem;font-weight:500;min-width:60px;text-align:right;color:var(--text)}
 input[type=range]{flex:1;min-width:80px;height:5px;-webkit-appearance:none;background:var(--bg3);border-radius:3px}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);cursor:pointer;border:3px solid var(--bg)}
@@ -47,78 +47,110 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 .u{background:var(--bg2);border-radius:var(--r);padding:9px 11px;border:1px solid var(--border2)}
 .u .ul{font-size:.63rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
 .u .uv{font-size:.85rem;font-weight:600;margin-top:1px;color:var(--text)}.u .un{font-size:.65rem;color:var(--text3)}.u.dim{opacity:.45}
-/* Concession bar */
-.conc-bar{height:28px;border-radius:var(--r);display:flex;overflow:hidden;margin:6px 0;position:relative}
+.conc-bar{height:28px;border-radius:var(--r);display:flex;overflow:hidden;margin:6px 0}
 .conc-fill{height:100%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;transition:width .2s}
 .conc-labels{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text3);margin:2px 0 8px}
+.legend{margin:16px 0;padding:14px;background:var(--bg2);border-radius:var(--rl);font-size:.75rem;line-height:1.7}
+.legend dt{font-weight:600;color:var(--text);display:inline}.legend dd{display:inline;color:var(--text2);margin:0 0 0 4px}
+.legend .row{margin:4px 0}
+.pos{color:var(--green)}.neg{color:var(--red)}
 .btn{padding:9px 18px;border-radius:var(--r);font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);transition:.15s}
 .btn:hover{background:var(--bg2)}.btn-p{background:var(--text);color:var(--bg);border-color:var(--text)}
 .br{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
 .ft{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border2);font-size:.68rem;color:var(--text3);line-height:1.7}
+.transition-yr{background:var(--amber-bg);font-weight:500}
 @media print{body{background:#fff;color:#000;font-size:9px}.c{max-width:100%;padding:.5rem}input[type=range],select,.br.np{display:none!important}.m,.cd,.u{break-inside:avoid}.cv{border:1px solid #ccc;padding:2px 4px;border-radius:3px}}
 </style>
 </head>
 <body>
 <div class="c">
 <div class="hdr">
-<h1>189-191 Hamilton St — Rental Hold Model</h1>
-<p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903 · Perpetual affordable hold</p>
-<span class="badge b-b">Investor Model</span> <span class="badge b-g">Tool A: Rental</span>
-<p style="margin-top:6px"><a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ Switch to Tool B: Condo Sale Model</a></p>
+<h1>189-191 Hamilton St — Rental Hold</h1>
+<p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903</p>
+<span class="badge b-g">Affordable housing preservation · Perpetual hold</span>
+<p style="margin-top:6px"><a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ View alternative: Condo Sale Model</a></p>
 </div>
 
 <div class="units">
-<div class="u dim"><div class="ul">Unit 1 — Steve (life tenancy)</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 1 · No revenue</div></div>
-<div class="u"><div class="ul">Unit 2 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 2 · Income-producing</div></div>
-<div class="u"><div class="ul">Unit 3 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 3 · Income-producing</div></div>
+<div class="u dim" id="u1card"><div class="ul">Unit 1 — Steve's home</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un" id="u1note">Floor 1 · Not rented</div></div>
+<div class="u"><div class="ul">Unit 2 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 2</div></div>
+<div class="u"><div class="ul">Unit 3 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 3</div></div>
 </div>
 
-<h2>Renovation capital (investor outlay)</h2>
-<div class="ctrl"><span class="cl">Construction $/SF</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
-<div class="ctrl"><span class="cl">Soft costs (% of construction)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
-<div class="ctrl"><span class="cl">Financing costs (% of hard)</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
+<div class="cd bd bl"><p><strong>How to read this tool:</strong> Numbers in <span class="pos">green (+)</span> are money coming in or good outcomes. Numbers in <span class="neg">red (−)</span> are money going out or costs. Slide the controls to test different scenarios — all numbers update instantly.</p></div>
+
+<h2>What the renovation costs</h2>
+<p>This is the total capital needed. Steve can contribute all or part of the building's value — slide to see how it changes the picture.</p>
+<div class="ctrl"><span class="cl">Steve's building contribution</span><input type="range" min="0" max="1610000" step="10000" value="1610000" id="acq" oninput="go()"><span class="cv" id="o_acq">$1.61M</span></div>
+<div class="ctrl"><span class="cl">Construction cost per sq ft</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
+<div class="ctrl"><span class="cl">Soft costs (architect, permits)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
+<div class="ctrl"><span class="cl">Financing costs</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
 <div id="capOut"></div>
 
-<h2>Rental income & affordability</h2>
-
-<div class="ctrl"><span class="cl">AMI tier</span>
+<h2>What the building earns</h2>
+<p>Two units are rented at affordable rates. The rent is set by the AMI tier — a government standard that caps what you can charge.</p>
+<div class="ctrl"><span class="cl">Affordability level (AMI)</span>
 <select id="ami" onchange="go()">
-<option value="0">50% AMI</option>
+<option value="0">50% AMI — deeply affordable</option>
 <option value="1">60% AMI</option>
 <option value="2">70% AMI</option>
-<option value="3" selected>80% AMI</option>
+<option value="3" selected>80% AMI — standard affordable</option>
 <option value="4">90% AMI</option>
-<option value="5">100% AMI</option>
+<option value="5">100% AMI — moderate income</option>
 <option value="6">110% AMI</option>
-<option value="7">120% AMI</option>
+<option value="7">120% AMI — workforce housing</option>
 <option value="8">130% AMI</option>
 </select></div>
-
-<div class="ctrl"><span class="cl">Post-reno market rent (2BR)</span><input type="range" min="2800" max="3800" step="50" value="3100" id="mkt" oninput="go()"><span class="cv" id="o_mkt">$3,100</span></div>
-
+<div class="ctrl"><span class="cl">Post-renovation market rent</span><input type="range" min="2800" max="3800" step="50" value="3100" id="mkt" oninput="go()"><span class="cv" id="o_mkt">$3,100</span></div>
 <div id="rentOut"></div>
-
-<h3>Concession spread (your measurable impact)</h3>
+<h3>The affordability impact — what you're choosing to give back</h3>
 <div id="concBar"></div>
 
-<h2>Operating assumptions</h2>
-<div class="ctrl"><span class="cl">Steve's annual care draw</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20K</span></div>
-<div class="ctrl"><span class="cl">Steve chips in expenses?</span><select id="chip" onchange="go()"><option value="0">No — zero contribution</option><option value="1" selected>Yes — 1/3 of building opex</option></select></div>
-<div class="ctrl"><span class="cl">Annual rent escalator</span><input type="range" min="0" max="5" step="0.5" value="2.5" id="rg" oninput="go()"><span class="cv" id="o_rg">2.5%</span></div>
-<div class="ctrl"><span class="cl">Annual expense escalator</span><input type="range" min="2" max="8" step="0.5" value="4" id="eg" oninput="go()"><span class="cv" id="o_eg">4.0%</span></div>
-<div class="ctrl"><span class="cl">Projection years</span><input type="range" min="5" max="20" step="1" value="10" id="yrs" oninput="go()"><span class="cv" id="o_yrs">10</span></div>
+<h2>Building expenses & Steve's care</h2>
+<div class="ctrl"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20K</span></div>
+<div class="ctrl"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No — building covers everything</option><option value="1" selected>Yes — he pays 1/3 of shared costs</option></select></div>
+<div class="ctrl"><span class="cl">Rent increase per year</span><span class="cv" id="o_rg" style="min-width:0;margin-left:auto">2.5%</span></div>
+<div class="ctrl"><span class="cl">Expense increase per year</span><span class="cv" id="o_eg" style="min-width:0;margin-left:auto">4.0%</span></div>
 
-<h2>Investor return metrics</h2>
+<div style="position:relative;margin:8px 0">
+<div style="font-size:.68rem;color:var(--text3);margin-bottom:6px">Both on the same 0–8% scale — see the gap:</div>
+<div style="position:relative;height:52px">
+<div style="position:absolute;top:8px;left:0;right:0;height:5px;background:var(--bg3);border-radius:3px;z-index:0"></div>
+<div id="escTrack" style="position:absolute;top:8px;height:5px;border-radius:3px;z-index:1"></div>
+<input type="range" min="0" max="8" step="0.5" value="2.5" id="rg" oninput="go()" style="position:absolute;top:0;left:0;width:100%;pointer-events:none;background:transparent;z-index:3" class="dth">
+<input type="range" min="0" max="8" step="0.5" value="4" id="eg" oninput="go()" style="position:absolute;top:26px;left:0;width:100%;pointer-events:none;background:transparent;z-index:3" class="dth">
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:2px">
+<div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:50%;background:var(--green)"></div><span style="font-size:.72rem;color:var(--text2)">Rent: <strong id="o_rg2">2.5%</strong>/yr</span></div>
+<div style="display:flex;align-items:center;gap:5px"><div style="width:9px;height:9px;border-radius:50%;background:var(--red)"></div><span style="font-size:.72rem;color:var(--text2)">Expenses: <strong id="o_eg2">4.0%</strong>/yr</span></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--text3);margin-top:1px"><span>0%</span><span>2%</span><span>4%</span><span>6%</span><span>8%</span></div>
+</div>
+<style>.dth::-webkit-slider-thumb{pointer-events:auto}.dth::-moz-range-thumb{pointer-events:auto}</style>
+<div id="gapWarn"></div>
+
+<h2>Timeline</h2>
+<p>Steve lives in Unit 1 during this period. When Unit 1 becomes available, it goes back online as a third affordable rental — increasing the building's income by roughly 50%.</p>
+<div class="ctrl"><span class="cl">Steve's expected residency</span><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
+<div class="ctrl"><span class="cl">Total projection</span><input type="range" min="10" max="25" step="1" value="15" id="yrs" oninput="go()"><span class="cv" id="o_yrs">15 yrs</span></div>
+<div id="timeVis"></div>
+
+<h2>Key results</h2>
 <div id="retOut"></div>
 
 <h2>Year-by-year cash flow</h2>
+<div id="cfNote"></div>
 <div class="tw" id="cfTbl"></div>
 
-<h2>AMI tier comparison (quick reference)</h2>
+<h2>All AMI tiers at a glance</h2>
+<p>This table shows what happens at every affordability level — so you can pick the right balance between mission and financial sustainability.</p>
 <div class="tw" id="amiTbl"></div>
 
-<h2>Risk & structure notes</h2>
+<h2>Important considerations</h2>
 <div id="notes"></div>
+
+<h2>What the terms mean</h2>
+<div class="legend" id="glossary"></div>
 
 <div class="br np">
 <button class="btn btn-p" onclick="copyLink()">Copy shareable link</button>
@@ -127,30 +159,20 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <div id="lm" style="font-size:.7rem;color:var(--green);margin:3px 0;display:none">Link copied</div>
 
 <div class="ft">
-<strong>189-191 Hamilton St — Rental hold model (Tool A).</strong> Appraisal: Beyond Appraisals Inc, 3/20/2025, as-is value $1,610,000. Rents: MHP 2025 Boston-Cambridge-Quincy. Utility allowance: BHA Aug 2025, $385/mo for 2BR (duplex/low-rise, gas, all tenant-paid). Taxes: Cambridge FY26 $12,184. Steve Kaiser's vision: renovate without profit, preserve affordable housing in Cambridgeport. Not financial, legal, or tax advice.
+<strong>189-191 Hamilton St.</strong> Appraisal: Beyond Appraisals Inc, 3/20/2025, as-is value $1,610,000. Rents: MHP 2025 Boston-Cambridge-Quincy. Utility allowance: BHA Aug 2025, $385/mo (2BR, gas heat, tenant-paid). Taxes: Cambridge FY26 $12,184. For planning purposes only — not financial, legal, or tax advice.
 </div>
 </div>
 
 <script>
-const GBA=3940,UA=385,VAC=.05,MGMT=.08;
-const BASE_OPEX=24368; // tax 12184 + ins 3600 + repairs 4200 + reserves 2400 + util 1200 + trash 600 + snow 800 + legal 384
-const APPR=1610000;
-
-// Published 2BR rents by AMI (MHP + extrapolated from income limits for 3-person HH)
-// Rent = (income limit × 30%) / 12
+const GBA=3940,UA=385,VAC=.05,MGMT=.08,BASE_OPEX=24368,APPR=1610000;
 const TIERS=[
-{pct:50,label:'50%',pub:1861},
-{pct:60,label:'60%',pub:2233},
-{pct:70,label:'70%',pub:2605},
-{pct:80,label:'80%',pub:2977},
-{pct:90,label:'90%',pub:3299},
-{pct:100,label:'100%',pub:3620},
-{pct:110,label:'110%',pub:3982},
-{pct:120,label:'120%',pub:4344},
-{pct:130,label:'130%',pub:4706}
+{pct:50,l:'50%',pub:1861},{pct:60,l:'60%',pub:2233},{pct:70,l:'70%',pub:2605},
+{pct:80,l:'80%',pub:2977},{pct:90,l:'90%',pub:3299},{pct:100,l:'100%',pub:3620},
+{pct:110,l:'110%',pub:3982},{pct:120,l:'120%',pub:4344},{pct:130,l:'130%',pub:4706}
 ];
 
-function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'($'+Math.abs(Math.round(n)).toLocaleString()+')':'$'+Math.round(n).toLocaleString();}
+function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'−$'+Math.abs(Math.round(n)).toLocaleString():'$'+Math.round(n).toLocaleString();}
+function fmtSign(n){if(n>0)return'+$'+Math.round(n).toLocaleString();if(n<0)return'−$'+Math.abs(Math.round(n)).toLocaleString();return'$0';}
 function pct(n){return(n*100).toFixed(1)+'%';}
 
 function go(){
@@ -163,8 +185,13 @@ const draw=+document.getElementById('draw').value;
 const chip=+document.getElementById('chip').value;
 const rg=+document.getElementById('rg').value/100;
 const eg=+document.getElementById('eg').value/100;
+const sLife=+document.getElementById('sLife').value;
 const yrs=+document.getElementById('yrs').value;
+const steveContrib=+document.getElementById('acq').value;
 
+const acqCost=APPR-steveContrib; // what outside capital pays for the building itself
+
+document.getElementById('o_acq').textContent=steveContrib>=1000000?'$'+(steveContrib/1000000).toFixed(2)+'M':'$'+(steveContrib/1000).toFixed(0)+'K';
 document.getElementById('o_psf').textContent='$'+psf;
 document.getElementById('o_soft').textContent=Math.round(softP*100)+'%';
 document.getElementById('o_fin').textContent=Math.round(finP*100)+'%';
@@ -172,126 +199,195 @@ document.getElementById('o_mkt').textContent='$'+mktRent.toLocaleString();
 document.getElementById('o_draw').textContent='$'+(draw/1000).toFixed(0)+'K';
 document.getElementById('o_rg').textContent=(rg*100).toFixed(1)+'%';
 document.getElementById('o_eg').textContent=(eg*100).toFixed(1)+'%';
-document.getElementById('o_yrs').textContent=yrs;
+document.getElementById('o_rg2').textContent=(rg*100).toFixed(1)+'%';
+document.getElementById('o_eg2').textContent=(eg*100).toFixed(1)+'%';
+// Escalator track visual
+const escLo=Math.min(rg,eg),escHi=Math.max(rg,eg);
+const escLoPct=(escLo/0.08)*100,escHiPct=(escHi/0.08)*100;
+const escTrk=document.getElementById('escTrack');
+if(Math.abs(rg-eg)<0.005){
+escTrk.style.cssText='position:absolute;top:8px;left:'+escLoPct+'%;width:4px;height:5px;border-radius:3px;background:var(--amber);z-index:1';
+}else{
+escTrk.style.cssText='position:absolute;top:8px;left:'+escLoPct+'%;width:'+(escHiPct-escLoPct)+'%;height:5px;border-radius:3px;background:'+(eg>rg?'var(--red-bg)':'var(--green-bg)')+';z-index:1';
+}
+document.getElementById('o_sLife').textContent=sLife+' yrs';
+document.getElementById('o_yrs').textContent=yrs+' yrs';
+
+// Gap warning — text context (visual is now on the dual slider above)
+const gapPct=eg-rg;
+const gapWarnEl=document.getElementById('gapWarn');
+if(gapPct>0){
+gapWarnEl.innerHTML=`<div class="cd bd ${gapPct>=0.02?'rd':'am'}" style="margin-top:4px"><p><strong>⚠ Expenses grow ${(gapPct*100).toFixed(1)}% faster than rent each year.</strong> Over 10 years: rents up ${Math.round((Math.pow(1+rg,10)-1)*100)}%, expenses up ${Math.round((Math.pow(1+eg,10)-1)*100)}%. The building's margin shrinks over time — this is the "cost squeeze."</p>
+<p style="margin-top:6px;font-size:.75rem"><strong>Historical context:</strong> Cambridge property taxes grew ~5.9%/yr over the last decade. Insurance up 7–10%/yr nationally since 2020. HUD adjusts AMI by only 2–4%/yr. The default gap reflects this reality.</p></div>`;
+}else if(gapPct===0){
+gapWarnEl.innerHTML=`<div class="cd bd am" style="margin-top:4px"><p><strong>Rent and expenses grow at the same rate.</strong> Margin stays flat — no squeeze, but no improvement either.</p></div>`;
+}else{
+gapWarnEl.innerHTML=`<div class="cd bd gn" style="margin-top:4px"><p><strong>Rent is growing faster than expenses.</strong> Margin improves over time. This is uncommon in affordable housing and may not hold long-term.</p></div>`;
+}
+
+// Ensure projection >= Steve's residency
+const projYrs=Math.max(yrs,sLife+2);
+
+// Timeline visual
+const sLifePct=Math.round((sLife/projYrs)*100);
+const afterPct=100-sLifePct;
+document.getElementById('timeVis').innerHTML=`
+<div style="margin:10px 0 4px;font-size:.72rem;color:var(--text3)">Timeline overview — ${projYrs} years total:</div>
+<div style="display:flex;height:32px;border-radius:var(--r);overflow:hidden;margin:4px 0">
+<div style="width:${sLifePct}%;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:var(--amber-text);border-right:2px solid var(--amber);min-width:40px">Yr 1–${sLife}</div>
+<div style="width:${afterPct}%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:var(--green-text);min-width:40px">Yr ${sLife+1}–${projYrs}</div>
+</div>
+<div style="display:flex;margin:2px 0 8px">
+<div style="width:${sLifePct}%;font-size:.68rem;color:var(--amber-text);text-align:center">2 units rented · Steve in Unit 1</div>
+<div style="width:${afterPct}%;font-size:.68rem;color:var(--green-text);text-align:center">3 units rented · +50% income</div>
+</div>`;
 
 const tier=TIERS[ai];
 const constr=psf*GBA;
 const soft=Math.round(constr*softP);
-const financing=Math.round(constr*finP);
-const totalInvest=constr+soft+financing;
+const financing=Math.round((constr+acqCost)*finP);
+const totalInvest=acqCost+constr+soft+financing;
 
-// Capital
+// Capital section
+const contribPct=Math.round((steveContrib/APPR)*100);
 document.getElementById('capOut').innerHTML=`<div class="ms">
-<div class="m am"><div class="ml">Construction</div><div class="mv">${fmt(constr)}</div><div class="mn">${GBA.toLocaleString()} SF × $${psf}</div></div>
-<div class="m am"><div class="ml">Soft costs</div><div class="mv">${fmt(soft)}</div></div>
-<div class="m am"><div class="ml">Financing costs</div><div class="mv">${fmt(financing)}</div></div>
-<div class="m rd"><div class="ml">Total investor capital</div><div class="mv">${fmt(totalInvest)}</div><div class="mn">Steve waives $1.61M equity</div></div>
+${acqCost>0?`<div class="m rd"><div class="ml">Acquisition cost</div><div class="mv">${fmt(acqCost)}</div><div class="mn">Appraised $1.61M minus Steve's ${contribPct}% contribution</div></div>`:''}
+<div class="m am"><div class="ml">Construction</div><div class="mv">${fmt(constr)}</div><div class="mn">${GBA.toLocaleString()} SF × $${psf}/SF</div></div>
+<div class="m am"><div class="ml">Soft costs + financing</div><div class="mv">${fmt(soft+financing)}</div></div>
+<div class="m rd"><div class="ml">Total capital needed</div><div class="mv">${fmt(totalInvest)}</div></div>
+</div>
+<div class="ms">
+<div class="m ${steveContrib>=APPR?'gn':steveContrib>0?'am':'rd'}"><div class="ml">Steve's contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of building value (appraised at $1.61M)${steveContrib>=APPR?' — full equity donated':steveContrib>0?' — partial contribution':' — no contribution, full acquisition needed'}</div></div>
 </div>`;
 
 // Rents
 const pubRent=tier.pub;
 const netRent=pubRent-UA;
-const netMkt=mktRent; // market rent assumed already net (post-reno, landlord pays utils differently or priced accordingly)
 const concession=mktRent-netRent;
 const concPct=mktRent>0?concession/mktRent:0;
 const annConc=concession*2*12;
 
 document.getElementById('rentOut').innerHTML=`<div class="ms">
-<div class="m bl"><div class="ml">Published rent (${tier.label} AMI)</div><div class="mv">${fmt(pubRent)}/mo</div><div class="mn">MHP 2025 2BR limit</div></div>
-<div class="m bl"><div class="ml">Net rent after utility allowance</div><div class="mv">${fmt(netRent)}/mo</div><div class="mn">Published − $${UA} UA = collectible rent</div></div>
-<div class="m gn"><div class="ml">Post-reno market rent</div><div class="mv">${fmt(mktRent)}/mo</div><div class="mn">What you COULD charge</div></div>
-</div>
-<div class="ms">
-<div class="m ${concession>0?'gn':'am'}"><div class="ml">Concession (per unit/mo)</div><div class="mv">${fmt(concession)}/mo</div><div class="mn">${pct(concPct)} below market</div></div>
-<div class="m ${concession>0?'gn':'am'}"><div class="ml">Annual affordability created</div><div class="mv">${fmt(annConc)}/yr</div><div class="mn">2 units × 12 months × ${fmt(concession)}</div></div>
+<div class="m bl"><div class="ml">Affordable rent (${tier.l} AMI)</div><div class="mv">${fmt(netRent)}/mo</div><div class="mn">Published ${fmt(pubRent)} minus $${UA} utility allowance</div></div>
+<div class="m gn"><div class="ml">Market rent (post-renovation)</div><div class="mv">${fmt(mktRent)}/mo</div><div class="mn">What you could charge without restrictions</div></div>
 </div>`;
 
-// Concession bar
-const fillPct=mktRent>0?Math.round((netRent/mktRent)*100):100;
-const concPctBar=100-fillPct;
+const fillPct=mktRent>0?Math.max(5,Math.round((netRent/mktRent)*100)):100;
 document.getElementById('concBar').innerHTML=`
 <div class="conc-bar">
-<div class="conc-fill" style="width:${fillPct}%;background:var(--blue-bg);color:var(--blue-text)">${fmt(netRent)}</div>
-<div class="conc-fill" style="width:${concPctBar}%;background:var(--green-bg);color:var(--green-text)">${concPctBar>8?'+'+fmt(concession)+' impact':''}${concPctBar<=0?'No concession':''}</div>
+<div class="conc-fill" style="width:${fillPct}%;background:var(--blue-bg);color:var(--blue-text)">Rent collected: ${fmt(netRent)}</div>
+<div class="conc-fill" style="width:${100-fillPct}%;background:var(--green-bg);color:var(--green-text)">${100-fillPct>12?'Given back: '+fmt(concession):''}</div>
 </div>
-<div class="conc-labels"><span>Affordable rent collected</span><span>Social impact (rent forgone): ${fmt(annConc)}/yr</span></div>`;
+<div class="conc-labels"><span>What tenants pay</span><span>Affordability created: <strong>${fmt(annConc)}/year</strong> (2 units)</span></div>`;
 
-// Cash flow
-let years=[];let yr1Noi=0;let piggy=0;
-for(let y=1;y<=yrs;y++){
+// Cash flow with Steve transition
+let years=[];let cumCF=0;let yr1Noi=0;let paybackYr=null;
+for(let y=1;y<=projYrs;y++){
+const isTransition=y===sLife+1;
+const rentalUnits=y<=sLife?2:3;
+const steveAlive=y<=sLife;
 const rm=Math.round(netRent*Math.pow(1+rg,y-1));
-const ga=rm*2*12;
+const ga=rm*rentalUnits*12;
 const egi=Math.round(ga*(1-VAC));
 const ox=Math.round(BASE_OPEX*Math.pow(1+eg,y-1));
-const ro=chip?Math.round(ox*(2/3)):ox;
+const steveShare=steveAlive&&chip?Math.round(ox/3):0;
+const buildingOx=ox-steveShare;
 const mf=Math.round(egi*MGMT);
-const totOx=ro+mf;
+const totOx=buildingOx+mf;
 const noi=egi-totOx;
-const ad=noi-draw;
-piggy+=ad;
+const careDraw=steveAlive?draw:0;
+const cf=noi-careDraw;
+cumCF+=cf;
 if(y===1)yr1Noi=noi;
-years.push({y,rm,ga,egi,totOx,noi,draw,ad,piggy});
+if(paybackYr===null&&cumCF>=totalInvest)paybackYr=y;
+years.push({y,rentalUnits,steveAlive,isTransition,rm,ga,egi,totOx,noi,careDraw,cf,cumCF});
 }
 
 const yoc=totalInvest>0?yr1Noi/totalInvest:0;
-const coc=totalInvest>0?years[0].ad/totalInvest:0;
-const lastY=years[yrs-1];
-const payback=years.findIndex(y=>y.piggy>=totalInvest);
-const paybackYr=payback>=0?years[payback].y:'Never (within projection)';
+const coc=totalInvest>0?years[0].cf/totalInvest:0;
+const lastY=years[projYrs-1];
 
-const bC=v=>v>=.07?'gn':v>=.055?'gn':v>=.04?'am':'rd';
-const bL=v=>v>=.07?'Band 3: Market return':v>=.055?'Band 2: Blended impact':v>=.04?'Band 1: Concessionary':'Below all bands';
+const bC=v=>v>=.055?'gn':v>=.04?'am':'rd';
 
 document.getElementById('retOut').innerHTML=`<div class="ms">
-<div class="m ${bC(yoc)}"><div class="ml">Yield on cost</div><div class="mv">${pct(yoc)}</div><div class="mn">${bL(yoc)}</div></div>
-<div class="m ${coc>=0?'gn':'rd'}"><div class="ml">Cash-on-cash (yr 1, after draw)</div><div class="mv">${pct(coc)}</div><div class="mn">${fmt(years[0].ad)}/yr to investor</div></div>
-<div class="m bl"><div class="ml">Simple payback</div><div class="mv">${typeof paybackYr==='number'?'Year '+paybackYr:paybackYr}</div><div class="mn">Cumulative cash flow = capital</div></div>
+<div class="m ${bC(yoc)}"><div class="ml">Annual return on capital</div><div class="mv">${pct(yoc)}</div><div class="mn">Year 1 building income ÷ capital invested</div></div>
+<div class="m ${years[0].cf>=0?'gn':'rd'}"><div class="ml">Year 1 net cash flow</div><div class="mv"><span class="${years[0].cf>=0?'pos':'neg'}">${fmtSign(years[0].cf)}</span></div><div class="mn">After all expenses and Steve's care</div></div>
+<div class="m ${paybackYr?'gn':'am'}"><div class="ml">Capital recovered by</div><div class="mv">${paybackYr?'Year '+paybackYr:'Beyond year '+projYrs}</div><div class="mn">${paybackYr?'Cumulative cash flow covers the investment':'Try higher AMI or lower construction cost'}</div></div>
 </div>
 <div class="ms">
-<div class="m ${lastY.piggy>=200000?'gn':lastY.piggy>=0?'am':'rd'}"><div class="ml">Yr ${yrs} cumulative surplus</div><div class="mv">${fmt(lastY.piggy)}</div><div class="mn">${lastY.piggy>=200000?'Exceeds $200K care target':'$200K care target: '+fmt(200000-lastY.piggy)+' gap'}</div></div>
-<div class="m bl"><div class="ml">Steve equity waived</div><div class="mv">${fmt(APPR)}</div><div class="mn">Social ROI: ${fmt(APPR)} community wealth preserved</div></div>
+<div class="m bl"><div class="ml">Year ${projYrs} cumulative cash</div><div class="mv"><span class="${lastY.cumCF>=0?'pos':'neg'}">${fmtSign(lastY.cumCF)}</span></div><div class="mn">Total cash generated over ${projYrs} years</div></div>
+<div class="m gn"><div class="ml">Annual affordability impact</div><div class="mv">${fmt(annConc)}</div><div class="mn">Rent savings created for 2 families</div></div>
+<div class="m bl"><div class="ml">Steve's building contribution</div><div class="mv">${fmt(APPR)}</div><div class="mn">Equity donated to the community</div></div>
 </div>`;
 
-// CF table
-let t='<table><tr><th style="text-align:left">Yr</th><th>Rent/mo</th><th>EGI</th><th>Expenses</th><th>NOI</th><th>Care draw</th><th>Cash flow</th><th>Cumulative</th></tr>';
-years.forEach(y=>{
-const c=y.piggy>=totalInvest?'yg':y.piggy>=0?'yw':'yr';
-t+=`<tr><td style="text-align:left;font-weight:600">${y.y}</td><td>${fmt(y.rm)}</td><td>${fmt(y.egi)}</td><td>${fmt(y.totOx)}</td><td style="font-weight:500">${fmt(y.noi)}</td><td style="color:var(--red)">(${fmt(y.draw)})</td><td style="font-weight:500;color:${y.ad>=0?'var(--green)':'var(--red)'}">${fmt(y.ad)}</td><td class="${c}">${fmt(y.piggy)}</td></tr>`;
-});
-document.getElementById('cfTbl').innerHTML=t+'</table>';
+// CF note
+document.getElementById('cfNote').innerHTML=`<div class="cd bd am"><p><strong>Reading the table:</strong> <span class="pos">Green numbers (+)</span> = money earned or accumulated. <span class="neg">Red numbers (−)</span> = money spent. The highlighted row in year ${sLife+1} is when Unit 1 becomes available as a third rental — notice how cash flow jumps.</p></div>`;
 
-// AMI comparison table
-let a='<table><tr><th style="text-align:left">AMI</th><th>Published</th><th>Net rent</th><th>Annual (2 units)</th><th>Yr 1 NOI</th><th>YOC</th><th>Concession/yr</th></tr>';
+// CF table
+let t='<table><tr><th style="text-align:left">Yr</th><th>Units rented</th><th>Rent/mo each</th><th>Income (EGI)</th><th>Expenses</th><th>Building income</th><th>Care budget</th><th>Net cash flow</th><th>Running total</th></tr>';
+years.forEach(y=>{
+const rc=y.cumCF>=totalInvest?'yg':y.cumCF>=0?'yw':'yr';
+const trClass=y.isTransition?' class="transition-yr"':'';
+t+=`<tr${trClass}><td style="text-align:left;font-weight:600">${y.y}${y.isTransition?' ★':''}</td><td>${y.rentalUnits}</td><td>${fmt(y.rm)}</td><td>${fmt(y.egi)}</td><td class="neg">${fmt(-y.totOx)}</td><td style="font-weight:500">${fmt(y.noi)}</td><td>${y.careDraw>0?'<span class="neg">'+fmt(-y.careDraw)+'</span>':'—'}</td><td style="font-weight:500"><span class="${y.cf>=0?'pos':'neg'}">${fmtSign(y.cf)}</span></td><td class="${rc}">${fmtSign(y.cumCF)}</td></tr>`;
+});
+document.getElementById('cfTbl').innerHTML=t+'</table><p style="font-size:.68rem;color:var(--text3);margin-top:4px">★ = year Unit 1 becomes available as a third rental</p>';
+
+// AMI table
+let a='<table><tr><th style="text-align:left">AMI level</th><th>Rent collected</th><th>Year 1 income</th><th>Annual return</th><th>Payback year</th><th>Rent saved/yr</th></tr>';
 TIERS.forEach((ti,i)=>{
 const nr=ti.pub-UA;
-const anr=nr*2*12;
-const egi2=Math.round(anr*(1-VAC));
+// Quick yr1 NOI calc for 2 units
+const egi2=Math.round(nr*2*12*(1-VAC));
 const ox2=chip?Math.round(BASE_OPEX*(2/3)):BASE_OPEX;
 const mf2=Math.round(egi2*MGMT);
 const noi2=egi2-ox2-mf2;
 const yoc2=totalInvest>0?noi2/totalInvest:0;
+const cf2=noi2-draw;
 const conc2=(mktRent-nr)*2*12;
+// Rough payback: need to account for escalation + unit 3 coming online
+let cum2=0;let pb2=null;
+for(let yy=1;yy<=25;yy++){
+const u=yy<=sLife?2:3;
+const r=Math.round(nr*Math.pow(1+rg,yy-1));
+const g=r*u*12;const e=Math.round(g*(1-VAC));
+const o=Math.round(BASE_OPEX*Math.pow(1+eg,yy-1));
+const ro=chip&&yy<=sLife?Math.round(o*(2/3)):o;
+const mf=Math.round(e*MGMT);const n=e-ro-mf;
+const d=yy<=sLife?draw:0;cum2+=n-d;
+if(pb2===null&&cum2>=totalInvest)pb2=yy;
+}
 const sel=i===ai;
-a+=`<tr style="${sel?'background:var(--blue-bg);font-weight:500':''}"><td style="text-align:left">${ti.label}</td><td>${fmt(ti.pub)}</td><td>${fmt(nr)}</td><td>${fmt(anr)}</td><td>${fmt(noi2)}</td><td style="color:${yoc2>=.055?'var(--green)':yoc2>=.04?'var(--amber)':'var(--red)'}">${pct(yoc2)}</td><td>${fmt(conc2)}</td></tr>`;
+a+=`<tr style="${sel?'background:var(--blue-bg);font-weight:500':''}"><td style="text-align:left">${ti.l}${ti.pct<=80?' (affordable)':ti.pct<=100?' (moderate)':' (workforce)'}</td><td>${fmt(nr)}/mo</td><td>${fmt(noi2)}</td><td style="color:${yoc2>=.055?'var(--green)':yoc2>=.04?'var(--amber)':'var(--red)'}">${pct(yoc2)}</td><td>${pb2?'Year '+pb2:'25+'}</td><td>${fmt(conc2)}</td></tr>`;
 });
 document.getElementById('amiTbl').innerHTML=a+'</table>';
 
 // Notes
+const lastNoi=years[projYrs-1].noi;
 document.getElementById('notes').innerHTML=`
-<div class="cd bd am"><p><strong>Expense scissors risk:</strong> Rents grow at ${(rg*100).toFixed(1)}%/yr (AMI adjustments) but expenses at ${(eg*100).toFixed(1)}%/yr. By year ${yrs}, NOI is ${fmt(lastY.noi)} vs. year 1 ${fmt(yr1Noi)} — ${lastY.noi<yr1Noi?'declining margin. Plan for this.':'still growing, but watch the gap.'}</p></div>
-<div class="cd bd rd"><p><strong>Estate & MassHealth:</strong> Property at $1.61M+ may trigger MA estate tax ($2M threshold). MassHealth estate recovery can lien the property. Steve (mid-80s, no insurance, no SS) should apply for MassHealth immediately and structure LLC ownership with an elder law attorney BEFORE any transfers.</p></div>
-<div class="cd bd bl"><p><strong>Steve's will requires:</strong> Retain as rental at affordable levels. At least 1 unit for low-income family. Anti-speculation resale cap on any future condo sales. Right of first refusal for LLC directors. All renovations aligned with these covenants.</p></div>
-<div class="cd bd gn"><p><strong>Investor value proposition:</strong> Steve waives $1.61M in equity. Investor contributes ${fmt(totalInvest)} in renovation capital. In return: ${pct(yoc)} yield on cost, ${fmt(annConc)}/yr in measurable affordability impact, and a building preserved for community use in perpetuity. This is a mission-driven investment, not a market-rate play.</p></div>
+<div class="cd bd am"><p><strong>The cost squeeze:</strong> Rents grow at ${(rg*100).toFixed(1)}% per year but expenses grow at ${(eg*100).toFixed(1)}%. Over ${projYrs} years, building income goes from ${fmt(yr1Noi)} to ${fmt(lastNoi)}${lastNoi<yr1Noi?' — it shrinks over time. Plan ahead.':' — growing, but the gap between income and expenses narrows.'}</p></div>
+<div class="cd bd bl"><p><strong>When Unit 1 comes online (Year ${sLife+1}):</strong> Income jumps roughly 50% because you go from 2 rented units to 3. This is the inflection point that makes the long-term math work. The capital payback often falls in the years right after this transition.</p></div>
+<div class="cd bd rd"><p><strong>Estate & healthcare:</strong> The building (appraised at $1.61M) may trigger Massachusetts estate tax ($2M threshold applies to entire estates). MassHealth can place a lien on the property for recovery of benefits. An elder law attorney should structure the LLC and ownership <em>before</em> any property transfers or renovations begin.</p></div>
+<div class="cd bd gn"><p><strong>Steve's vision:</strong> Renovate without profit. Keep rents affordable. Preserve the building for the community. At ${tier.l} AMI, this building creates ${fmt(annConc)} per year in rent savings for working families — while Steve's donated equity of $1.61M stays in the neighborhood instead of being extracted to market.</p></div>`;
+
+// Glossary
+document.getElementById('glossary').innerHTML=`
+<div class="row"><dt>AMI (Area Median Income)</dt><dd>— The government's measure of middle-class income for the Boston area. "80% AMI" means the rent is set for a household earning 80% of that middle income. Lower % = more affordable, less rent collected.</dd></div>
+<div class="row"><dt>Utility allowance</dt><dd>— A deduction from the published rent because tenants pay their own utilities. Published rent minus utility allowance = what the landlord actually collects.</dd></div>
+<div class="row"><dt>Net cash flow</dt><dd>— What's left after paying all building expenses and Steve's care budget. <span class="pos">Positive (+)</span> means money is accumulating. <span class="neg">Negative (−)</span> means money is being spent faster than it comes in.</dd></div>
+<div class="row"><dt>Running total</dt><dd>— The sum of all net cash flows since year 1. When this number reaches the "total capital needed," the renovation investment has been fully paid back.</dd></div>
+<div class="row"><dt>Annual return on capital</dt><dd>— Year 1 building income divided by the total capital invested. A measure of how hard the money is working. 5–7% is typical for impact-oriented projects; 8%+ is market-rate.</dd></div>
+<div class="row"><dt>Concession spread</dt><dd>— The difference between what you could charge (market rent) and what you choose to charge (affordable rent). This gap is the measurable social impact of the project.</dd></div>
+<div class="row"><dt>EGI (Effective Gross Income)</dt><dd>— Total rent collected after accounting for vacancies (assumed 5% of the time a unit sits empty between tenants).</dd></div>
 `;
 }
 
 function copyLink(){
 const p=new URLSearchParams();
-['psf','soft','fin','ami','mkt','draw','chip','rg','eg','yrs'].forEach(k=>p.set(k,document.getElementById(k).value));
+['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq'].forEach(k=>p.set(k,document.getElementById(k).value));
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','yrs'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
 
 loadSettings();go();
 </script>
