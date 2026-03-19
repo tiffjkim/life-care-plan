@@ -31,8 +31,8 @@ select{padding:6px 10px;border-radius:var(--r);border:1px solid var(--border);ba
 .m{background:var(--bg2);border-radius:var(--r);padding:10px 12px;flex:1;min-width:125px;border-left:3px solid var(--border)}
 .m.bl{border-left-color:var(--blue)}.m.gn{border-left-color:var(--green)}.m.am{border-left-color:var(--amber)}.m.rd{border-left-color:var(--red)}
 .m .ml{font-size:.63rem;color:var(--text2);margin-bottom:2px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.m .mv{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--text)}
-.m .mn{font-size:.65rem;color:var(--text3);margin-top:1px}
+.m .mv{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--text);text-align:right}
+.m .mn{font-size:.65rem;color:var(--text3);margin-top:1px;text-align:right}
 .cd{background:var(--bg2);border-radius:var(--rl);padding:.85rem 1rem;margin:8px 0;font-size:.8rem;line-height:1.55}
 .cd.bd{border-left:3px solid var(--border)}.cd.bl{border-left-color:var(--blue);background:var(--blue-bg)}.cd.gn{border-left-color:var(--green);background:var(--green-bg)}.cd.am{border-left-color:var(--amber);background:var(--amber-bg)}.cd.rd{border-left-color:var(--red);background:var(--red-bg)}
 .cd strong{font-weight:600}.cd p{margin:0;color:var(--text)}
@@ -77,10 +77,10 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <div class="u"><div class="ul">Unit 3 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 3</div></div>
 </div>
 
-<div class="cd bd bl"><p><strong>How to read this tool:</strong> Numbers in <span class="pos">green (+)</span> are money coming in or good outcomes. Numbers in <span class="neg">red (−)</span> are money going out or costs. Slide the controls to test different scenarios — all numbers update instantly.</p></div>
+<div class="cd bd bl"><p><span class="pos">Green (+)</span> = money in. <span class="neg">Red (−)</span> = money out. Slide controls to test scenarios.</p></div>
 
-<h2>What the renovation costs</h2>
-<p>This is the total capital needed. Steve can contribute all or part of the building's value — slide to see how it changes the picture.</p>
+<h2>Renovation capital</h2>
+<p>Steve contributes all or part of the building. Slide to see how it changes.</p>
 <div class="ctrl"><span class="cl">Steve's building contribution</span><input type="range" min="0" max="1610000" step="10000" value="1610000" id="acq" oninput="go()"><span class="cv" id="o_acq">$1.61M</span></div>
 <div class="ctrl"><span class="cl">Construction cost per sq ft</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
 <div class="ctrl"><span class="cl">Soft costs (architect, permits)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
@@ -88,8 +88,8 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <div class="ctrl"><span class="cl">Construction time (months)</span><input type="range" min="0" max="46" step="1" value="12" id="down" oninput="go()"><span class="cv" id="o_down">12 mo</span></div>
 <div id="capOut"></div>
 
-<h2>What the building earns</h2>
-<p>Two units are rented at affordable rates. The rent is set by the AMI tier — a government standard that caps what you can charge.</p>
+<h2>Rental income</h2>
+<p>Two units rented at AMI-capped rates. The tier sets the max rent.</p>
 <div class="ctrl"><span class="cl">Affordability level (AMI)</span>
 <select id="ami" onchange="go()">
 <option value="0">50% AMI — deeply affordable</option>
@@ -150,15 +150,14 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <div id="cfNote"></div>
 <div class="tw" id="cfTbl"></div>
 
-<h2>All AMI tiers at a glance</h2>
-<p>This table shows what happens at every affordability level — so you can pick the right balance between mission and financial sustainability.</p>
+<h2>All AMI tiers</h2>
+<p>Every tier from 50%–200%, with the market crossover flagged.</p>
 <div class="tw" id="amiTbl"></div>
 
 <h2>Important considerations</h2>
 <div id="notes"></div>
 
-<h2>Why this approach works — conventional vs. equity donation</h2>
-<p>Steve's insight: by donating equity and eliminating profit, the total cost drops to roughly one-third of what a conventional developer would spend. This is why affordable housing becomes possible.</p>
+<h2>Conventional developer vs. Steve's method</h2>
 <div id="methodComp"></div>
 
 <h2>What the terms mean</h2>
@@ -278,17 +277,14 @@ const totalWithDown=totalInvest+downExpenses; // full cash needed including carr
 
 // Capital section
 const contribPct=Math.round((steveContrib/APPR)*100);
-document.getElementById('capOut').innerHTML=`<div class="ms">
-${acqCost>0?`<div class="m rd"><div class="ml">Acquisition cost</div><div class="mv">${fmt(acqCost)}</div><div class="mn">Appraised $1.61M minus Steve's ${contribPct}% contribution</div></div>`:''}
-<div class="m am"><div class="ml">Construction</div><div class="mv">${fmt(constr)}</div><div class="mn">${GBA.toLocaleString()} SF × $${psf}/SF</div></div>
-<div class="m am"><div class="ml">Soft costs + financing</div><div class="mv">${fmt(soft+financing)}</div></div>
-${downtime>0?`<div class="m am"><div class="ml">Carrying costs during construction</div><div class="mv"><span class="neg">${fmt(-downExpenses)}</span></div><div class="mn">${downtime} months of taxes, insurance, etc. while no rent comes in</div></div>`:''}
-<div class="m rd"><div class="ml">Total capital needed</div><div class="mv">${fmt(totalWithDown)}</div>${downtime>0?`<div class="mn">Includes ${downtime} months of carrying costs</div>`:''}</div>
-</div>
-<div class="ms">
-<div class="m ${steveContrib>=APPR?'gn':steveContrib>0?'am':'rd'}"><div class="ml">Steve's contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of building value${steveContrib>=APPR?' — full equity donated':''}</div></div>
-${downtime>0?`<div class="m am"><div class="ml">Lost rent during construction</div><div class="mv"><span class="neg">${fmt(-downCost)}</span></div><div class="mn">${downtime} months × 2 rental units × ${fmt(tier.pub-UA)}/mo (Steve's unit is not counted — it produces no rent either way)</div></div>`:''}
+let capHtml=`<div class="ms">
+<div class="m rd"><div class="ml">Total capital needed</div><div class="mv">${fmt(totalWithDown)}</div><div class="mn">${fmt(constr)} build + ${fmt(soft+financing)} soft/fin${downtime>0?' + '+fmt(downExpenses)+' carrying':''}${acqCost>0?' + '+fmt(acqCost)+' acquisition':''}</div></div>
+<div class="m ${steveContrib>=APPR?'gn':steveContrib>0?'am':'rd'}"><div class="ml">Steve's contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of $1.61M appraised value</div></div>
 </div>`;
+if(downtime>0){
+capHtml+=`<div class="cd bd am"><p><strong>${downtime} months of construction:</strong> -${fmt(downExpenses)} in carrying costs (taxes, insurance) and -${fmt(downCost)} in lost rent (2 rental units × ${fmt(tier.pub-UA)}/mo). Steve's unit isn't counted — it produces no rent either way.</p></div>`;
+}
+document.getElementById('capOut').innerHTML=capHtml;
 
 // Rents
 const pubRent=tier.pub;
@@ -312,21 +308,22 @@ document.getElementById('concBar').innerHTML=`
 
 // Cash flow with renovation downtime + Steve transition
 let years=[];let cumCF=0;let yr1Noi=0;let paybackYr=null;
-
-// Year 0: renovation period (no income, just carrying costs)
-if(downtime>0){
-const y0ox=downExpenses;
-const y0cf=-y0ox;
-cumCF+=y0cf;
-years.push({y:0,rentalUnits:0,steveAlive:true,isTransition:false,isReno:true,rm:0,ga:0,egi:0,totOx:y0ox,noi:-y0ox,careDraw:0,cf:y0cf,cumCF:cumCF});
-}
+let firstFullYr=null;
 
 for(let y=1;y<=projYrs;y++){
+// How many months of this year are operating (not under construction)?
+// Year y covers months (y-1)*12+1 through y*12 from project start
+const yrStartMonth=(y-1)*12;
+const yrEndMonth=y*12;
+const opMonths=Math.max(0,Math.min(12,yrEndMonth-downtime));
+const isReno=opMonths===0;
+const isPartial=opMonths>0&&opMonths<12;
+
 const isTransition=y===sLife+1;
 const rentalUnits=y<=sLife?2:3;
 const steveAlive=y<=sLife;
 const rm=Math.round(netRent*Math.pow(1+rg,y-1));
-const ga=rm*rentalUnits*12;
+const ga=Math.round(rm*rentalUnits*opMonths); // prorated by operating months
 const egi=Math.round(ga*(1-VAC));
 const ox=Math.round(BASE_OPEX*Math.pow(1+eg,y-1));
 const steveShare=steveAlive&&chip?Math.round(ox/3):0;
@@ -334,13 +331,14 @@ const buildingOx=ox-steveShare;
 const mf=Math.round(egi*MGMT);
 const totOx=buildingOx+mf;
 const noi=egi-totOx;
-const careDraw=steveAlive?draw:0;
+const careDraw=steveAlive?Math.round(draw*(opMonths/12)):0; // prorate care too
 const cf=noi-careDraw;
 cumCF+=cf;
-if(y===1)yr1Noi=noi;
+if(!firstFullYr&&opMonths===12){firstFullYr=y;yr1Noi=noi;}
 if(paybackYr===null&&cumCF>=totalWithDown)paybackYr=y;
-years.push({y,rentalUnits,steveAlive,isTransition,isReno:false,rm,ga,egi,totOx,noi,careDraw,cf,cumCF});
+years.push({y,opMonths,rentalUnits,steveAlive,isTransition,isReno,isPartial,rm,ga,egi,totOx,noi,careDraw,cf,cumCF});
 }
+if(!firstFullYr&&years.length>0){yr1Noi=years.find(y=>y.opMonths>0)?.noi||0;}
 
 const yoc=totalWithDown>0?yr1Noi/totalWithDown:0;
 const coc=totalWithDown>0?(years.find(y=>y.y===1)||{cf:0}).cf/totalWithDown:0;
@@ -349,7 +347,7 @@ const lastY=years[years.length-1];
 const bC=v=>v>=.055?'gn':v>=.04?'am':'rd';
 
 document.getElementById('retOut').innerHTML=`<div class="ms">
-<div class="m ${bC(yoc)}"><div class="ml">Annual return on capital</div><div class="mv">${pct(yoc)}</div><div class="mn">First operating year income (${fmt(yr1Noi)}) ÷ total capital (${fmt(totalWithDown)})</div></div>
+<div class="m ${bC(yoc)}"><div class="ml">Annual return on capital</div><div class="mv">${pct(yoc)}</div><div class="mn">First full operating year${firstFullYr?' (Yr '+firstFullYr+')':''}: ${fmt(yr1Noi)} ÷ ${fmt(totalWithDown)}</div></div>
 <div class="m ${years[0].cf>=0?'gn':'rd'}"><div class="ml">Year 1 net cash flow</div><div class="mv"><span class="${years[0].cf>=0?'pos':'neg'}">${fmtSign(years[0].cf)}</span></div><div class="mn">After all expenses and Steve's care</div></div>
 <div class="m ${paybackYr?'gn':'am'}"><div class="ml">Capital recovered by</div><div class="mv">${paybackYr?'Year '+paybackYr:'Beyond year '+projYrs}</div><div class="mn">${paybackYr?'Cumulative cash flow covers the investment':'Try higher AMI or lower construction cost'}</div></div>
 </div>
@@ -360,17 +358,18 @@ document.getElementById('retOut').innerHTML=`<div class="ms">
 </div>`;
 
 // CF note
-document.getElementById('cfNote').innerHTML=`<div class="cd bd am"><p><strong>Reading the table:</strong> <span class="pos">Green numbers (+)</span> = money earned or accumulated. <span class="neg">Red numbers (−)</span> = money spent.${downtime>0?' <strong>Year 0</strong> is the construction period — no rent, just carrying costs.':''} The ★ row in year ${sLife+1} is when Unit 1 becomes available as a third rental — notice how cash flow jumps.</p></div>`;
+document.getElementById('cfNote').innerHTML=`<div class="cd bd am"><p>${downtime>0?`Construction: ${downtime} months. Income is prorated — a 16-month build means Year 2 only has 8 operating months. `:''}★ = Unit 1 comes online as 3rd rental.</p></div>`;
 
-// CF table
-let t='<table><tr><th style="text-align:left">Yr</th><th>Units rented</th><th>Rent/mo each</th><th>Income (EGI)</th><th>Expenses</th><th>Building income</th><th>Care budget</th><th>Net cash flow</th><th>Running total</th></tr>';
+// CF table - simplified
+let t='<table><tr><th style="text-align:left">Yr</th><th>Months</th><th>Rent/mo</th><th>Income</th><th>Expenses (−)</th><th>NOI</th><th>Care (−)</th><th>Cash flow</th><th>Cumulative</th></tr>';
 years.forEach(y=>{
 const rc=y.cumCF>=totalWithDown?'yg':y.cumCF>=0?'yw':'yr';
-const trClass=y.isReno?' style="background:var(--red-bg)"':y.isTransition?' class="transition-yr"':'';
-const label=y.isReno?'0 (construction)':y.y+(y.isTransition?' ★':'');
-t+=`<tr${trClass}><td style="text-align:left;font-weight:600">${label}</td><td>${y.rentalUnits}</td><td>${y.rm?fmt(y.rm):'—'}</td><td>${y.egi?fmt(y.egi):'—'}</td><td class="neg">${y.totOx?fmt(-y.totOx):'—'}</td><td style="font-weight:500">${fmt(y.noi)}</td><td>${y.careDraw>0?'<span class="neg">'+fmt(-y.careDraw)+'</span>':'—'}</td><td style="font-weight:500"><span class="${y.cf>=0?'pos':'neg'}">${fmtSign(y.cf)}</span></td><td class="${rc}">${fmtSign(y.cumCF)}</td></tr>`;
+const trClass=y.isReno?' style="background:var(--red-bg)"':y.isPartial?' style="background:var(--amber-bg)"':y.isTransition?' class="transition-yr"':'';
+const label=y.y+(y.isTransition?' ★':'');
+const moLabel=y.isReno?'0 / 12':y.isPartial?y.opMonths+' / 12':'12';
+t+=`<tr${trClass}><td style="text-align:left;font-weight:600">${label}</td><td>${moLabel}</td><td>${y.opMonths>0?fmt(y.rm):'—'}</td><td>${y.egi?fmt(y.egi):'—'}</td><td class="neg">${y.totOx?'-'+fmt(y.totOx):'—'}</td><td style="font-weight:500">${fmt(y.noi)}</td><td>${y.careDraw>0?'<span class="neg">-'+fmt(y.careDraw)+'</span>':'—'}</td><td style="font-weight:500"><span class="${y.cf>=0?'pos':'neg'}">${fmtSign(y.cf)}</span></td><td class="${rc}">${fmtSign(y.cumCF)}</td></tr>`;
 });
-document.getElementById('cfTbl').innerHTML=t+`</table><p style="font-size:.68rem;color:var(--text3);margin-top:4px">★ = year Unit 1 becomes available as a third rental${downtime>0?' · Year 0 = construction period (no income)':''}</p>`;
+document.getElementById('cfTbl').innerHTML=t+`</table><p style="font-size:.68rem;color:var(--text3);margin-top:4px">Months = operating months (earning rent). ${downtime>0?'Red rows = under construction. Amber = partial year. ':''}★ = Unit 1 online.</p>`;
 
 // AMI table
 let a='<table><tr><th style="text-align:left">AMI level</th><th>Rent collected</th><th>Year 1 income</th><th>Annual return</th><th>Payback year</th><th>vs. market</th></tr>';
@@ -387,35 +386,35 @@ const noi2=egi2-ox2-mf2;
 const yoc2=totalWithDown>0?noi2/totalWithDown:0;
 const cf2=noi2-draw;
 const conc2=mktRent-nr;
-// Rough payback: include downtime carrying costs + escalation + unit 3 coming online
-let cum2=downtime>0?-downExpenses:0;let pb2=null;
+// Rough payback: prorate for construction + escalation + unit 3 coming online
+let cum2=0;let pb2=null;
 for(let yy=1;yy<=25;yy++){
+const opMo2=Math.max(0,Math.min(12,yy*12-downtime));
 const u=yy<=sLife?2:3;
 const r=Math.round(nr*Math.pow(1+rg,yy-1));
-const g=r*u*12;const e=Math.round(g*(1-VAC));
+const g=Math.round(r*u*opMo2);const e=Math.round(g*(1-VAC));
 const o=Math.round(BASE_OPEX*Math.pow(1+eg,yy-1));
 const ro=chip&&yy<=sLife?Math.round(o*(2/3)):o;
 const mf=Math.round(e*MGMT);const n=e-ro-mf;
-const d=yy<=sLife?draw:0;cum2+=n-d;
+const d=yy<=sLife?Math.round(draw*(opMo2/12)):0;cum2+=n-d;
 if(pb2===null&&cum2>=totalWithDown)pb2=yy;
 }
 const sel=i===ai;
-const mktTag=atOrAboveMkt?(crossoverTier===ti?'★ HITS MARKET':'above market'):(conc2>0?fmt(-conc2)+'/mo below':'at market');
+const mktTag=atOrAboveMkt?(crossoverTier===ti?'← no discount above here':'no discount'):(conc2>0?fmt(-conc2)+'/mo discount':'at market');
 const mktColor=atOrAboveMkt?'var(--green)':'var(--text3)';
 const isCrossover=crossoverTier===ti;
-const rowStyle=sel?'background:var(--blue-bg);font-weight:500':isCrossover?'background:var(--green-bg);font-weight:600':'';
-a+=`<tr style="${rowStyle}"><td style="text-align:left">${isCrossover?'→ ':''}${ti.l}${ti.pct<=80?' (affordable)':ti.pct<=100?' (moderate)':ti.pct<=130?' (workforce)':ti.pct<=160?' (market-adjacent)':' (above market)'}</td><td>${fmt(nr)}/mo</td><td>${fmt(noi2)}</td><td style="color:${yoc2>=.055?'var(--green)':yoc2>=.04?'var(--amber)':'var(--red)'}">${pct(yoc2)}</td><td>${pb2?'Year '+pb2:'25+'}</td><td style="color:${mktColor};font-weight:${atOrAboveMkt?'600':'400'}">${mktTag}</td></tr>`;
+const rowStyle=sel?'background:var(--blue-bg);font-weight:500':isCrossover?'background:var(--green-bg)':'';
+a+=`<tr style="${rowStyle}"><td style="text-align:left">${ti.l}${ti.pct<=80?' (affordable)':ti.pct<=100?' (moderate)':ti.pct<=130?' (workforce)':ti.pct<=160?' (market-adjacent)':' (above market)'}</td><td>${fmt(nr)}/mo</td><td>${fmt(noi2)}</td><td style="color:${yoc2>=.055?'var(--green)':yoc2>=.04?'var(--amber)':'var(--red)'}">${pct(yoc2)}</td><td>${pb2?'Year '+pb2:'25+'}</td><td style="color:${mktColor};font-weight:${atOrAboveMkt||isCrossover?'600':'400'}">${mktTag}</td></tr>`;
 });
-const crossNote=crossoverTier?`<div class="cd bd gn" style="margin-top:6px"><p><strong>★ Market crossover at ${crossoverTier.l} AMI.</strong> At this tier, the affordable rent (${fmt(crossoverTier.pub-UA)}/mo after utility allowance) meets or exceeds your post-renovation market rent of ${fmt(mktRent)}/mo. Everything below this row is a real concession — rent you're choosing not to collect. Everything above is at or above what the market would bear.</p></div>`:`<p style="font-size:.7rem;color:var(--amber);margin-top:4px"><strong>No crossover.</strong> At a market rent of ${fmt(mktRent)}/mo, every AMI tier shown is below market — even 200% AMI. Every tier represents a concession.</p>`;
+const crossNote=crossoverTier?`<div class="cd bd gn" style="margin-top:6px"><p><strong>At ${crossoverTier.l} AMI, the affordable rent (${fmt(crossoverTier.pub-UA)}/mo) reaches the market rate of ${fmt(mktRent)}/mo.</strong> Every tier above this row is a real discount — the further above, the bigger the concession to tenants. Below this row, you're effectively charging market rate or more.</p></div>`:`<p style="font-size:.7rem;color:var(--amber);margin-top:4px"><strong>At ${fmt(mktRent)}/mo market rent, every AMI tier is a discount.</strong> Even 200% AMI is below market at this rent level.</p>`;
 document.getElementById('amiTbl').innerHTML=a+'</table>'+crossNote;
 
 // Notes
 const lastNoi=lastY.noi;
 document.getElementById('notes').innerHTML=`
-<div class="cd bd am"><p><strong>The cost squeeze:</strong> Rents grow at ${(rg*100).toFixed(1)}% per year but expenses grow at ${(eg*100).toFixed(1)}%. Over ${projYrs} years, building income goes from ${fmt(yr1Noi)} to ${fmt(lastNoi)}${lastNoi<yr1Noi?' — it shrinks over time. Plan ahead.':' — growing, but the gap between income and expenses narrows.'}</p></div>
-<div class="cd bd bl"><p><strong>When Unit 1 comes online (Year ${sLife+1}):</strong> Income jumps roughly 50% because you go from 2 rented units to 3. This is the inflection point that makes the long-term math work. The capital payback often falls in the years right after this transition.</p></div>
-<div class="cd bd rd"><p><strong>Estate & healthcare:</strong> The building (appraised at $1.61M) may trigger Massachusetts estate tax ($2M threshold applies to entire estates). MassHealth can place a lien on the property for recovery of benefits. An elder law attorney should structure the LLC and ownership <em>before</em> any property transfers or renovations begin.</p></div>
-<div class="cd bd gn"><p><strong>Steve's vision:</strong> Renovate without profit. Keep rents affordable. Preserve the building for the community. At ${tier.l} AMI, this building creates ${fmt(annConc)} per year in rent savings for working families — while Steve's donated equity of $1.61M stays in the neighborhood instead of being extracted to market.</p></div>`;
+<div class="cd bd am"><p><strong>Cost squeeze:</strong> Rent +${(rg*100).toFixed(1)}%/yr vs. expenses +${(eg*100).toFixed(1)}%/yr. Year 1 NOI: ${fmt(yr1Noi)}. Year ${projYrs} NOI: ${fmt(lastNoi)}.</p></div>
+<div class="cd bd bl"><p><strong>Unit 1 online (Year ${sLife+1}):</strong> Income jumps ~50%. Payback often lands shortly after.</p></div>
+<div class="cd bd rd"><p><strong>Estate risk:</strong> $1.61M building may trigger MA estate tax ($2M threshold). MassHealth can lien. Structure LLC with elder law attorney first.</p></div>`;
 
 // Method comparison: Conventional vs. Steve's equity donation
 const convAcq=2200000; // comparable acquisition (210 Hamilton St)
@@ -434,39 +433,17 @@ const convDebt=convAcq; // mortgage on acquisition
 const convMonthly=convDebt>0?Math.round(convDebt*(convRate/12)*Math.pow(1+convRate/12,convTerm*12)/(Math.pow(1+convRate/12,convTerm*12)-1)):0;
 const convAnnualDebt=convMonthly*12;
 
-// Year-by-year cost comparison
-let compRows='';
-const checkpoints=[0,1,5,10,15,20];
-checkpoints.forEach(yr=>{
-if(yr>projYrs&&yr>0)return;
-const convCum=yr===0?convTotal:convTotal+convAnnualDebt*yr;
-// Steve's: totalWithDown + cumulative opex (no debt service on acquisition)
-const steveCum=yr===0?steveTotal:steveTotal;
-const steveCumWithOps=yr===0?steveTotal:steveTotal+(years.find(y=>y.y===yr)||{cumCF:0}).cumCF*-1+steveTotal;
-// Simpler: just show total basis + cumulative debt service for conventional
-const convTotalAtYr=convTotal+(yr>0?convAnnualDebt*yr:0);
-const steveTotalAtYr=steveTotal; // no ongoing debt from acquisition
-const gap=convTotalAtYr-steveTotalAtYr;
-compRows+=`<tr><td style="text-align:left;font-weight:${yr===0?'600':'400'}">Year ${yr}</td><td class="neg">${fmt(convTotalAtYr)}</td><td>${fmt(steveTotalAtYr)}</td><td class="yg">${fmt(gap)}</td><td class="yg">${savingsPct}%${yr>0?'+':''}</td></tr>`;
-});
-
 document.getElementById('methodComp').innerHTML=`
 <div class="tw"><table>
-<tr><th style="text-align:left">Year</th><th>Conventional developer</th><th>Steve's method</th><th>Savings</th><th>Reduction</th></tr>
-${compRows}
+<tr><th style="text-align:left">Cost layer</th><th>Conventional</th><th>Steve's method</th><th>Saved</th></tr>
+<tr><td style="text-align:left">Acquisition</td><td class="neg">${fmt(convAcq)}</td><td class="yg">$0</td><td class="yg">${fmt(convAcq)}</td></tr>
+<tr><td style="text-align:left">Renovation</td><td>${fmt(convReno)}</td><td>${fmt(constr+soft+financing+downExpenses)}</td><td>—</td></tr>
+<tr><td style="text-align:left">Developer profit</td><td class="neg">${fmt(convProfit)}</td><td class="yg">$0</td><td class="yg">${fmt(convProfit)}</td></tr>
+<tr style="font-weight:600;border-top:2px solid var(--border)"><td style="text-align:left">Total</td><td class="neg">${fmt(convTotal)}</td><td>${fmt(steveTotal)}</td><td class="yg">${fmt(savings)} (${savingsPct}%)</td></tr>
+<tr><td style="text-align:left">Per unit</td><td>${fmt(convPerUnit)}</td><td>${fmt(stevePerUnit)}</td><td></td></tr>
+<tr><td style="text-align:left">Annual debt service</td><td class="neg">-${fmt(convAnnualDebt)}/yr</td><td class="yg">$0/yr</td><td class="yg">${fmt(convAnnualDebt)}/yr</td></tr>
 </table></div>
-<div class="ms">
-<div class="m rd"><div class="ml">Conventional total cost</div><div class="mv">${fmt(convTotal)}</div><div class="mn">${fmt(convAcq)} acquisition + ${fmt(convReno)} reno + ${fmt(convProfit)} profit</div></div>
-<div class="m gn"><div class="ml">Steve's method total cost</div><div class="mv">${fmt(steveTotal)}</div><div class="mn">${fmt(0)} acquisition + ${fmt(constr+soft+financing)} reno + $0 profit</div></div>
-<div class="m gn"><div class="ml">Cost reduction</div><div class="mv">${savingsPct}%</div><div class="mn">${fmt(savings)} saved by eliminating acquisition + profit</div></div>
-</div>
-<div class="ms">
-<div class="m bl"><div class="ml">Per unit (conventional)</div><div class="mv">${fmt(convPerUnit)}</div></div>
-<div class="m gn"><div class="ml">Per unit (Steve's method)</div><div class="mv">${fmt(stevePerUnit)}</div></div>
-<div class="m am"><div class="ml">Conventional annual debt service</div><div class="mv"><span class="neg">${fmt(convAnnualDebt)}/yr</span></div><div class="mn">Mortgage on $2.2M at 7% / 30yr — Steve pays $0</div></div>
-</div>
-<div class="cd bd gn"><p><strong>Why this matters beyond 189 Hamilton:</strong> There are millions of aging homeowners in small multifamily buildings across the US. When they pass, these buildings typically sell at market rate — adding $1–2M in acquisition cost that makes affordable preservation impossible. Steve's method eliminates that cost entirely. If even a fraction of older homeowners used this approach — donating equity through a trust, renovating without profit — it could preserve affordable housing at a scale no subsidy program can match. The development community doesn't use this method because it requires a willing owner. Steve is that owner.</p></div>
-<div class="cd bd bl"><p><strong>The math in one sentence:</strong> A conventional developer spends ${fmt(convTotal)} to produce 3 units. Steve spends ${fmt(steveTotal)}. Same building, same renovation, same tenants — ${savingsPct}% less cost. The difference is acquisition ($${(convAcq/1000000).toFixed(1)}M eliminated) and profit ($${(convProfit/1000000).toFixed(1)}M eliminated). Affordable housing pencils out when you remove the two biggest cost layers — and Steve's willingness to donate equity is what makes that possible.</p></div>
+<div class="cd bd gn"><p><strong>Same building, same renovation, ${savingsPct}% less cost.</strong> The two eliminated layers — acquisition and profit — are what make affordable rents possible. Steve's willingness to donate equity is what makes it work.</p></div>
 `;
 
 // Glossary
