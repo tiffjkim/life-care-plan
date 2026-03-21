@@ -354,7 +354,7 @@ document.getElementById('retOut').innerHTML=`<div class="ms">
 <div class="ms">
 <div class="m bl"><div class="ml">Year ${projYrs} cumulative cash</div><div class="mv"><span class="${lastY.cumCF>=0?'pos':'neg'}">${fmtSign(lastY.cumCF)}</span></div><div class="mn">Total cash generated over ${projYrs} years</div></div>
 <div class="m gn"><div class="ml">Annual affordability impact</div><div class="mv">${fmt(annConc)}</div><div class="mn">Rent savings created for 2 families</div></div>
-<div class="m bl"><div class="ml">Steve's building contribution</div><div class="mv">${fmt(APPR)}</div><div class="mn">Equity donated to the community</div></div>
+<div class="m bl"><div class="ml">Steve's building contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of $1.61M appraised value</div></div>
 </div>`;
 
 // CF note
