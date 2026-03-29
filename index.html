@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#FAFAF8;--bg2:#F0EFEB;--text:#1A1A18;--text2:#6B6A65;--border:#D4D3CD;--blue:#2563EB;--green:#059669;--green-bg:#ECFDF5;--green-text:#065F46;--amber:#D97706;--amber-bg:#FFFBEB;--amber-text:#92400E;--font:'DM Sans',system-ui,sans-serif;--r:14px}
+:root{--bg:#FAFAF8;--bg2:#F0EFEB;--text:#1A1A18;--text2:#6B6A65;--border:#D4D3CD;--blue:#2563EB;--green:#059669;--green-bg:#ECFDF5;--green-text:#065F46;--amber:#D97706;--amber-bg:#FFFBEB;--amber-text:#92400E;--blue:#2563EB;--blue-bg:#EFF6FF;--blue-text:#1E40AF;--font:'DM Sans',system-ui,sans-serif;--r:14px}
 @media(prefers-color-scheme:dark){:root{--bg:#141413;--bg2:#1E1E1C;--text:#E8E6E1;--text2:#9C9B95;--border:#3A3A37;--blue:#60A5FA;--green:#34D399;--green-bg:#064E3B;--green-text:#6EE7B7;--amber:#FBBF24;--amber-bg:#451A03;--amber-text:#FCD34D}}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
 .wrap{max-width:520px;width:100%}
@@ -21,6 +21,7 @@ a.card:hover{border-color:var(--blue);transform:translateY(-2px)}
 .card p{font-size:.78rem}
 .b-g{background:var(--green-bg);color:var(--green-text)}
 .b-a{background:var(--amber-bg);color:var(--amber-text)}
+.b-b{background:var(--blue-bg,#EFF6FF);color:var(--blue-text,#1E40AF)}
 .ft{margin-top:2rem;font-size:.68rem;color:var(--text2);line-height:1.6}
 </style>
 </head>
@@ -38,6 +39,11 @@ a.card:hover{border-color:var(--blue);transform:translateY(-2px)}
 <span class="badge b-a">Tool B — Alternative</span>
 <h2>Condo sale model</h2>
 <p>What-if analysis: sell 1, 2, or 3 units as condos. Deed-restricted vs. market pricing up to $2.5M, HOA governance, KPI dashboard, and a glossary explaining every metric. For succession planning and comparison.</p>
+</a>
+<a href="report.html" class="card">
+<span class="badge b-b">Tool C — Decision Report</span>
+<h2>Decision report</h2>
+<p>Three-scenario comparison (conservative, moderate, aggressive) with verdicts, cash flow milestones, Steve's before/after transition analysis, construction risk stress tests, and a 10-step Cambridge action plan. The artifact you send to the lawyer.</p>
 </a>
 </div>
 <div class="ft">Based on appraisal by Beyond Appraisals Inc (3/20/2025). As-is value: $1,610,000. 3-unit triple-decker, 3,940 SF, built 1903. Steve Kaiser, MIT '65, owner since 1992. For planning purposes only.</div>

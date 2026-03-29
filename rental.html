@@ -68,7 +68,7 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <h1>189-191 Hamilton St — Rental Hold</h1>
 <p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903</p>
 <span class="badge b-g">Affordable housing preservation · Perpetual hold</span>
-<p style="margin-top:6px"><a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ View alternative: Condo Sale Model</a></p>
+<p style="margin-top:6px"><a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ View alternative: Condo Sale Model</a> · <a href="report.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ Decision Report</a></p>
 </div>
 
 <div class="units">
@@ -174,20 +174,9 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 </div>
 </div>
 
+<script src="engine.js"></script>
 <script>
-const GBA=3940,UA=385,VAC=.05,MGMT=.08,BASE_OPEX=24368,APPR=1610000;
-const TIERS=[
-{pct:50,l:'50%',pub:1861},{pct:60,l:'60%',pub:2233},{pct:70,l:'70%',pub:2605},
-{pct:80,l:'80%',pub:2977},{pct:90,l:'90%',pub:3299},{pct:100,l:'100%',pub:3620},
-{pct:110,l:'110%',pub:3982},{pct:120,l:'120%',pub:4344},{pct:130,l:'130%',pub:4706},
-{pct:140,l:'140%',pub:5068},{pct:150,l:'150%',pub:5430},{pct:160,l:'160%',pub:5792},
-{pct:170,l:'170%',pub:6154},{pct:180,l:'180%',pub:6516},{pct:190,l:'190%',pub:6878},
-{pct:200,l:'200%',pub:7240}
-];
-
-function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'−$'+Math.abs(Math.round(n)).toLocaleString():'$'+Math.round(n).toLocaleString();}
-function fmtSign(n){if(n>0)return'+$'+Math.round(n).toLocaleString();if(n<0)return'−$'+Math.abs(Math.round(n)).toLocaleString();return'$0';}
-function pct(n){return(n*100).toFixed(1)+'%';}
+const pct = pctFmt; // alias for backward compatibility
 
 function go(){
 const psf=+document.getElementById('psf').value;

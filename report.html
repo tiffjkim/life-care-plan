@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>189 Hamilton St — Decision Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#FAFAF8;--bg2:#F0EFEB;--bg3:#E8E6E1;--text:#1A1A18;--text2:#6B6A65;--text3:#9C9B95;--border:#D4D3CD;--border2:#E8E6E1;--blue:#2563EB;--blue-bg:#EFF6FF;--blue-text:#1E40AF;--green:#059669;--green-bg:#ECFDF5;--green-text:#065F46;--amber:#D97706;--amber-bg:#FFFBEB;--amber-text:#92400E;--red:#DC2626;--red-bg:#FEF2F2;--red-text:#991B1B;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;--r:10px;--rl:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#141413;--bg2:#1E1E1C;--bg3:#282826;--text:#E8E6E1;--text2:#9C9B95;--text3:#6B6A65;--border:#3A3A37;--border2:#2A2A28;--blue:#60A5FA;--blue-bg:#1E293B;--blue-text:#93C5FD;--green:#34D399;--green-bg:#064E3B;--green-text:#6EE7B7;--amber:#FBBF24;--amber-bg:#451A03;--amber-text:#FCD34D;--red:#F87171;--red-bg:#450A0A;--red-text:#FCA5A5}}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.c{max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
+@media(max-width:600px){.c{padding:1.25rem 1rem 3rem}}
+
+/* Header */
+.hdr{margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.hdr h1{font-size:1.35rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.1rem}
+.hdr p{font-size:.8rem;color:var(--text2)}
+.hdr .date{font-size:.7rem;color:var(--text3);margin-top:4px}
+
+/* Config panel */
+.config{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1.5rem}
+.config h2{font-size:.9rem;font-weight:600;margin-bottom:.75rem;border:none;padding:0}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.config-grid{grid-template-columns:1fr}}
+.cfg{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:.78rem}
+.cfg .cfg-label{color:var(--text2);font-weight:500}
+.cfg .cfg-val{font-family:var(--mono);font-weight:500;color:var(--text)}
+.ctrl{display:flex;align-items:center;gap:10px;margin:5px 0;flex-wrap:wrap}
+.cl{font-size:.76rem;color:var(--text2);min-width:160px;font-weight:500}
+.cv{font-family:var(--mono);font-size:.8rem;font-weight:500;min-width:60px;text-align:right;color:var(--text)}
+input[type=range]{flex:1;min-width:80px;height:5px;-webkit-appearance:none;background:var(--bg3);border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);cursor:pointer;border:3px solid var(--bg)}
+select{padding:6px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);font-size:.8rem}
+
+/* Section headers */
+h2{font-size:1rem;font-weight:600;margin:1.75rem 0 .6rem;padding-top:1.25rem;border-top:1px solid var(--border2)}
+h3{font-size:.88rem;font-weight:500;margin:1rem 0 .35rem}
+
+/* Verdict banners */
+.verdicts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:1rem 0}
+@media(max-width:600px){.verdicts{grid-template-columns:1fr}}
+.verdict{border-radius:var(--rl);padding:1rem;border-left:4px solid var(--green);background:var(--green-bg)}
+.verdict.amber{border-left-color:var(--amber);background:var(--amber-bg)}
+.verdict.red{border-left-color:var(--red);background:var(--red-bg)}
+.verdict .v-label{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.verdict .v-label.gn{color:var(--green-text)}.verdict .v-label.am{color:var(--amber-text)}.verdict .v-label.rd{color:var(--red-text)}
+.verdict .v-status{font-size:.95rem;font-weight:600;margin-bottom:2px}
+.verdict .v-status.gn{color:var(--green-text)}.verdict .v-status.am{color:var(--amber-text)}.verdict .v-status.rd{color:var(--red-text)}
+.verdict .v-detail{font-size:.72rem;color:var(--text2);line-height:1.5}
+
+/* Comparison table */
+table{width:100%;border-collapse:collapse;font-size:.75rem;margin:8px 0}
+th{text-align:left;padding:8px 10px;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--border);font-weight:500}
+th:nth-child(n+2){text-align:right}
+td{padding:8px 10px;border-bottom:1px solid var(--border2)}
+td:first-child{font-weight:500;color:var(--text);text-align:left}
+td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.highlight{background:var(--green-bg);font-weight:600}
+.col-gn{border-bottom:2px solid var(--green)}
+.col-am{border-bottom:2px solid var(--amber)}
+.col-rd{border-bottom:2px solid var(--red)}
+.discount{font-size:.65rem;color:var(--text3);display:block;font-weight:400}
+.neg{color:var(--red)}.pos{color:var(--green)}.warn{color:var(--amber)}
+
+/* Milestone cash flow */
+.ms-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin:8px 0}
+@media(max-width:600px){.ms-grid{grid-template-columns:1fr 1fr}}
+.ms-card{background:var(--bg2);border-radius:var(--r);padding:10px 12px;border-left:3px solid var(--border)}
+.ms-card.gn{border-left-color:var(--green)}.ms-card.am{border-left-color:var(--amber)}.ms-card.rd{border-left-color:var(--red)}
+.ms-card .ms-yr{font-size:.6rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.ms-card .ms-val{font-family:var(--mono);font-size:.95rem;font-weight:500;margin-top:2px}
+.ms-card .ms-note{font-size:.62rem;color:var(--text3);margin-top:1px}
+
+/* Parameter snapshot */
+.params{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+@media(max-width:600px){.params{grid-template-columns:1fr}}
+.param{background:var(--bg2);border-radius:var(--r);padding:8px 12px;display:flex;justify-content:space-between;align-items:center}
+.param .label{font-size:.72rem;color:var(--text2);font-weight:500;text-align:left}
+.param .value{font-family:var(--mono);font-size:.8rem;font-weight:500;text-align:right}
+
+/* Checklist */
+.checklist{list-style:none;margin:8px 0}
+.checklist>li{padding:10px 12px;border-left:3px solid var(--border);background:var(--bg2);border-radius:0 var(--r) var(--r) 0;margin:6px 0;font-size:.8rem}
+.checklist .step-header{display:flex;align-items:flex-start;gap:8px}
+.checklist .num{font-family:var(--mono);font-weight:600;color:var(--blue);min-width:24px;flex-shrink:0}
+.checklist .text{font-weight:500;color:var(--text)}
+.checklist .timing{font-size:.65rem;color:var(--amber-text);background:var(--amber-bg);padding:1px 6px;border-radius:8px;margin-left:6px;white-space:nowrap;font-weight:500}
+.checklist .sub{font-size:.72rem;color:var(--text2);margin-top:2px;margin-left:32px}
+
+/* Checkbox substeps */
+.substeps{list-style:none;margin:8px 0 0 32px;padding:0}
+.substeps li{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:.74rem;color:var(--text)}
+.substeps li label{cursor:pointer;display:flex;align-items:flex-start;gap:8px}
+.substeps li input[type=checkbox]{margin-top:2px;width:15px;height:15px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.substeps li.done label{text-decoration:line-through;color:var(--text3)}
+
+/* Transition cards */
+.trans-card{background:var(--bg2);border-radius:var(--rl);padding:1rem;border-left:4px solid var(--border)}
+.trans-card.before{border-left-color:var(--amber)}
+.trans-card.after{border-left-color:var(--green)}
+.trans-card .tc-label{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--text3)}
+.trans-card .tc-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.76rem;border-bottom:1px solid var(--border2)}
+.trans-card .tc-row:last-child{border:none}
+.trans-card .tc-key{color:var(--text2)}
+.trans-card .tc-val{font-family:var(--mono);font-weight:500;text-align:right}
+.risk-card{background:var(--bg2);border-radius:var(--rl);padding:1rem;border-left:4px solid var(--amber);margin:8px 0;font-size:.78rem;line-height:1.6}
+.risk-card .risk-row{display:flex;justify-content:space-between;padding:3px 0}
+.risk-card .risk-row .risk-key{color:var(--text2)}
+.risk-card .risk-row .risk-val{font-family:var(--mono);font-weight:500;text-align:right}
+
+/* Progress bar */
+.progress-bar{height:6px;background:var(--bg3);border-radius:3px;margin:12px 0 4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .3s}
+.progress-label{font-size:.65rem;color:var(--text3);text-align:right}
+
+/* Share bar */
+.share{display:flex;gap:8px;margin:1.5rem 0;flex-wrap:wrap}
+.btn{padding:9px 18px;border-radius:var(--r);font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:var(--font);transition:.15s}
+.btn:hover{background:var(--bg2)}.btn-p{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-p:hover{opacity:.9}
+
+/* Footer */
+.ft{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border2);font-size:.68rem;color:var(--text3);line-height:1.7}
+
+/* Print: hide config, show only report */
+@media print{
+  body{background:#fff;color:#000;font-size:9px}
+  .c{max-width:100%;padding:.5rem}
+  .config,.share,.progress-bar,.progress-label,.substeps{display:none!important}
+  .verdict,.ms-card,.param,.checklist>li{break-inside:avoid}
+  .verdicts{grid-template-columns:1fr 1fr 1fr}
+  .cv{border:1px solid #ccc;padding:2px 4px;border-radius:3px}
+  input[type=range],select{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>189-191 Hamilton St — Decision Report</h1>
+  <p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903</p>
+  <div class="date">Generated March 29, 2026 · Parameters locked at time of generation</div>
+</div>
+
+<!-- ═══════════════ CONFIG PANEL (hidden on print) ═══════════════ -->
+<div class="config">
+  <h2>Shared Assumptions</h2>
+  <div class="ctrl"><span class="cl">Post-renovation market rent</span><input type="range" min="2800" max="7500" step="50" value="3100" id="mkt" oninput="go()"><span class="cv" id="o_mkt">$3,100</span></div>
+  <div class="ctrl"><span class="cl">Steve's building contribution</span><input type="range" min="0" max="1610000" step="10000" value="1610000" id="acq" oninput="go()"><span class="cv" id="o_acq">$1.61M</span></div>
+  <div class="ctrl"><span class="cl">Construction cost per sq ft</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
+  <div class="ctrl"><span class="cl">Soft costs (architect, permits)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
+  <div class="ctrl"><span class="cl">Financing costs</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
+  <div class="ctrl"><span class="cl">Construction time (months)</span><input type="range" min="0" max="46" step="1" value="12" id="down" oninput="go()"><span class="cv" id="o_down">12 mo</span></div>
+  <div class="ctrl"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20,000</span></div>
+  <div class="ctrl"><span class="cl">Steve's residency</span><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
+  <div class="ctrl"><span class="cl">Rent growth (%/yr)</span><input type="range" min="0" max="8" step="0.5" value="2.5" id="rg" oninput="go()"><span class="cv" id="o_rg">2.5%</span></div>
+  <div class="ctrl"><span class="cl">Expense growth (%/yr)</span><input type="range" min="0" max="8" step="0.5" value="4" id="eg" oninput="go()"><span class="cv" id="o_eg">4.0%</span></div>
+  <div class="ctrl"><span class="cl">Projection horizon (years)</span><input type="range" min="10" max="25" step="1" value="15" id="yrs" oninput="go()"><span class="cv" id="o_yrs">15 yrs</span></div>
+  <div class="ctrl"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No</option><option value="1" selected>Yes — pays 1/3</option></select></div>
+
+  <h2 style="margin-top:1rem;border:none;padding:0">Scenario AMI Tiers</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px">
+    <div>
+      <div style="font-size:.65rem;font-weight:600;color:var(--red-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">A · Conservative</div>
+      <select id="ami_a" onchange="go()" style="width:100%"></select>
+    </div>
+    <div>
+      <div style="font-size:.65rem;font-weight:600;color:var(--amber-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">B · Moderate</div>
+      <select id="ami_b" onchange="go()" style="width:100%"></select>
+    </div>
+    <div>
+      <div style="font-size:.65rem;font-weight:600;color:var(--green-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">C · Aggressive</div>
+      <select id="ami_c" onchange="go()" style="width:100%"></select>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ REPORT (visible on print) ═══════════════ -->
+
+<!-- Verdict banners — one per scenario -->
+<div class="verdicts" id="verdicts"></div>
+
+<h2>Three-Scenario Comparison</h2>
+<div style="overflow-x:auto">
+<table id="compTable">
+  <thead>
+    <tr>
+      <th style="width:30%">Metric</th>
+      <th class="col-rd" style="width:23%">A · Conservative</th>
+      <th class="col-am" style="width:23%">B · Moderate</th>
+      <th class="col-gn" style="width:23%">C · Aggressive</th>
+    </tr>
+  </thead>
+  <tbody id="compBody"></tbody>
+</table>
+</div>
+
+<h2>Cash Flow at Key Milestones</h2>
+<h3 id="ms_label_b">Scenario B · Moderate</h3>
+<div class="ms-grid" id="milestones"></div>
+
+<h2>Steve's Transition — Before &amp; After</h2>
+<p style="font-size:.78rem;color:var(--text2);margin-bottom:8px">Steve's transition is the single biggest financial event in this model. Three things change at once.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0" id="transitionCards"></div>
+<div id="transitionNote" style="margin-top:8px"></div>
+
+<h2>Construction Risk</h2>
+<div id="constructionRisk"></div>
+
+<h2>Assumptions Snapshot</h2>
+<div class="params" id="paramsSnap"></div>
+
+<h2>Next Steps — Cambridge, MA</h2>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="progress-label" id="progressLabel">0 of 24 complete</div>
+
+<ul class="checklist">
+  <li>
+    <div class="step-header"><span class="num">01</span><span class="text">Engage elder law attorney for trust/LLC structure</span><span class="timing">Week 1-2</span></div>
+    <div class="sub">The financial model supports a perpetual hold. The legal structure needs to match. An irrevocable trust or LLC holds the property outside probate.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Research elder law attorneys in Cambridge/Boston area</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Schedule initial consultation (bring this report)</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Decide structure: irrevocable trust vs. LLC vs. deed restriction</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">02</span><span class="text">Verify affordable rent limits with Cambridge housing authority</span><span class="timing">Week 1-2</span></div>
+    <div class="sub">Confirm current AMI limits and published rent ceilings for Cambridge. The model uses HUD published rents, but local programs may have different thresholds.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Contact Cambridge Housing Authority for current AMI schedule</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Cross-check model's rent tiers against official limits</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">03</span><span class="text">Apply for CPA-28 property tax exemption</span><span class="timing">Week 3-4</span></div>
+    <div class="sub">Cambridge's Community Preservation Act surcharge may qualify for exemption if units are deed-restricted affordable. Improves cash flow by ~$800-1,200/yr.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Confirm deed restriction requirements with city assessor</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Gather documentation (affordability commitment, rent rolls)</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Submit CPA-28 exemption application</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">04</span><span class="text">Contact Cambridge Affordable Housing Trust for gap funding</span><span class="timing">Week 3-4</span></div>
+    <div class="sub">CAHT provides grants and loans for preservation of affordable units in small properties. If the model shows a gap at lower AMI tiers, this is the bridge.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Review CAHT funding eligibility and application timeline</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Prepare project summary with this report's financials</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Submit inquiry or application to CAHT</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">05</span><span class="text">Get updated insurance quotes</span><span class="timing">Week 2-3</span></div>
+    <div class="sub">Insurance costs have spiked 150% industry-wide since 2019. Current quotes may differ significantly from model assumptions. This is the single biggest cost risk.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Request quotes from 3 insurers for the property as-is</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Request quotes assuming deed-restricted affordable (may qualify for different rates)</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">06</span><span class="text">Appraise renovation scope and cost</span><span class="timing">Week 4-6</span></div>
+    <div class="sub">The model uses $175/sf as default. Get a real bid to validate or adjust. Scope drives everything downstream.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Walk the property with a contractor for scope assessment</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Get written estimate and timeline</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">07</span><span class="text">Draft Steve's care plan and transition timeline</span><span class="timing">Week 4-6</span></div>
+    <div class="sub">The model assumes Steve lives in Unit 1 for 7 years. His actual health, preferences, and care needs should drive this number, not an assumption.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Discuss care preferences and timeline with Steve</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Consult with care coordinator or geriatric specialist</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">08</span><span class="text">Explore MassHousing or DHCD preservation programs</span><span class="timing">Week 6-8</span></div>
+    <div class="sub">State-level programs may offer low-interest loans, technical assistance, or capital for small multifamily preservation. These can close the viability gap at lower AMI tiers.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Research MassHousing small property preservation programs</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Check DHCD Community Investment Tax Credit eligibility</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">09</span><span class="text">Run final model with verified inputs</span><span class="timing">Week 8-10</span></div>
+    <div class="sub">Replace assumptions with real numbers from steps 2-8. Regenerate this Decision Report with verified data. This becomes the basis for legal structuring.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Update all sliders with verified inputs</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Generate final Decision Report and save shareable link</label></li>
+    </ul>
+  </li>
+  <li>
+    <div class="step-header"><span class="num">10</span><span class="text">Share final report with all advisors and schedule decision meeting</span><span class="timing">Week 10-12</span></div>
+    <div class="sub">Everyone at the table needs to see the same verified numbers. One meeting, one report, one decision.</div>
+    <ul class="substeps">
+      <li><label><input type="checkbox" onchange="updateProgress()"> Send final report link to attorney, financial advisor, housing counselor</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> Schedule decision meeting with all parties</label></li>
+      <li><label><input type="checkbox" onchange="updateProgress()"> At meeting: agree on AMI tier, legal structure, and timeline</label></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="share">
+  <button class="btn btn-p" onclick="copyLink()">Copy shareable link</button>
+  <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+  <button class="btn" onclick="window.location='rental.html'">Back to rental model</button>
+</div>
+
+<div class="ft">
+  Based on appraisal by Beyond Appraisals Inc (3/20/2025). As-is value: $1,610,000. 3-unit triple-decker, 3,940 SF, built 1903. Steve Kaiser, MIT '65, owner since 1992.<br><br><strong>Disclaimer:</strong> This report is for planning and discussion purposes only. It does not constitute legal, financial, tax, or investment advice. All projections are estimates based on user-provided assumptions and publicly available data. Actual results will vary. Consult with qualified legal counsel, a licensed financial advisor, and a certified public accountant before making any decisions regarding property ownership, trust structures, tax exemptions, or affordable housing commitments. The creators of this tool assume no liability for decisions made based on its output.
+</div>
+
+</div><!-- .c -->
+
+<script src="engine.js"></script>
+<script>
+
+// Populate AMI selects
+function populateSelects(){
+  ['ami_a','ami_b','ami_c'].forEach((id,i)=>{
+    const sel=document.getElementById(id);
+    TIERS.forEach((t,j)=>{sel.add(new Option(t.l+'% AMI',j))});
+    sel.value=[0,3,5][i]; // Defaults: A=50%, B=80%, C=100%
+  });
+}
+
+function getParams(){
+  const mktRent=+document.getElementById('mkt').value;
+  const psf=+document.getElementById('psf').value;
+  const softP=+document.getElementById('soft').value/100;
+  const finP=+document.getElementById('fin').value/100;
+  const steveContrib=+document.getElementById('acq').value;
+  const downtime=+document.getElementById('down').value;
+  const draw=+document.getElementById('draw').value;
+  const chip=+document.getElementById('chip').value;
+  const rg=+document.getElementById('rg').value/100;
+  const eg=+document.getElementById('eg').value/100;
+  const sLife=+document.getElementById('sLife').value;
+  const yrs=+document.getElementById('yrs').value;
+  return{mktRent,psf,softP,finP,steveContrib,downtime,draw,chip,rg,eg,sLife,yrs};
+}
+
+function go(){
+  const p=getParams();
+  const amiA=+document.getElementById('ami_a').value;
+  const amiB=+document.getElementById('ami_b').value;
+  const amiC=+document.getElementById('ami_c').value;
+
+  // Update display values
+  document.getElementById('o_mkt').textContent='$'+p.mktRent.toLocaleString();
+  document.getElementById('o_acq').textContent=p.steveContrib>=1000000?'$'+(p.steveContrib/1000000).toFixed(2)+'M':'$'+(p.steveContrib/1000).toFixed(0)+'K';
+  document.getElementById('o_psf').textContent='$'+p.psf;
+  document.getElementById('o_soft').textContent=Math.round(p.softP*100)+'%';
+  document.getElementById('o_fin').textContent=Math.round(p.finP*100)+'%';
+  document.getElementById('o_down').textContent=p.downtime+' mo';
+  document.getElementById('o_draw').textContent='$'+p.draw.toLocaleString();
+  document.getElementById('o_sLife').textContent=p.sLife+' yrs';
+  document.getElementById('o_rg').textContent=(p.rg*100).toFixed(1)+'%';
+  document.getElementById('o_eg').textContent=(p.eg*100).toFixed(1)+'%';
+  document.getElementById('o_yrs').textContent=p.yrs+' yrs';
+
+  const scenarios=[
+    {key:'a',label:'A · Conservative',idx:amiA,...calcScenario(amiA,p)},
+    {key:'b',label:'B · Moderate',idx:amiB,...calcScenario(amiB,p)},
+    {key:'c',label:'C · Aggressive',idx:amiC,...calcScenario(amiC,p)}
+  ];
+
+  // ── Verdicts (3-tier: OPTIMAL / VIABLE / NOT VIABLE) ──
+  const vHtml=scenarios.map(s=>{
+    let cls,labelCls,statusText,detail;
+    if(s.viability==='optimal'){
+      cls='';labelCls='gn';statusText='OPTIMAL';
+      detail='First full year cash flow '+fmt(s.cfFirstFull)+'. Healthy margin against cost surprises.';
+    }else if(s.viability==='viable'){
+      cls='amber';labelCls='am';statusText='VIABLE';
+      detail='First full year cash flow '+fmt(s.cfFirstFull)+'. Tight ... one insurance spike or vacancy could tip it.';
+    }else{
+      cls='red';labelCls='rd';statusText='NOT VIABLE';
+      detail='First full year shortfall '+fmt(s.cfFirstFull)+'. Needs subsidy or higher AMI tier.';
+    }
+    const mktNote=s.marketDelta>0.5?' Rents are above market (+'+s.marketDelta.toFixed(1)+'% premium).'
+      :s.marketDelta<-0.5?' Rents are '+Math.abs(s.marketDelta).toFixed(1)+'% below market.'
+      :' Rents are at market.';
+    return `<div class="verdict ${cls}">
+      <div class="v-label ${labelCls}">${s.label}</div>
+      <div class="v-status ${labelCls}">${statusText} at ${s.tier.l}%</div>
+      <div class="v-detail">${detail}${mktNote}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('verdicts').innerHTML=vHtml;
+
+  // ── Comparison table ──
+  const minViable=findMinViableAMI(p);
+  const projYrs=Math.max(p.yrs,p.sLife+2);
+  const rows=[
+    {label:'AMI tier',vals:scenarios.map(s=>s.tier.l+'%')},
+    {label:'Affordable rent (net of utilities)',vals:scenarios.map(s=>fmt(s.netRent)+'/mo')},
+    {label:'Discount / premium to market',vals:scenarios.map(s=>fmtMarketDelta(s.netRent,p.mktRent))},
+    {label:'Cash flow — first full operating year'+(scenarios[0].firstFullYr?' (Yr '+scenarios[0].firstFullYr+')':''),vals:scenarios.map(s=>{
+      const cls=s.viability==='optimal'?'pos':s.viability==='viable'?'warn':'neg';
+      return `<span class="${cls}">${fmt(s.cfFirstFull)}</span>`;
+    })},
+    {label:'Cash flow — after transition (Yr '+(p.sLife+1)+')',vals:scenarios.map(s=>{
+      const cls=s.cfAfter>=10000?'pos':s.cfAfter>=0?'warn':'neg';
+      return `<span class="${cls}">${fmt(s.cfAfter)}</span>`;
+    })},
+    {label:'Cumulative cash flow ('+projYrs+'yr)',vals:scenarios.map(s=>{
+      const cls=s.cumTotal>=0?'pos':'neg';
+      return `<span class="${cls}">${fmt(s.cumTotal)}</span>`;
+    })},
+    {label:'Total capital needed',vals:scenarios.map(s=>fmt(s.cap.totalWithDown))},
+    {label:'Capital recovered by',vals:scenarios.map(s=>s.paybackYr?'Year '+s.paybackYr:'Beyond yr '+projYrs)},
+    {label:'Annual return on capital',vals:scenarios.map(s=>pctFmt(s.yoc))},
+    {label:'Affordable units preserved',vals:scenarios.map(s=>{
+      if(s.isAffordable) return '<span class="pos">2 of 3</span>';
+      return '<span class="neg">0 of 3 (above market)</span>';
+    })},
+    {label:'Probate risk',vals:scenarios.map(()=>'Eliminated')},
+    {label:'Minimum viable AMI',vals:scenarios.map(()=>minViable?minViable.tier.l+'%':'None viable')}
+  ];
+  document.getElementById('compBody').innerHTML=rows.map(r=>
+    `<tr><td>${r.label}</td>${r.vals.map(v=>`<td>${v}</td>`).join('')}</tr>`
+  ).join('');
+
+  // ── Milestones (show scenario B) ──
+  const bScen=scenarios[1];
+  document.getElementById('ms_label_b').textContent='Scenario B · '+bScen.tier.l+'% AMI';
+  document.getElementById('milestones').innerHTML=bScen.milestones.map(m=>{
+    const cls=m.cf>=10000?'gn':m.cf>=0?'am':'rd';
+    return `<div class="ms-card ${cls}">
+      <div class="ms-yr">${m.label}${m.opMonths<12?' ('+m.opMonths+'mo)':''}</div>
+      <div class="ms-val">${fmt(m.cf)}</div>
+      <div class="ms-note">${m.opMonths===0?'under construction':'annual cash flow'}</div>
+    </div>`;
+  }).join('');
+
+  // ── Steve's transition (before/after) — use scenario B ──
+  document.getElementById('transitionCards').innerHTML=`
+    <div class="trans-card before">
+      <div class="tc-label" style="color:var(--amber-text)">While Steve is alive (Years 1-${p.sLife})</div>
+      <div class="tc-row"><span class="tc-key">Units rented</span><span class="tc-val">2 of 3</span></div>
+      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(bScen.egiBefore)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(bScen.opexBefore)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Steve's care draw</span><span class="tc-val neg">${fmt(-p.draw)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Steve's expense contribution</span><span class="tc-val pos">${p.chip?'Pays 1/3':'None'}</span></div>
+      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${bScen.cfBefore>=0?'color:var(--green)':'color:var(--red)'}">${fmt(bScen.cfBefore)}/yr</span></div>
+    </div>
+    <div class="trans-card after">
+      <div class="tc-label" style="color:var(--green-text)">After transition (Year ${p.sLife+1}+)</div>
+      <div class="tc-row"><span class="tc-key">Units rented</span><span class="tc-val">3 of 3</span></div>
+      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(bScen.egiAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(bScen.opexAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Steve's care draw</span><span class="tc-val">$0</span></div>
+      <div class="tc-row"><span class="tc-key">Steve's expense contribution</span><span class="tc-val">None</span></div>
+      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${bScen.cfAfter>=0?'color:var(--green)':'color:var(--red)'}">${fmt(bScen.cfAfter)}/yr</span></div>
+    </div>`;
+  const cfDelta=bScen.cfAfter-bScen.cfBefore;
+  document.getElementById('transitionNote').innerHTML=`<div class="risk-card" style="border-left-color:var(--blue)">
+    <p style="margin:0;color:var(--text)"><strong>Net change at transition:</strong> Cash flow ${cfDelta>=0?'improves':'worsens'} by <strong>${fmt(Math.abs(cfDelta))}/yr</strong>.
+    ${cfDelta>=0?'The 3rd unit adds income and the care draw stops, which more than offsets losing Steve\'s 1/3 expense contribution.':'Losing Steve\'s expense contribution outweighs the gains — review the AMI tier.'}</p>
+  </div>`;
+
+  // ── Construction risk (using engine.js calcCapital) ──
+  const capB=bScen.cap;
+  const stressCost=Math.round(capB.totalInvest*1.2)+capB.downExpenses;
+  const delayCarryPerMonth=Math.round(BASE_OPEX/12)+Math.round(bScen.netRent*2*(1-VAC)/1); // monthly carry
+  const delayStress6mo=delayCarryPerMonth*6;
+  document.getElementById('constructionRisk').innerHTML=`
+    <div class="risk-card">
+      <div class="risk-row"><span class="risk-key">Construction (${fmt(capB.constr)}) + soft (${fmt(capB.soft)}) + financing (${fmt(capB.financing)})</span><span class="risk-val">${fmt(capB.totalInvest)}</span></div>
+      <div class="risk-row"><span class="risk-key">Carrying costs during ${p.downtime}-month build (taxes/insurance)</span><span class="risk-val">${fmt(capB.downExpenses)}</span></div>
+      <div class="risk-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px;font-weight:600"><span class="risk-key">Total capital needed</span><span class="risk-val">${fmt(capB.totalWithDown)}</span></div>
+    </div>
+    <div class="risk-card" style="border-left-color:var(--red)">
+      <p style="margin:0 0 6px;color:var(--text);font-weight:500">Stress tests</p>
+      <div class="risk-row"><span class="risk-key">If construction runs +20% over budget</span><span class="risk-val neg">${fmt(stressCost)} total</span></div>
+      <div class="risk-row"><span class="risk-key">If construction delayed 6 months</span><span class="risk-val neg">+${fmt(delayStress6mo)} in carrying costs</span></div>
+      <div class="risk-row"><span class="risk-key">Worst case: both happen</span><span class="risk-val neg">${fmt(stressCost+delayStress6mo)} total</span></div>
+    </div>`;
+
+  // ── Parameters snapshot ──
+  const snapParams=[
+    {l:'Market rent (2BR)',v:'$'+p.mktRent.toLocaleString()+'/mo'},
+    {l:'Steve\'s contribution',v:p.steveContrib>=1000000?'$'+(p.steveContrib/1000000).toFixed(2)+'M':'$'+(p.steveContrib/1000).toFixed(0)+'K'},
+    {l:'Construction $/sf',v:'$'+p.psf},
+    {l:'Soft costs',v:Math.round(p.softP*100)+'%'},
+    {l:'Financing costs',v:Math.round(p.finP*100)+'%'},
+    {l:'Construction time',v:p.downtime+' months'},
+    {l:'Steve\'s care budget',v:'$'+p.draw.toLocaleString()+'/yr'},
+    {l:'Steve\'s residency',v:p.sLife+' years'},
+    {l:'Steve pays 1/3 expenses',v:p.chip?'Yes':'No'},
+    {l:'Base operating expenses',v:'$'+BASE_OPEX.toLocaleString()+'/yr'},
+    {l:'Vacancy rate',v:'5%'},
+    {l:'Management fee',v:'8%'},
+    {l:'Utility allowance',v:'$'+UA+'/mo'},
+    {l:'Appraisal (as-is)',v:'$'+APPR.toLocaleString()},
+    {l:'Rent growth',v:(p.rg*100).toFixed(1)+'%/yr'},
+    {l:'Expense growth',v:(p.eg*100).toFixed(1)+'%/yr'},
+    {l:'Projection horizon',v:projYrs+' years'}
+  ];
+  document.getElementById('paramsSnap').innerHTML=snapParams.map(sp=>
+    `<div class="param"><span class="label">${sp.l}</span><span class="value">${sp.v}</span></div>`
+  ).join('');
+}
+
+function updateProgress(){
+  const boxes=document.querySelectorAll('.substeps input[type=checkbox]');
+  const checked=document.querySelectorAll('.substeps input[type=checkbox]:checked');
+  const pct=Math.round((checked.length/boxes.length)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=checked.length+' of '+boxes.length+' complete';
+  boxes.forEach(cb=>{cb.closest('li').classList.toggle('done',cb.checked)});
+}
+
+function copyLink(){
+  const p=new URLSearchParams();
+  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c'].forEach(k=>p.set(k,document.getElementById(k).value));
+  const url=location.origin+location.pathname+'?'+p.toString();
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn=document.querySelector('.btn-p');
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy shareable link',3000);
+  }).catch(()=>prompt('Copy this link:',url));
+}
+
+// Load from URL params
+function loadFromURL(){
+  const p=new URLSearchParams(location.search);
+  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c'].forEach(k=>{
+    if(p.has(k)){const el=document.getElementById(k);if(el)el.value=p.get(k)}
+  });
+}
+
+populateSelects();
+loadFromURL();
+go();
+</script>
+
+</body>
+</html>
