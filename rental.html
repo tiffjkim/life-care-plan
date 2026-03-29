@@ -59,7 +59,29 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 .br{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
 .ft{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border2);font-size:.68rem;color:var(--text3);line-height:1.7}
 .transition-yr{background:var(--amber-bg);font-weight:500}
-@media print{body{background:#fff;color:#000;font-size:9px}.c{max-width:100%;padding:.5rem}input[type=range],select,.br.np{display:none!important}.m,.cd,.u{break-inside:avoid}.cv{border:1px solid #ccc;padding:2px 4px;border-radius:3px}}
+@media print{
+@page{size:landscape;margin:0.5in}
+body{background:#fff;color:#000;font-size:7.5px;line-height:1.3}
+.c{max-width:100%;padding:0}
+input[type=range],select,.br.np,.hdr p:last-of-type{display:none!important}
+.hdr{margin-bottom:.5rem;padding-bottom:.3rem}
+.hdr h1{font-size:1rem}
+h2{font-size:.8rem;margin:.8rem 0 .3rem;padding-top:.4rem}
+.m,.cd,.u{break-inside:avoid}
+.ms{gap:4px;margin:4px 0}
+.m{padding:6px 8px;border-radius:4px}
+.m .ml{font-size:.55rem}
+.m .mv{font-size:.85rem}
+.cd{padding:.4rem .6rem;margin:4px 0;font-size:.65rem}
+.units{gap:4px;margin:4px 0}
+.u{padding:5px 8px}
+table{font-size:.6rem}
+th,td{padding:2px 4px}
+.ctrl{display:none!important}
+.cv{border:1px solid #ccc;padding:2px 4px;border-radius:3px}
+.legend{padding:8px;font-size:.6rem;line-height:1.5}
+.ft{margin-top:.5rem;padding-top:.3rem;font-size:.55rem}
+}
 </style>
 </head>
 <body>
@@ -68,7 +90,7 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <h1>189-191 Hamilton St — Rental Hold</h1>
 <p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903</p>
 <span class="badge b-g">Affordable housing preservation · Perpetual hold</span>
-<p style="margin-top:6px"><a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ View alternative: Condo Sale Model</a> · <a href="report.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">→ Decision Report</a></p>
+<p style="margin-top:6px"><a href="index.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">← Home</a> · <a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">Condo Sale Model</a> · <a href="report.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">Decision Report</a></p>
 </div>
 
 <div class="units">

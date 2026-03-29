@@ -124,15 +124,40 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 /* Footer */
 .ft{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border2);font-size:.68rem;color:var(--text3);line-height:1.7}
 
-/* Print: hide config, show only report */
+/* Print: clean 1-2 page landscape report */
 @media print{
-  body{background:#fff;color:#000;font-size:9px}
-  .c{max-width:100%;padding:.5rem}
-  .config,.share,.progress-bar,.progress-label,.substeps{display:none!important}
-  .verdict,.ms-card,.param,.checklist>li{break-inside:avoid}
-  .verdicts{grid-template-columns:1fr 1fr 1fr}
-  .cv{border:1px solid #ccc;padding:2px 4px;border-radius:3px}
+  @page{size:landscape;margin:0.5in}
+  body{background:#fff;color:#000;font-size:8px;line-height:1.4}
+  .c{max-width:100%;padding:0}
+  .config,.share,.progress-bar,.progress-label,.substeps,.hdr .date+p{display:none!important}
   input[type=range],select{display:none!important}
+  .hdr{margin-bottom:.5rem;padding-bottom:.5rem}
+  .hdr h1{font-size:1.1rem;margin-bottom:0}
+  .hdr .date{font-size:.6rem}
+  h2{font-size:.85rem;margin:1rem 0 .4rem;padding-top:.5rem}
+  h3{font-size:.75rem;margin:.5rem 0 .25rem}
+  .verdicts{grid-template-columns:1fr 1fr 1fr;gap:4px;margin:.5rem 0}
+  .verdict{padding:.5rem;border-radius:6px}
+  .verdict .v-status{font-size:.8rem}
+  .verdict .v-detail{font-size:.6rem}
+  table{font-size:.65rem;margin:4px 0}
+  th,td{padding:3px 6px}
+  .ms-grid{grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin:4px 0}
+  .ms-card{padding:6px 8px}
+  .ms-card .ms-yr{font-size:.55rem}
+  .ms-card .ms-val{font-size:.8rem}
+  .trans-card{padding:.5rem}
+  .trans-card .tc-row{padding:2px 0;font-size:.65rem}
+  .risk-card{padding:.5rem;margin:4px 0;font-size:.65rem}
+  .params{grid-template-columns:1fr 1fr 1fr;gap:3px;margin:4px 0}
+  .param{padding:4px 8px;border-radius:4px}
+  .param .label{font-size:.6rem}
+  .param .value{font-size:.65rem}
+  .checklist>li{padding:4px 8px;margin:3px 0;font-size:.65rem}
+  .checklist .sub{font-size:.58rem;margin-top:1px}
+  .checklist .timing{font-size:.55rem;padding:0 4px}
+  .verdict,.ms-card,.param,.checklist>li,.trans-card,.risk-card{break-inside:avoid}
+  .ft{margin-top:.5rem;padding-top:.5rem;font-size:.55rem}
 }
 </style>
 </head>
@@ -143,6 +168,7 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
   <h1>189-191 Hamilton St — Decision Report</h1>
   <p>Cambridgeport, Cambridge MA 02139 · 3-unit triple-decker · 3,940 SF · Built 1903</p>
   <div class="date">Generated March 29, 2026 · Parameters locked at time of generation</div>
+  <p style="margin-top:6px"><a href="index.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">← Home</a> · <a href="rental.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">Rental Hold Model</a> · <a href="condo.html" style="color:var(--blue);font-size:.75rem;text-decoration:none">Condo Sale Model</a></p>
 </div>
 
 <!-- ═══════════════ CONFIG PANEL (hidden on print) ═══════════════ -->
