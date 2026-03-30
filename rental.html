@@ -233,12 +233,15 @@ const baseOpex=resolveOpex(opexMode,opexPctVal,opexOverrideVal,netRent0,2);
 document.getElementById('o_opexPct').textContent=Math.round(opexPctVal*100)+'%';
 document.getElementById('o_opexOverride').textContent='$'+opexOverrideVal.toLocaleString();
 const grossAnnual=netRent0*2*12;
+const opexMax=Math.round(grossAnnual*1.1);
+document.getElementById('opexOverride').max=Math.max(opexMax,10000);
+if(opexOverrideVal>opexMax){document.getElementById('opexOverride').value=opexMax;}
 const impliedPct=grossAnnual>0?(baseOpex/grossAnnual*100).toFixed(1)+'%':'n/a';
 const impliedDollar='$'+baseOpex.toLocaleString();
 if(opexMode==='pct'){
   document.getElementById('opexNote').textContent='= '+impliedDollar+'/yr at current AMI tier';
 }else{
-  document.getElementById('opexNote').textContent='= '+impliedPct+' of gross rental income at current AMI tier';
+  document.getElementById('opexNote').textContent='= '+impliedPct+' of gross rental income (max: 110% = $'+opexMax.toLocaleString()+')';
 }
 const steveContrib=+document.getElementById('acq').value;
 const downtime=+document.getElementById('down').value;

@@ -410,6 +410,15 @@ function go(){
   document.getElementById('o_yrs').textContent=p.yrs+' yrs';
   document.getElementById('o_opexPct').textContent=Math.round(p.opexPct*100)+'%';
   document.getElementById('o_opexOverride').textContent='$'+(p.opexOverride||DEFAULT_OPEX).toLocaleString();
+  // Dynamic max: 110% of gross rental income at moderate scenario AMI
+  const modTier=TIERS[amiB];
+  const modNetRent=modTier.pub-UA;
+  const modGross=modNetRent*2*12;
+  const opexMax=Math.round(modGross*1.1);
+  document.getElementById('opexOverride').max=Math.max(opexMax,10000);
+  document.getElementById('opexNote').textContent=p.opexMode==='override'
+    ?'= '+(modGross>0?(p.opexOverride/modGross*100).toFixed(1):'0')+'% of income (max: 110% = $'+opexMax.toLocaleString()+')'
+    :'= $'+resolveOpex('pct',p.opexPct,0,modNetRent,2).toLocaleString()+'/yr at Scenario B AMI';
 
   const scenarios=[
     {key:'a',label:'A · Conservative',idx:amiA,...calcScenario(amiA,p)},
