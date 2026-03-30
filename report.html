@@ -187,6 +187,10 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
   <div class="ctrl"><span class="cl">Soft costs (architect, permits)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
   <div class="ctrl"><span class="cl">Financing costs</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
   <div class="ctrl"><span class="cl">Construction time (months)</span><input type="range" min="0" max="46" step="1" value="12" id="down" oninput="go()"><span class="cv" id="o_down">12 mo</span></div>
+  <div class="ctrl"><span class="cl">Operating expenses</span><select id="opexMode" onchange="toggleOpex();go()"><option value="pct">% of rental income</option><option value="override" selected>Fixed amount (override)</option></select></div>
+  <div class="ctrl" id="opexPctRow" style="display:none"><span class="cl">OpEx as % of income</span><input type="range" min="20" max="70" step="1" value="40" id="opexPct" oninput="go()"><span class="cv" id="o_opexPct">40%</span></div>
+  <div class="ctrl" id="opexOverrideRow"><span class="cl">Annual operating expenses</span><input type="range" min="10000" max="60000" step="500" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
+  <div id="opexNote" style="font-size:.68rem;color:var(--text3);margin:2px 0 6px"></div>
   <div class="ctrl"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20,000</span></div>
   <div class="ctrl"><span class="cl">Steve's residency</span><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
   <div class="ctrl"><span class="cl">Rent growth (%/yr)</span><input type="range" min="0" max="8" step="0.5" value="2.5" id="rg" oninput="go()"><span class="cv" id="o_rg">2.5%</span></div>
@@ -361,6 +365,12 @@ function populateSelects(){
   });
 }
 
+function toggleOpex(){
+  const mode=document.getElementById('opexMode').value;
+  document.getElementById('opexPctRow').style.display=mode==='pct'?'flex':'none';
+  document.getElementById('opexOverrideRow').style.display=mode==='override'?'flex':'none';
+}
+
 function getParams(){
   const mktRent=+document.getElementById('mkt').value;
   const psf=+document.getElementById('psf').value;
@@ -374,7 +384,10 @@ function getParams(){
   const eg=+document.getElementById('eg').value/100;
   const sLife=+document.getElementById('sLife').value;
   const yrs=+document.getElementById('yrs').value;
-  return{mktRent,psf,softP,finP,steveContrib,downtime,draw,chip,rg,eg,sLife,yrs};
+  const opexMode=document.getElementById('opexMode').value;
+  const opexPct=+document.getElementById('opexPct').value/100;
+  const opexOverride=+document.getElementById('opexOverride').value;
+  return{mktRent,psf,softP,finP,steveContrib,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride};
 }
 
 function go(){
@@ -395,6 +408,8 @@ function go(){
   document.getElementById('o_rg').textContent=(p.rg*100).toFixed(1)+'%';
   document.getElementById('o_eg').textContent=(p.eg*100).toFixed(1)+'%';
   document.getElementById('o_yrs').textContent=p.yrs+' yrs';
+  document.getElementById('o_opexPct').textContent=Math.round(p.opexPct*100)+'%';
+  document.getElementById('o_opexOverride').textContent='$'+(p.opexOverride||DEFAULT_OPEX).toLocaleString();
 
   const scenarios=[
     {key:'a',label:'A · Conservative',idx:amiA,...calcScenario(amiA,p)},
@@ -526,7 +541,7 @@ function go(){
     {l:'Steve\'s care budget',v:'$'+p.draw.toLocaleString()+'/yr'},
     {l:'Steve\'s residency',v:p.sLife+' years'},
     {l:'Steve pays 1/3 expenses',v:p.chip?'Yes':'No'},
-    {l:'Base operating expenses',v:'$'+BASE_OPEX.toLocaleString()+'/yr'},
+    {l:'Operating expenses',v:'$'+scenarios[1].baseOpex.toLocaleString()+'/yr ('+Math.round(scenarios[1].opexPctOfIncome*100)+'% of income)'},
     {l:'Vacancy rate',v:'5%'},
     {l:'Management fee',v:'8%'},
     {l:'Utility allowance',v:'$'+UA+'/mo'},
@@ -551,7 +566,7 @@ function updateProgress(){
 
 function copyLink(){
   const p=new URLSearchParams();
-  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c'].forEach(k=>p.set(k,document.getElementById(k).value));
+  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','opexMode','opexPct','opexOverride','ami_a','ami_b','ami_c'].forEach(k=>p.set(k,document.getElementById(k).value));
   const url=location.origin+location.pathname+'?'+p.toString();
   navigator.clipboard.writeText(url).then(()=>{
     const btn=document.querySelector('.btn-p');
@@ -570,6 +585,7 @@ function loadFromURL(){
 
 populateSelects();
 loadFromURL();
+toggleOpex();
 go();
 </script>
 

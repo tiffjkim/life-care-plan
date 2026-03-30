@@ -3,7 +3,19 @@
 // Single source of truth. Used by rental.html, report.html, condo.html
 // ═══════════════════════════════════════════════════════════════════
 
-const GBA = 3940, UA = 385, VAC = .05, MGMT = .08, BASE_OPEX = 24368, APPR = 1610000;
+const GBA = 3940, UA = 385, VAC = .05, MGMT = .08, DEFAULT_OPEX = 24368, APPR = 1610000;
+
+// OpEx can be calculated two ways:
+// 1. As a % of gross rental income (typical underwriting, default 40%)
+// 2. As a fixed dollar override (when affordable rents make the % unrealistic)
+// The resolve function returns the annual opex dollar amount used in all calculations.
+
+function resolveOpex(mode, opexPct, opexOverride, netRent, units) {
+  if (mode === 'override') return opexOverride;
+  // % of income: gross annual rent * opexPct
+  const grossAnnual = netRent * units * 12;
+  return Math.round(grossAnnual * opexPct);
+}
 
 const TIERS = [
   {pct:50,  l:'50%',  pub:1861},
@@ -41,21 +53,21 @@ function pctFmt(n) { return (n * 100).toFixed(1) + '%'; }
 
 // ── Capital cost calculation (matches rental.html exactly) ──
 
-function calcCapital(psf, softP, finP, steveContrib, downtime, netRent) {
+function calcCapital(psf, softP, finP, steveContrib, downtime, netRent, baseOpex) {
   const acqCost = APPR - steveContrib;
   const constr = psf * GBA;
   const soft = Math.round(constr * softP);
   const financing = Math.round((constr + acqCost) * finP);
   const totalInvest = acqCost + constr + soft + financing;
   const downCost = Math.round(netRent * 2 * (downtime / 12)); // lost rent during reno
-  const downExpenses = Math.round(BASE_OPEX * (downtime / 12)); // taxes/ins still owed
+  const downExpenses = Math.round(baseOpex * (downtime / 12)); // taxes/ins still owed
   const totalWithDown = totalInvest + downExpenses;
   return { acqCost, constr, soft, financing, totalInvest, downCost, downExpenses, totalWithDown };
 }
 
 // ── Year-by-year cash flow (matches rental.html's go() loop exactly) ──
 
-function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, totalWithDown) {
+function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, totalWithDown, baseOpex) {
   const years = [];
   let cumCF = 0, yr1Noi = 0, paybackYr = null, firstFullYr = null;
 
@@ -71,7 +83,7 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
     const rm = Math.round(netRent * Math.pow(1 + rg, y - 1));
     const ga = Math.round(rm * rentalUnits * opMonths);
     const egi = Math.round(ga * (1 - VAC));
-    const ox = Math.round(BASE_OPEX * Math.pow(1 + eg, y - 1));
+    const ox = Math.round(baseOpex * Math.pow(1 + eg, y - 1));
     const steveShare = steveAlive && chip ? Math.round(ox / 3) : 0;
     const buildingOx = ox - steveShare;
     const mf = Math.round(egi * MGMT);
@@ -99,15 +111,19 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
 // Runs the full year-by-year model (same as rental.html) and extracts summary metrics
 
 function calcScenario(amiIdx, params) {
-  const { mktRent, draw, chip, sLife, psf, softP, finP, steveContrib, downtime, rg, eg, yrs } = params;
+  const { mktRent, draw, chip, sLife, psf, softP, finP, steveContrib, downtime, rg, eg, yrs, opexMode, opexPct, opexOverride } = params;
   const tier = TIERS[amiIdx];
   const netRent = tier.pub - UA;
   const isAffordable = netRent <= mktRent;
   const marketDelta = mktRent > 0 ? ((netRent - mktRent) / mktRent * 100) : 0;
 
+  // Resolve operating expenses: % of income or fixed override
+  const baseOpex = resolveOpex(opexMode || 'override', opexPct || 0.4, opexOverride || DEFAULT_OPEX, netRent, 2);
+  const opexPctOfIncome = (netRent * 2 * 12) > 0 ? baseOpex / (netRent * 2 * 12) : 0;
+
   const projYrs = Math.max(yrs, sLife + 2);
-  const cap = calcCapital(psf, softP, finP, steveContrib, downtime, netRent);
-  const flow = calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, cap.totalWithDown);
+  const cap = calcCapital(psf, softP, finP, steveContrib, downtime, netRent, baseOpex);
+  const flow = calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, cap.totalWithDown, baseOpex);
 
   // First full operating year cash flow (the number that matters for viability)
   const firstFullYear = flow.years.find(y => y.opMonths === 12);
@@ -152,7 +168,7 @@ function calcScenario(amiIdx, params) {
   const yoc = cap.totalWithDown > 0 ? noiFirstFull / cap.totalWithDown : 0;
 
   return {
-    tier, netRent, isAffordable, marketDelta,
+    tier, netRent, isAffordable, marketDelta, baseOpex, opexPctOfIncome,
     cfFirstFull, noiFirstFull, viability, viable: cfFirstFull >= 0,
     cfBefore, egiBefore, opexBefore,
     cfAfter, noiAfter, egiAfter, opexAfter,

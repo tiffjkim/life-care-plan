@@ -137,6 +137,10 @@ th,td{padding:2px 4px}
 <div id="concBar"></div>
 
 <h2>Building expenses & Steve's care</h2>
+<div class="ctrl"><span class="cl">Operating expenses</span><select id="opexMode" onchange="toggleOpex();go()"><option value="pct">% of rental income</option><option value="override" selected>Fixed amount (override)</option></select></div>
+<div class="ctrl" id="opexPctRow" style="display:none"><span class="cl">OpEx as % of income</span><input type="range" min="20" max="70" step="1" value="40" id="opexPct" oninput="go()"><span class="cv" id="o_opexPct">40%</span></div>
+<div class="ctrl" id="opexOverrideRow"><span class="cl">Annual operating expenses</span><input type="range" min="10000" max="60000" step="500" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
+<div id="opexNote" style="font-size:.68rem;color:var(--text3);margin:2px 0 6px"></div>
 <div class="ctrl"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20K</span></div>
 <div class="ctrl"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No — building covers everything</option><option value="1" selected>Yes — he pays 1/3 of shared costs</option></select></div>
 <div class="ctrl"><span class="cl">Rent increase per year</span><span class="cv" id="o_rg" style="min-width:0;margin-left:auto">2.5%</span></div>
@@ -200,6 +204,12 @@ th,td{padding:2px 4px}
 <script>
 const pct = pctFmt; // alias for backward compatibility
 
+function toggleOpex(){
+  const mode=document.getElementById('opexMode').value;
+  document.getElementById('opexPctRow').style.display=mode==='pct'?'flex':'none';
+  document.getElementById('opexOverrideRow').style.display=mode==='override'?'flex':'none';
+}
+
 function go(){
 const psf=+document.getElementById('psf').value;
 const softP=+document.getElementById('soft').value/100;
@@ -212,6 +222,24 @@ const rg=+document.getElementById('rg').value/100;
 const eg=+document.getElementById('eg').value/100;
 const sLife=+document.getElementById('sLife').value;
 const yrs=+document.getElementById('yrs').value;
+const opexMode=document.getElementById('opexMode').value;
+const opexPctVal=+document.getElementById('opexPct').value/100;
+const opexOverrideVal=+document.getElementById('opexOverride').value;
+const tier0=TIERS[ai];
+const netRent0=tier0.pub-UA;
+const baseOpex=resolveOpex(opexMode,opexPctVal,opexOverrideVal,netRent0,2);
+
+// Show the other side: if fixed, show what % it is; if %, show what $ it equals
+document.getElementById('o_opexPct').textContent=Math.round(opexPctVal*100)+'%';
+document.getElementById('o_opexOverride').textContent='$'+opexOverrideVal.toLocaleString();
+const grossAnnual=netRent0*2*12;
+const impliedPct=grossAnnual>0?(baseOpex/grossAnnual*100).toFixed(1)+'%':'n/a';
+const impliedDollar='$'+baseOpex.toLocaleString();
+if(opexMode==='pct'){
+  document.getElementById('opexNote').textContent='= '+impliedDollar+'/yr at current AMI tier';
+}else{
+  document.getElementById('opexNote').textContent='= '+impliedPct+' of gross rental income at current AMI tier';
+}
 const steveContrib=+document.getElementById('acq').value;
 const downtime=+document.getElementById('down').value;
 
@@ -283,7 +311,7 @@ const soft=Math.round(constr*softP);
 const financing=Math.round((constr+acqCost)*finP);
 const totalInvest=acqCost+constr+soft+financing;
 const downCost=Math.round((tier.pub-UA)*2*(downtime/12)); // lost rent during reno
-const downExpenses=Math.round(BASE_OPEX*(downtime/12)); // taxes/ins still owed during reno
+const downExpenses=Math.round(baseOpex*(downtime/12)); // taxes/ins still owed during reno
 const totalWithDown=totalInvest+downExpenses; // full cash needed including carrying costs
 
 // Capital section
@@ -336,7 +364,7 @@ const steveAlive=y<=sLife;
 const rm=Math.round(netRent*Math.pow(1+rg,y-1));
 const ga=Math.round(rm*rentalUnits*opMonths); // prorated by operating months
 const egi=Math.round(ga*(1-VAC));
-const ox=Math.round(BASE_OPEX*Math.pow(1+eg,y-1));
+const ox=Math.round(baseOpex*Math.pow(1+eg,y-1));
 const steveShare=steveAlive&&chip?Math.round(ox/3):0;
 const buildingOx=ox-steveShare;
 const mf=Math.round(egi*MGMT);
@@ -391,7 +419,7 @@ const atOrAboveMkt=nr>=mktRent;
 if(!crossoverTier&&atOrAboveMkt)crossoverTier=ti;
 // Quick yr1 NOI calc for 2 units
 const egi2=Math.round(nr*2*12*(1-VAC));
-const ox2=chip?Math.round(BASE_OPEX*(2/3)):BASE_OPEX;
+const ox2=chip?Math.round(baseOpex*(2/3)):baseOpex;
 const mf2=Math.round(egi2*MGMT);
 const noi2=egi2-ox2-mf2;
 const yoc2=totalWithDown>0?noi2/totalWithDown:0;
@@ -404,7 +432,7 @@ const opMo2=Math.max(0,Math.min(12,yy*12-downtime));
 const u=yy<=sLife?2:3;
 const r=Math.round(nr*Math.pow(1+rg,yy-1));
 const g=Math.round(r*u*opMo2);const e=Math.round(g*(1-VAC));
-const o=Math.round(BASE_OPEX*Math.pow(1+eg,yy-1));
+const o=Math.round(baseOpex*Math.pow(1+eg,yy-1));
 const ro=chip&&yy<=sLife?Math.round(o*(2/3)):o;
 const mf=Math.round(e*MGMT);const n=e-ro-mf;
 const d=yy<=sLife?Math.round(draw*(opMo2/12)):0;cum2+=n-d;
@@ -473,13 +501,13 @@ document.getElementById('glossary').innerHTML=`
 
 function copyLink(){
 const p=new URLSearchParams();
-['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down'].forEach(k=>p.set(k,document.getElementById(k).value));
+['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride'].forEach(k=>p.set(k,document.getElementById(k).value));
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
 
-loadSettings();go();
+loadSettings();toggleOpex();go();
 </script>
 </body>
 </html>
