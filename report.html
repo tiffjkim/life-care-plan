@@ -356,7 +356,7 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 function populateSelects(){
   ['ami_a','ami_b','ami_c'].forEach((id,i)=>{
     const sel=document.getElementById(id);
-    TIERS.forEach((t,j)=>{sel.add(new Option(t.l+'% AMI',j))});
+    TIERS.forEach((t,j)=>{sel.add(new Option(t.l+' AMI',j))});
     sel.value=[0,3,5][i]; // Defaults: A=50%, B=80%, C=100%
   });
 }
@@ -420,7 +420,7 @@ function go(){
       :' Rents are at market.';
     return `<div class="verdict ${cls}">
       <div class="v-label ${labelCls}">${s.label}</div>
-      <div class="v-status ${labelCls}">${statusText} at ${s.tier.l}%</div>
+      <div class="v-status ${labelCls}">${statusText} at ${s.tier.l}</div>
       <div class="v-detail">${detail}${mktNote}</div>
     </div>`;
   }).join('');
@@ -430,7 +430,7 @@ function go(){
   const minViable=findMinViableAMI(p);
   const projYrs=Math.max(p.yrs,p.sLife+2);
   const rows=[
-    {label:'AMI tier',vals:scenarios.map(s=>s.tier.l+'%')},
+    {label:'AMI tier',vals:scenarios.map(s=>s.tier.l)},
     {label:'Affordable rent (net of utilities)',vals:scenarios.map(s=>fmt(s.netRent)+'/mo')},
     {label:'Discount / premium to market',vals:scenarios.map(s=>fmtMarketDelta(s.netRent,p.mktRent))},
     {label:'Cash flow — first full operating year'+(scenarios[0].firstFullYr?' (Yr '+scenarios[0].firstFullYr+')':''),vals:scenarios.map(s=>{
@@ -453,7 +453,7 @@ function go(){
       return '<span class="neg">0 of 3 (above market)</span>';
     })},
     {label:'Probate risk',vals:scenarios.map(()=>'Eliminated')},
-    {label:'Minimum viable AMI',vals:scenarios.map(()=>minViable?minViable.tier.l+'%':'None viable')}
+    {label:'Minimum viable AMI',vals:scenarios.map(()=>minViable?minViable.tier.l:'None viable')}
   ];
   document.getElementById('compBody').innerHTML=rows.map(r=>
     `<tr><td>${r.label}</td>${r.vals.map(v=>`<td>${v}</td>`).join('')}</tr>`
@@ -461,7 +461,7 @@ function go(){
 
   // ── Milestones (show scenario B) ──
   const bScen=scenarios[1];
-  document.getElementById('ms_label_b').textContent='Scenario B · '+bScen.tier.l+'% AMI';
+  document.getElementById('ms_label_b').textContent='Scenario B · '+bScen.tier.l+' AMI';
   document.getElementById('milestones').innerHTML=bScen.milestones.map(m=>{
     const cls=m.cf>=10000?'gn':m.cf>=0?'am':'rd';
     return `<div class="ms-card ${cls}">
