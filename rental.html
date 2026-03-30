@@ -139,7 +139,7 @@ th,td{padding:2px 4px}
 <h2>Building expenses & Steve's care</h2>
 <div class="ctrl"><span class="cl">Operating expenses</span><select id="opexMode" onchange="toggleOpex();go()"><option value="pct">% of rental income</option><option value="override" selected>Fixed amount (override)</option></select></div>
 <div class="ctrl" id="opexPctRow" style="display:none"><span class="cl">OpEx as % of income</span><input type="range" min="20" max="70" step="1" value="40" id="opexPct" oninput="go()"><span class="cv" id="o_opexPct">40%</span></div>
-<div class="ctrl" id="opexOverrideRow"><span class="cl">Annual operating expenses</span><input type="range" min="10000" max="60000" step="500" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
+<div class="ctrl" id="opexOverrideRow"><span class="cl">Annual operating expenses</span><input type="range" min="10000" max="60000" step="1" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
 <div id="opexNote" style="font-size:.68rem;color:var(--text3);margin:2px 0 6px"></div>
 <div class="ctrl"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20K</span></div>
 <div class="ctrl"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No — building covers everything</option><option value="1" selected>Yes — he pays 1/3 of shared costs</option></select></div>

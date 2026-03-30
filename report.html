@@ -181,21 +181,21 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <!-- ═══════════════ CONFIG PANEL (hidden on print) ═══════════════ -->
 <div class="config">
   <h2>Shared Assumptions</h2>
-  <div class="ctrl"><span class="cl">Post-renovation market rent</span><input type="range" min="2800" max="7500" step="50" value="3100" id="mkt" oninput="go()"><span class="cv" id="o_mkt">$3,100</span></div>
-  <div class="ctrl"><span class="cl">Steve's building contribution</span><input type="range" min="0" max="1610000" step="10000" value="1610000" id="acq" oninput="go()"><span class="cv" id="o_acq">$1.61M</span></div>
-  <div class="ctrl"><span class="cl">Construction cost per sq ft</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
-  <div class="ctrl"><span class="cl">Soft costs (architect, permits)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
-  <div class="ctrl"><span class="cl">Financing costs</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
-  <div class="ctrl"><span class="cl">Construction time (months)</span><input type="range" min="0" max="46" step="1" value="12" id="down" oninput="go()"><span class="cv" id="o_down">12 mo</span></div>
+  <div class="ctrl"><label class="cl" for="mkt">Post-renovation market rent</label><input type="range" min="2800" max="7500" step="50" value="3100" id="mkt" oninput="go()"><span class="cv" id="o_mkt">$3,100</span></div>
+  <div class="ctrl"><label class="cl" for="acq">Steve's building contribution</label><input type="range" min="0" max="1610000" step="10000" value="1610000" id="acq" oninput="go()"><span class="cv" id="o_acq">$1.61M</span></div>
+  <div class="ctrl"><label class="cl" for="psf">Construction cost per sq ft</label><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
+  <div class="ctrl"><label class="cl" for="soft">Soft costs (architect, permits)</label><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
+  <div class="ctrl"><label class="cl" for="fin">Financing costs</label><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
+  <div class="ctrl"><label class="cl" for="down">Construction time (months)</label><input type="range" min="0" max="46" step="1" value="12" id="down" oninput="go()"><span class="cv" id="o_down">12 mo</span></div>
   <div class="ctrl"><span class="cl">Operating expenses</span><select id="opexMode" onchange="toggleOpex();go()"><option value="pct">% of rental income</option><option value="override" selected>Fixed amount (override)</option></select></div>
-  <div class="ctrl" id="opexPctRow" style="display:none"><span class="cl">OpEx as % of income</span><input type="range" min="20" max="70" step="1" value="40" id="opexPct" oninput="go()"><span class="cv" id="o_opexPct">40%</span></div>
-  <div class="ctrl" id="opexOverrideRow"><span class="cl">Annual operating expenses</span><input type="range" min="10000" max="60000" step="500" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
+  <div class="ctrl" id="opexPctRow" style="display:none"><label class="cl" for="opexPct">OpEx as % of income</label><input type="range" min="20" max="70" step="1" value="40" id="opexPct" oninput="go()"><span class="cv" id="o_opexPct">40%</span></div>
+  <div class="ctrl" id="opexOverrideRow"><label class="cl" for="opexOverride">Annual operating expenses</label><input type="range" min="10000" max="60000" step="1" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
   <div id="opexNote" style="font-size:.68rem;color:var(--text3);margin:2px 0 6px"></div>
-  <div class="ctrl"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20,000</span></div>
-  <div class="ctrl"><span class="cl">Steve's residency</span><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
-  <div class="ctrl"><span class="cl">Rent growth (%/yr)</span><input type="range" min="0" max="8" step="0.5" value="2.5" id="rg" oninput="go()"><span class="cv" id="o_rg">2.5%</span></div>
-  <div class="ctrl"><span class="cl">Expense growth (%/yr)</span><input type="range" min="0" max="8" step="0.5" value="4" id="eg" oninput="go()"><span class="cv" id="o_eg">4.0%</span></div>
-  <div class="ctrl"><span class="cl">Projection horizon (years)</span><input type="range" min="10" max="25" step="1" value="15" id="yrs" oninput="go()"><span class="cv" id="o_yrs">15 yrs</span></div>
+  <div class="ctrl"><label class="cl" for="draw">Steve's annual care budget</label><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20,000</span></div>
+  <div class="ctrl"><label class="cl" for="sLife">Steve's residency</label><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
+  <div class="ctrl"><label class="cl" for="rg">Rent growth (%/yr)</label><input type="range" min="0" max="8" step="0.5" value="2.5" id="rg" oninput="go()"><span class="cv" id="o_rg">2.5%</span></div>
+  <div class="ctrl"><label class="cl" for="eg">Expense growth (%/yr)</label><input type="range" min="0" max="8" step="0.5" value="4" id="eg" oninput="go()"><span class="cv" id="o_eg">4.0%</span></div>
+  <div class="ctrl"><label class="cl" for="yrs">Projection horizon (years)</label><input type="range" min="10" max="25" step="1" value="15" id="yrs" oninput="go()"><span class="cv" id="o_yrs">15 yrs</span></div>
   <div class="ctrl"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No</option><option value="1" selected>Yes — pays 1/3</option></select></div>
 
   <h2 style="margin-top:1rem;border:none;padding:0">Scenario AMI Tiers</h2>
