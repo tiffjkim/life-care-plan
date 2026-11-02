@@ -514,21 +514,27 @@ document.getElementById('retOut').innerHTML=`<div class="ms">
 <div class="ms">
 ${(()=>{const ff=years.find(y=>y.y===firstFullYr)||years.find(y=>y.opMonths>0)||years[0];return ff?`<div class="m gn"><div class="ml">Year ${ff.y} rental income</div><div class="mv">${fmt(ff.egi)}</div><div class="mn">After 5% vacancy · ${ff.rentalUnits} unit${ff.rentalUnits===1?'':'s'} rented</div></div><div class="m rd"><div class="ml">Year ${ff.y} operating expenses</div><div class="mv">${fmt(ff.totOx)}</div><div class="mn">Building expenses incl. 8% management${ownerOcc&&chip?' · after owner share':''}</div></div>`:'';})()}
 ${ownerOcc?`<div class="m am"><div class="ml">Care budget drawn</div><div class="mv">${fmt(years.reduce((a,y)=>a+y.careDraw,0))}</div><div class="mn">Total over the ${effSLife}-year residency</div></div>`:''}
-</div>`;
+</div>
+${loanOn?`<div class="ms">
+<div class="m ${takeoutGap<0?'gn':'rd'}"><div class="ml">${takeoutGap<0?'Cash back at stabilization refi':'Cash due at stabilization refi'}</div><div class="mv">${fmtSign(-takeoutGap)}</div><div class="mn">${takeoutGap<0?('Year '+stabYr+' · '+(cashDuringConstr>0?Math.round((-takeoutGap)/cashDuringConstr*100):0)+'% of the '+fmt(cashDuringConstr)+' put in during construction comes back at the refinance'):('Year '+stabYr+' · the permanent loan falls short of the construction payoff — you bring the difference at closing')}</div></div>
+<div class="m bl"><div class="ml">Still to recover from cash flow</div><div class="mv">${fmt(Math.max(equityNeeded,0))}</div><div class="mn">${equityNeeded>0?'Your net cash still in the deal after the refi — tracked in the Capital returned column':'The refi returned all construction cash and more'}</div></div>
+</div>`:''}`;
 
 // CF note
-document.getElementById('cfNote').innerHTML=`<div class="cd bd am"><p>${downtime>0?`Construction: ${downtime} months. Income is prorated — a 16-month build means Year 2 only has 8 operating months. `:''}${ownerOcc?'★ = the owner-occupied units come online as rentals.':'All 3 units rented from Year 1 — no transition year.'}</p></div>`;
+document.getElementById('cfNote').innerHTML=`<div class="cd bd am"><p>${loanOn?`Refinance: the permanent loan closes at stabilization (Year ${stabYr}) — proceeds above the construction payoff come back as cash that year. `:''}${downtime>0?`Construction: ${downtime} months. Income is prorated — a 16-month build means Year 2 only has 8 operating months. `:''}${ownerOcc?'★ = the owner-occupied units come online as rentals.':'All 3 units rented from Year 1 — no transition year.'}</p></div>`;
 
 // CF table - simplified
-let t='<table><tr><th style="text-align:left">Yr</th><th>Operating</th><th>Rent/mo</th><th>Income</th><th>Expenses (−)</th><th>NOI</th>'+(loanOn?'<th>Debt (−)</th>':'')+'<th>Care (−)</th><th>Cash flow</th><th>Cumulative</th></tr>';
+let t='<table><tr><th style="text-align:left">Yr</th><th>Operating</th><th>Rent/mo</th><th>Income</th><th>Expenses (−)</th><th>NOI</th>'+(loanOn?'<th>Debt (−)</th>':'')+'<th>Care (−)</th><th>Cash flow</th><th>Cumulative</th>'+(loanOn?'<th>Capital returned</th>':'')+'</tr>';
 years.forEach(y=>{
 const rc=y.cumCF>=capitalBasis?'yg':y.cumCF>=0?'yw':'yr';
 const trClass=y.isReno?' style="background:var(--red-bg)"':y.isPartial?' style="background:var(--amber-bg)"':y.isTransition?' class="transition-yr"':'';
 const label=y.y+(y.isTransition?' ★':'');
 const moLabel=y.isReno?'0 mo':y.isPartial?y.opMonths+' mo':'12 mo';
-t+=`<tr${trClass}><td style="text-align:left;font-weight:600">${label}</td><td>${moLabel}</td><td>${y.opMonths>0?fmt(y.rm):'—'}</td><td>${y.egi?fmt(y.egi):'—'}</td><td class="neg">${y.totOx?'-'+fmt(y.totOx):'—'}</td><td style="font-weight:500">${fmt(y.noi)}</td>${loanOn?`<td>${y.ds>0?'<span class="neg">-'+fmt(y.ds)+'</span>':'—'}</td>`:''}<td>${y.careDraw>0?'<span class="neg">-'+fmt(y.careDraw)+'</span>':'—'}</td><td style="font-weight:500"><span class="${y.cf>=0?'pos':'neg'}">${fmtSign(y.cf)}</span></td><td class="${rc}">${fmtSign(y.cumCF)}</td></tr>`;
+const retCap=y.cumCF+(loanOn&&y.y>=stabYr?(permLoan-payoff):0);
+const retClass=retCap>=cashDuringConstr?'yg':retCap>=0?'yw':'yr';
+t+=`<tr${trClass}><td style="text-align:left;font-weight:600">${label}</td><td>${moLabel}</td><td>${y.opMonths>0?fmt(y.rm):'—'}</td><td>${y.egi?fmt(y.egi):'—'}</td><td class="neg">${y.totOx?'-'+fmt(y.totOx):'—'}</td><td style="font-weight:500">${fmt(y.noi)}</td>${loanOn?`<td>${y.ds>0?'<span class="neg">-'+fmt(y.ds)+'</span>':'—'}</td>`:''}<td>${y.careDraw>0?'<span class="neg">-'+fmt(y.careDraw)+'</span>':'—'}</td><td style="font-weight:500"><span class="${y.cf>=0?'pos':'neg'}">${fmtSign(y.cf)}</span></td><td class="${rc}">${fmtSign(y.cumCF)}</td>${loanOn?`<td class="${retClass}">${fmtSign(retCap)}</td>`:''}</tr>`;
 });
-document.getElementById('cfTbl').innerHTML=t+`</table><p style="font-size:.68rem;color:var(--text3);margin-top:4px">Months = operating months (earning rent). ${downtime>0?'Red rows = under construction. Amber = partial year. ':''}${ownerOcc?'★ = Unit 1 online.':''}</p>`;
+document.getElementById('cfTbl').innerHTML=t+`</table><p style="font-size:.68rem;color:var(--text3);margin-top:4px">Months = operating months (earning rent). ${downtime>0?'Red rows = under construction. Amber = partial year. ':''}${ownerOcc?'★ = Unit 1 online.':''}${loanOn?' Capital returned = cumulative cash flow plus the one-time stabilization refinance proceeds (from Year '+stabYr+'); you are fully repaid when it reaches the '+fmt(cashDuringConstr)+' put in during construction.':''}</p>`;
 
 // AMI table
 let a='<table><tr><th style="text-align:left">AMI level</th><th>Rent collected</th><th>Year 1 income</th><th>Annual return</th><th>Payback year</th><th>vs. market</th></tr>';
