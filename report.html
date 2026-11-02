@@ -391,7 +391,7 @@ function getParams(){
   const opexPct=+document.getElementById('opexPct').value/100;
   const opexOverride=+document.getElementById('opexOverride').value;
   const ownerOccupied=document.getElementById('ownerOcc').value==='1';
-  return{mktRent,psf,softP,finP,steveContrib,acqCost,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride,ownerOccupied};
+  return{mktRent,psf,softP,finP,steveContrib,acqCost,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride,ownerOccupied,ownerUnits:ownerOccupied?1:0};
 }
 
 function go(){
