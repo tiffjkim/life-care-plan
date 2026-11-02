@@ -99,7 +99,7 @@ th,td{padding:2px 4px}
 
 <h2>What to sell</h2>
 <div class="ctrl"><span class="cl">Units to sell</span><select id="sell" onchange="go()"><option value="1">Sell 1 (keep 2)</option><option value="2" selected>Sell 2 (keep 1)</option><option value="3">Sell all 3</option></select></div>
-<div class="ctrl"><span class="cl">Steve keeps a unit?</span><select id="steve" onchange="go()"><option value="1" selected>Yes — he lives in Unit 1</option><option value="0">No — all units available</option></select></div>
+<div class="ctrl"><span class="cl">Owner keeps a unit?</span><select id="steve" onchange="go()"><option value="1" selected>Yes — owner lives in Unit 1</option><option value="0">No — all units available</option></select></div>
 <div id="sellSummary" style="font-size:.72rem;color:var(--text3);margin:2px 0 6px"></div>
 
 <h2>Pricing</h2>
@@ -163,7 +163,7 @@ th,td{padding:2px 4px}
 <div id="lm" style="font-size:.7rem;color:var(--green);margin:3px 0;display:none">Link copied</div>
 
 <div class="ft">
-<strong>189-191 Hamilton St — Condo sale model.</strong> This is an alternative scenario for comparison. The base case (rental hold) is the primary model aligned with Steve's vision for the building. Appraisal: $1,610,000 as-is (3/20/2025). For planning purposes only — not financial, legal, or tax advice.
+<strong>189-191 Hamilton St — Condo sale model.</strong> This is an alternative scenario for comparison. The base case (rental hold) is the primary model aligned with the owner's vision for the building. Appraisal: $1,610,000 as-is (3/20/2025). For planning purposes only — not financial, legal, or tax advice.
 </div>
 </div>
 
@@ -178,7 +178,7 @@ const psf=+document.getElementById('psf').value;
 const costsP=+document.getElementById('costs').value/100;
 let sellN=+document.getElementById('sell').value;
 const steveKeeps=+document.getElementById('steve').value;
-// The two controls must agree: if Steve keeps Unit 1, at most 2 units can be sold.
+// The two controls must agree: if the owner keeps Unit 1, at most 2 units can be sold.
 document.querySelector('#sell option[value="3"]').disabled=!!steveKeeps;
 if(steveKeeps&&sellN>2){sellN=2;document.getElementById('sell').value='2';}
 const drp=+document.getElementById('drp').value;
@@ -221,14 +221,14 @@ psEl.innerHTML=`<div class="cd bd gn" style="margin:6px 0"><p><strong>Gap: ${fmt
 const keepN=3-sellN;
 const rentalN=steveKeeps?Math.max(0,keepN-1):keepN;
 document.getElementById('sellSummary').textContent=steveKeeps
-  ?`Selling ${sellN} of 3 — Unit 1 stays as Steve's home${rentalN>0?`, ${rentalN} kept as rental${rentalN>1?'s':''}`:''}. "Sell all 3" is unavailable while Steve keeps a unit.`
+  ?`Selling ${sellN} of 3 — Unit 1 stays as the owner's home${rentalN>0?`, ${rentalN} kept as rental${rentalN>1?'s':''}`:''}. "Sell all 3" is unavailable while the owner keeps a unit.`
   :`Selling ${sellN} of 3 — ${keepN} kept${keepN>0?` as rental${keepN>1?'s':''}`:'; no units kept'}.`;
 
 // Unit cards
 const units=[];
 for(let i=1;i<=3;i++){
 let status,dim=false;
-if(steveKeeps&&i===1){status="Steve's home";dim=true;}
+if(steveKeeps&&i===1){status="Owner's home";dim=true;}
 else if(steveKeeps&&i<=sellN+1){status='Sell as condo';}
 else if(!steveKeeps&&i<=sellN){status='Sell as condo';}
 else{status='Keep as rental';}
@@ -297,7 +297,7 @@ document.getElementById('compOut').innerHTML=`
 if(rentalN>0){
 document.getElementById('residOut').innerHTML=`<div class="cd bd gn"><p><strong>${rentalN} unit${rentalN>1?'s':''} kept as rental${rentalN>1?'s':''}.</strong> These continue generating income — see the <a href="rental.html" style="color:var(--blue)">Rental Hold Model</a> for detailed projections. Combined with sale proceeds, this creates a hybrid: upfront cash from sales plus ongoing income from rentals.</p></div>`;
 }else if(steveKeeps){
-document.getElementById('residOut').innerHTML=`<div class="cd bd am"><p><strong>Steve keeps Unit 1</strong> (no revenue). All other units sold. No ongoing rental income — the sale proceeds are the full return. Steve's living expenses would need to come from the proceeds or other sources.</p></div>`;
+document.getElementById('residOut').innerHTML=`<div class="cd bd am"><p><strong>The owner keeps Unit 1</strong> (no revenue). All other units sold. No ongoing rental income — the sale proceeds are the full return. The owner's living expenses would need to come from the proceeds or other sources.</p></div>`;
 }else{
 document.getElementById('residOut').innerHTML=`<div class="cd bd bl"><p><strong>All units sold.</strong> No ongoing rental income. The sale proceeds represent the total return on investment.</p></div>`;
 }
@@ -340,17 +340,17 @@ document.getElementById('kpiOut').innerHTML=`
 <tr><td style="text-align:left">Price per SF</td><td>$${drpPsf}</td><td>$${mkpPsf}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Renovated Cambridgeport 2BR condos: $450–550/SF typical.</td></tr>
 <tr><td style="text-align:left">Renovation cost per unit</td><td colspan="2" style="text-align:center">${fmt(costPerUnit)}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Must be below sale price for the deal to create value.</td></tr>
 <tr><td style="text-align:left">Community equity</td><td style="color:var(--green);font-weight:600">${fmt(equityPreserved)}</td><td>$0</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Market value forgone to keep housing affordable.</td></tr>
-<tr><td style="text-align:left">Steve's equity waived</td><td colspan="2" style="text-align:center">${fmt(APPR)}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Building value donated. Not counted as investment cost.</td></tr>
+<tr><td style="text-align:left">Owner's equity waived</td><td colspan="2" style="text-align:center">${fmt(APPR)}</td><td style="text-align:left;font-size:.65rem;color:var(--text3)">Building value donated. Not counted as investment cost.</td></tr>
 </table></div>`;
 }
 
 function copyLink(){
 const p=new URLSearchParams();
-['psf','costs','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));
+['psf','costs','sell','drp','mkp','restrict','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));p.set('ownerKeeps',document.getElementById('steve').value);
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','costs','sell','steve','drp','mkp','restrict','conv','bkr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','costs','sell','drp','mkp','restrict','conv','bkr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(p.has('ownerKeeps'))document.getElementById('steve').value=p.get('ownerKeeps');else if(p.has('steve'))document.getElementById('steve').value=p.get('steve');} // older links used 'steve' as the param name
 
 loadSettings();go();
 </script>

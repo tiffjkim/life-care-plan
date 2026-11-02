@@ -147,7 +147,7 @@ function calcScenario(amiIdx, params) {
   const egiAfter = afterYear ? afterYear.egi : 0;
   const opexAfter = afterYear ? afterYear.totOx : 0;
 
-  // Before-transition snapshot (last full year with Steve alive)
+  // Before-transition snapshot (last full year with the owner in Unit 1)
   // When owner-occupancy is off there is no "before", so mirror the
   // steady-state (after) values instead of returning zeroes.
   const beforeYear = flow.years.filter(y => y.steveAlive && y.opMonths === 12).pop();
@@ -161,7 +161,7 @@ function calcScenario(amiIdx, params) {
     const d = flow.years.find(y => y.y === yr);
     if (!d) return null;
     let label = 'Year ' + yr;
-    if (occ && yr === sLife) label = 'Yr ' + yr + ' (last w/ Steve)';
+    if (occ && yr === sLife) label = 'Yr ' + yr + ' (last w/ owner)';
     if (occ && yr === sLife + 1) label = 'Yr ' + yr + ' (transition)';
     if (yr === projYrs) label = 'Yr ' + yr + ' (end)';
     return { yr, cf: d.cf, noi: d.noi, cumCF: d.cumCF, opMonths: d.opMonths, label };
