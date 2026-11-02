@@ -250,97 +250,6 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <h2>Assumptions Snapshot</h2>
 <div class="params" id="paramsSnap"></div>
 
-<h2 class="no-print">Next Steps — Cambridge, MA</h2>
-<div class="progress-bar no-print"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-<div class="progress-label" id="progressLabel">0 of 24 complete</div>
-
-<ul class="checklist">
-  <li>
-    <div class="step-header"><span class="num">01</span><span class="text">Engage elder law attorney for trust/LLC structure</span><span class="timing">Week 1-2</span></div>
-    <div class="sub">The financial model supports a perpetual hold. The legal structure needs to match. An irrevocable trust or LLC holds the property outside probate.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Research elder law attorneys in Cambridge/Boston area</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Schedule initial consultation (bring this report)</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Decide structure: irrevocable trust vs. LLC vs. deed restriction</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">02</span><span class="text">Verify affordable rent limits with Cambridge housing authority</span><span class="timing">Week 1-2</span></div>
-    <div class="sub">Confirm current AMI limits and published rent ceilings for Cambridge. The model uses HUD published rents, but local programs may have different thresholds.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Contact Cambridge Housing Authority for current AMI schedule</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Cross-check model's rent tiers against official limits</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">03</span><span class="text">Apply for CPA-28 property tax exemption</span><span class="timing">Week 3-4</span></div>
-    <div class="sub">Cambridge's Community Preservation Act surcharge may qualify for exemption if units are deed-restricted affordable. Improves cash flow by ~$800-1,200/yr.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Confirm deed restriction requirements with city assessor</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Gather documentation (affordability commitment, rent rolls)</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Submit CPA-28 exemption application</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">04</span><span class="text">Contact Cambridge Affordable Housing Trust for gap funding</span><span class="timing">Week 3-4</span></div>
-    <div class="sub">CAHT provides grants and loans for preservation of affordable units in small properties. If the model shows a gap at lower AMI tiers, this is the bridge.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Review CAHT funding eligibility and application timeline</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Prepare project summary with this report's financials</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Submit inquiry or application to CAHT</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">05</span><span class="text">Get updated insurance quotes</span><span class="timing">Week 2-3</span></div>
-    <div class="sub">Insurance costs have risen sharply — homeowners rates are up 45.8% nationally from 2020–2025 (<a href="https://www.lendingtree.com/insurance/rates-inflation-income-study/" target="_blank" rel="noopener" style="color:var(--blue)">LendingTree analysis of S&amp;P Global RateWatch data</a>). Current quotes may differ significantly from model assumptions. This is the single biggest cost risk.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Request quotes from 3 insurers for the property as-is</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Request quotes assuming deed-restricted affordable (may qualify for different rates)</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">06</span><span class="text">Appraise renovation scope and cost</span><span class="timing">Week 4-6</span></div>
-    <div class="sub">The model uses $175/sf as default. Get a real bid to validate or adjust. Scope drives everything downstream.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Walk the property with a contractor for scope assessment</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Get written estimate and timeline</label></li>
-    </ul>
-  </li>
-  <li id="stepCare">
-    <div class="step-header"><span class="num">07</span><span class="text">Draft the owner's care plan and transition timeline</span><span class="timing">Week 4-6</span></div>
-    <div class="sub">The model assumes the owner lives in Unit 1 for 7 years. The owner's actual health, preferences, and care needs should drive this number, not an assumption.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Discuss care preferences and timeline with the owner</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Consult with care coordinator or geriatric specialist</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">08</span><span class="text">Explore MassHousing or DHCD preservation programs</span><span class="timing">Week 6-8</span></div>
-    <div class="sub">State-level programs may offer low-interest loans, technical assistance, or capital for small multifamily preservation. These can close the viability gap at lower AMI tiers.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Research MassHousing small property preservation programs</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Check DHCD Community Investment Tax Credit eligibility</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">09</span><span class="text">Run final model with verified inputs</span><span class="timing">Week 8-10</span></div>
-    <div class="sub">Replace assumptions with real numbers from steps 2-8. Regenerate this Decision Report with verified data. This becomes the basis for legal structuring.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Update all sliders with verified inputs</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Generate final Decision Report and save shareable link</label></li>
-    </ul>
-  </li>
-  <li>
-    <div class="step-header"><span class="num">10</span><span class="text">Share final report with all advisors and schedule decision meeting</span><span class="timing">Week 10-12</span></div>
-    <div class="sub">Everyone at the table needs to see the same verified numbers. One meeting, one report, one decision.</div>
-    <ul class="substeps">
-      <li><label><input type="checkbox" onchange="updateProgress()"> Send final report link to attorney, financial advisor, housing counselor</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> Schedule decision meeting with all parties</label></li>
-      <li><label><input type="checkbox" onchange="updateProgress()"> At meeting: agree on AMI tier, legal structure, and timeline</label></li>
-    </ul>
-  </li>
-</ul>
-
 <div class="share">
   <button class="btn btn-p" onclick="copyLink()">Copy shareable link</button>
   <button class="btn" onclick="window.print()">Print / Save as PDF</button>
@@ -398,7 +307,6 @@ function go(){
   document.getElementById('drawRow').style.display=occ?'flex':'none';
   document.getElementById('sLifeRow').style.display=occ?'flex':'none';
   document.getElementById('chipRow').style.display=occ?'flex':'none';
-  document.getElementById('stepCare').style.display=occ?'':'none';
   const amiIdx=+document.getElementById('ami').value;
 
   // Condo inputs (Paths B & C) — the condo model prices soft + financing as one add-on rate on construction
@@ -629,15 +537,6 @@ function go(){
   ).join('');
 }
 
-function updateProgress(){
-  const allBoxes=[...document.querySelectorAll('.substeps input[type=checkbox]')];
-  const boxes=allBoxes.filter(cb=>{const li=cb.closest('.checklist > li');return !li||li.style.display!=='none';});
-  const checked=boxes.filter(cb=>cb.checked);
-  const pct=Math.round((checked.length/boxes.length)*100);
-  document.getElementById('progressFill').style.width=pct+'%';
-  document.getElementById('progressLabel').textContent=checked.length+' of '+boxes.length+' complete';
-  allBoxes.forEach(cb=>{cb.closest('li').classList.toggle('done',cb.checked)});
-}
 
 function copyLink(){
   const p=new URLSearchParams();

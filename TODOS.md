@@ -8,6 +8,7 @@
 **Depends on:** engine.js extraction of condo calculation logic.
 
 ## V2: Actionable playbook steps (not vague checklists)
+**Status: Superseded 2026-11-02** — the Next Steps checklist was removed from the Decision Report entirely at Tiffany's direction, so there is no checklist left to make actionable.
 **What:** Replace generic checklist items ("Research elder law attorneys") with specific, actionable playbook steps with exact phone numbers, what to ask for, what to bring, and what output to expect.
 **Why:** The current checklist is a to-do list, not a guide. Actionable means: "Call Cambridge Bar Association at (617) 225-5000. Ask for elder law attorney with irrevocable trust experience for rental property. Bring: this report, the appraisal, rent rolls, and the owner's will."
 **Context:** The user wants the product to be a living guide that teaches you how to do small-scale affordable housing development. Each step should have a specific deliverable and specific next action.
