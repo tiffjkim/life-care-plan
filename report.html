@@ -200,21 +200,16 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
   <div class="ctrl"><label class="cl" for="yrs">Projection horizon (years)</label><input type="range" min="10" max="25" step="1" value="15" id="yrs" oninput="go()"><span class="cv" id="o_yrs">15 yrs</span></div>
   <div class="ctrl" id="chipRow"><span class="cl">Owner helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No</option><option value="1" selected>Yes — pays 1/3</option></select></div>
 
-  <h2 style="margin-top:1rem;border:none;padding:0">Scenario AMI Tiers</h2>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px">
-    <div>
-      <div style="font-size:.65rem;font-weight:600;color:var(--red-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">A · Conservative</div>
-      <select id="ami_a" onchange="go()" style="width:100%"></select>
-    </div>
-    <div>
-      <div style="font-size:.65rem;font-weight:600;color:var(--amber-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">B · Moderate</div>
-      <select id="ami_b" onchange="go()" style="width:100%"></select>
-    </div>
-    <div>
-      <div style="font-size:.65rem;font-weight:600;color:var(--green-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">C · Aggressive</div>
-      <select id="ami_c" onchange="go()" style="width:100%"></select>
-    </div>
-  </div>
+  <h2 style="margin-top:1rem;border:none;padding:0">The Three Paths</h2>
+  <p style="font-size:.72rem;color:var(--text2);margin-top:4px">Every path shares the assumptions above — same building, same renovation, same acquisition cost. <strong>A · Rental hold</strong> keeps all 3 units as rentals. <strong>B · Condo sale</strong> sells units as condos. <strong>C · Hybrid</strong> sells exactly 1 unit and holds the other 2 as rentals.</p>
+  <div class="ctrl"><span class="cl">A &amp; C — Affordable rent tier</span><select id="ami" onchange="go()"></select></div>
+  <div class="ctrl"><span class="cl">B — Units sold as condos</span><select id="sellN" onchange="go()"><option value="1">Sell 1 (keep 2)</option><option value="2">Sell 2 (keep 1)</option><option value="3" selected>Sell all 3</option></select></div>
+  <div id="sellNote" style="font-size:.68rem;color:var(--text3);margin:2px 0 6px"></div>
+  <div class="ctrl"><span class="cl">B &amp; C — Pricing approach</span><select id="restrict" onchange="go()"><option value="1" selected>Deed-restricted (affordable)</option><option value="0">Market rate (unrestricted)</option></select></div>
+  <div class="ctrl"><label class="cl" for="drp">Deed-restricted price per unit</label><input type="range" min="200000" max="2500000" step="25000" value="400000" id="drp" oninput="go()"><span class="cv" id="o_drp">$400K</span></div>
+  <div class="ctrl"><label class="cl" for="mkp">Market price per unit</label><input type="range" min="200000" max="2500000" step="25000" value="600000" id="mkp" oninput="go()"><span class="cv" id="o_mkp">$600K</span></div>
+  <div class="ctrl"><label class="cl" for="conv">Condo conversion costs</label><input type="range" min="15000" max="75000" step="1000" value="25000" id="conv" oninput="go()"><span class="cv" id="o_conv">$25K</span></div>
+  <div class="ctrl"><label class="cl" for="bkr">Broker commission</label><input type="range" min="0" max="6" step="0.5" value="5" id="bkr" oninput="go()"><span class="cv" id="o_bkr">5.0%</span></div>
 </div>
 
 <!-- ═══════════════ REPORT (visible on print) ═══════════════ -->
@@ -222,15 +217,15 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <!-- Verdict banners — one per scenario -->
 <div class="verdicts" id="verdicts"></div>
 
-<h2>Three-Scenario Comparison</h2>
+<h2>Three Paths, Side by Side</h2>
 <div style="overflow-x:auto">
 <table id="compTable">
   <thead>
     <tr>
       <th style="width:30%">Metric</th>
-      <th class="col-rd" style="width:23%">A · Conservative</th>
-      <th class="col-am" style="width:23%">B · Moderate</th>
-      <th class="col-gn" style="width:23%">C · Aggressive</th>
+      <th class="col-gn" style="width:23%">A · Rental hold</th>
+      <th class="col-rd" style="width:23%">B · Condo sale</th>
+      <th class="col-am" style="width:23%">C · Hybrid (sell 1, hold 2)</th>
     </tr>
   </thead>
   <tbody id="compBody"></tbody>
@@ -238,8 +233,11 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 </div>
 
 <h2 class="no-print">Cash Flow at Key Milestones</h2>
-<h3 id="ms_label_b" class="no-print">Scenario B · Moderate</h3>
+<h3 id="ms_label_a" class="no-print">Path A · Rental hold</h3>
 <div class="ms-grid no-print" id="milestones"></div>
+<div id="msNoteB" class="no-print" style="margin-top:8px"></div>
+<h3 id="ms_label_c" class="no-print" style="margin-top:10px">Path C · Hybrid (rental part)</h3>
+<div class="ms-grid no-print" id="milestonesC"></div>
 
 <h2 id="transitionHeading">Owner's Transition — Before &amp; After</h2>
 <p id="transitionIntro" style="font-size:.78rem;color:var(--text2);margin-bottom:8px">The owner's transition is the single biggest financial event in this model. Three things change at once.</p>
@@ -358,13 +356,11 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <script src="engine.js"></script>
 <script>
 
-// Populate AMI selects
+// Populate the AMI select (Path A & C rent tier)
 function populateSelects(){
-  ['ami_a','ami_b','ami_c'].forEach((id,i)=>{
-    const sel=document.getElementById(id);
-    TIERS.forEach((t,j)=>{sel.add(new Option(t.l+' AMI',j))});
-    sel.value=[0,3,5][i]; // Defaults: A=50%, B=80%, C=100%
-  });
+  const sel=document.getElementById('ami');
+  TIERS.forEach((t,j)=>{sel.add(new Option(t.l+' AMI',j))});
+  sel.value=3; // Default: 80% AMI
 }
 
 function toggleOpex(){
@@ -394,6 +390,8 @@ function getParams(){
   return{mktRent,psf,softP,finP,steveContrib,acqCost,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride,ownerOccupied,ownerUnits:ownerOccupied?1:0};
 }
 
+function fmtPriceShort(v){return v>=1000000?'$'+(v/1000000).toFixed(2)+'M':'$'+(v/1000).toFixed(0)+'K';}
+
 function go(){
   const p=getParams();
   const occ=p.ownerOccupied;
@@ -401,13 +399,38 @@ function go(){
   document.getElementById('sLifeRow').style.display=occ?'flex':'none';
   document.getElementById('chipRow').style.display=occ?'flex':'none';
   document.getElementById('stepCare').style.display=occ?'':'none';
-  const amiA=+document.getElementById('ami_a').value;
-  const amiB=+document.getElementById('ami_b').value;
-  const amiC=+document.getElementById('ami_c').value;
+  const amiIdx=+document.getElementById('ami').value;
+
+  // Condo inputs (Paths B & C) — the condo model prices soft + financing as one add-on rate on construction
+  const drp=+document.getElementById('drp').value;
+  const mkp=+document.getElementById('mkp').value;
+  const restricted=document.getElementById('restrict').value==='1';
+  const conv=+document.getElementById('conv').value;
+  const bkr=+document.getElementById('bkr').value/100;
+  const condoBase={psf:p.psf,costsP:p.softP+p.finP,drp,mkp,restricted,conv,bkr};
+
+  // ── The three paths, all from the shared engine ──
+  const A=calcScenario(amiIdx,p); // A · Rental hold — all 3 units
+  const sellNWant=+document.getElementById('sellN').value;
+  const B=calcCondo({...condoBase,sellN:sellNWant,ownerKeeps:occ}); // B · Condo sale
+  if(B.sellN!==sellNWant)document.getElementById('sellN').value=String(B.sellN);
+  const C1=calcCondo({...condoBase,sellN:1,ownerKeeps:occ}); // C · Hybrid — the one unit sold
+  const C=calcScenario(amiIdx,{...p,heldUnits:2}); // C · Hybrid — the two units held
+
+  // Hybrid economics: one-time proceeds + the held units' rental stream, against the whole-building capital
+  const cNetSale=C1.netSale;
+  const cCapital=C.cap.totalWithDown+C1.totalSellCosts;
+  const cReturned=cNetSale+C.cumTotal;
+  const cNet=cNetSale+C.cumTotal-C.cap.totalWithDown;
+  let cPayback=null;
+  for(const y of C.flow.years){if(cNetSale+y.cumCF>=C.cap.totalWithDown){cPayback=y.y;break;}}
+  const netA=A.cumTotal-A.cap.totalWithDown;
+  const netB=B.netSale-B.totalInvest-p.acqCost;
+  const capB=p.acqCost+B.totalInvest+B.totalSellCosts;
 
   // Update display values
   document.getElementById('o_mkt').textContent='$'+p.mktRent.toLocaleString();
-  document.getElementById('o_acqCost').textContent=p.acqCost===0?'$0':p.acqCost>=1000000?'$'+(p.acqCost/1000000).toFixed(2)+'M':'$'+(p.acqCost/1000).toFixed(0)+'K';
+  document.getElementById('o_acqCost').textContent=p.acqCost===0?'$0':fmtPriceShort(p.acqCost);
   document.getElementById('o_psf').textContent='$'+p.psf;
   document.getElementById('o_soft').textContent=Math.round(p.softP*100)+'%';
   document.getElementById('o_fin').textContent=Math.round(p.finP*100)+'%';
@@ -419,83 +442,82 @@ function go(){
   document.getElementById('o_yrs').textContent=p.yrs+' yrs';
   document.getElementById('o_opexPct').textContent=Math.round(p.opexPct*100)+'%';
   document.getElementById('o_opexOverride').textContent='$'+(p.opexOverride||DEFAULT_OPEX).toLocaleString();
-  // Dynamic max: 110% of gross rental income at moderate scenario AMI
-  const modTier=TIERS[amiB];
-  const modNetRent=modTier.pub-UA;
-  const modGross=modNetRent*(occ?2:3)*12;
-  const opexMax=Math.round(modGross*1.1);
+  document.getElementById('o_drp').textContent=fmtPriceShort(drp);
+  document.getElementById('o_mkp').textContent=fmtPriceShort(mkp);
+  document.getElementById('o_conv').textContent='$'+(conv/1000).toFixed(0)+'K';
+  document.getElementById('o_bkr').textContent=(bkr*100).toFixed(1)+'%';
+  document.getElementById('sellNote').textContent=occ
+    ?(sellNWant===3&&B.sellN===2
+      ?'The owner keeps Unit 1, so Path B can sell at most 2 units — adjusted automatically. In Path C the owner keeps Unit 1 and one unit is held as a rental during the residency.'
+      :'The owner keeps Unit 1 in every path: in B it is never sold; in C the held units are the owner’s home plus one rental during the residency, then two rentals.')
+    :'Path C always sells exactly 1 unit and holds the other 2 as rentals.';
+  // Dynamic max: 110% of gross rental income at the selected AMI
+  const tier=TIERS[amiIdx];
+  const netRent=tier.pub-UA;
+  const grossIncome=netRent*(occ?2:3)*12;
+  const opexMax=Math.round(grossIncome*1.1);
   document.getElementById('opexOverride').max=Math.max(opexMax,10000);
   document.getElementById('opexNote').textContent=p.opexMode==='override'
-    ?'= '+(modGross>0?(p.opexOverride/modGross*100).toFixed(1):'0')+'% of income (max: 110% = $'+opexMax.toLocaleString()+')'
-    :'= $'+resolveOpex('pct',p.opexPct,0,modNetRent,occ?2:3).toLocaleString()+'/yr at Scenario B AMI';
+    ?'= '+(grossIncome>0?(p.opexOverride/grossIncome*100).toFixed(1):'0')+'% of income (max: 110% = $'+opexMax.toLocaleString()+')'
+    :'= $'+resolveOpex('pct',p.opexPct,0,netRent,occ?2:3).toLocaleString()+'/yr at the selected AMI';
 
-  const scenarios=[
-    {key:'a',label:'A · Conservative',idx:amiA,...calcScenario(amiA,p)},
-    {key:'b',label:'B · Moderate',idx:amiB,...calcScenario(amiB,p)},
-    {key:'c',label:'C · Aggressive',idx:amiC,...calcScenario(amiC,p)}
-  ];
-
-  // ── Verdicts (3-tier: OPTIMAL / VIABLE / NOT VIABLE) ──
-  const vHtml=scenarios.map(s=>{
-    let cls,labelCls,statusText,detail;
-    if(s.viability==='optimal'){
-      cls='';labelCls='gn';statusText='OPTIMAL';
-      detail='First full year cash flow '+fmt(s.cfFirstFull)+'. Healthy margin against cost surprises.';
-    }else if(s.viability==='viable'){
-      cls='amber';labelCls='am';statusText='VIABLE';
-      detail='First full year cash flow '+fmt(s.cfFirstFull)+'. Tight ... one insurance spike or vacancy could tip it.';
-    }else{
-      cls='red';labelCls='rd';statusText='NOT VIABLE';
-      detail='First full year shortfall '+fmt(s.cfFirstFull)+'. Needs subsidy or higher AMI tier.';
-    }
-    const mktNote=s.marketDelta>0.5?' Rents are above market (+'+s.marketDelta.toFixed(1)+'% premium).'
-      :s.marketDelta<-0.5?' Rents are '+Math.abs(s.marketDelta).toFixed(1)+'% below market.'
-      :' Rents are at market.';
-    return `<div class="verdict ${cls}">
-      <div class="v-label ${labelCls}">${s.label}</div>
-      <div class="v-status ${labelCls}">${statusText} at ${s.tier.l}</div>
-      <div class="v-detail">${detail}${mktNote}</div>
+  // ── Verdicts — one per path ──
+  let aCls,aLabel,aStatus,aDetail;
+  if(A.viability==='optimal'){aCls='';aLabel='gn';aStatus='VIABLE — STRONG';aDetail='First full year cash flow '+fmt(A.cfFirstFull)+'. Healthy margin against cost surprises.';}
+  else if(A.viability==='viable'){aCls='amber';aLabel='am';aStatus='VIABLE — TIGHT';aDetail='First full year cash flow '+fmt(A.cfFirstFull)+'. Tight — one insurance spike or vacancy could tip it.';}
+  else{aCls='red';aLabel='rd';aStatus='NOT VIABLE';aDetail='First full year shortfall '+fmt(A.cfFirstFull)+'. Needs subsidy or a higher AMI tier.';}
+  const bAhead=netB>=0;
+  const cStatus=cNet>=0?'AHEAD BY YEAR '+p.yrs:(C.cfFirstFull>=0?'INCOME-POSITIVE, CAPITAL SHORT':'NOT VIABLE');
+  const cCls=cNet>=0?'':(C.cfFirstFull>=0?'amber':'red');
+  const cLabel=cNet>=0?'gn':(C.cfFirstFull>=0?'am':'rd');
+  const ctrlText=B.control?'You keep the HOA majority ('+B.keepN+' vs '+B.sellN+').':B.deadlock?'HOA votes tie '+B.keepN+'–'+B.sellN+' — deadlock risk.':'Buyers hold the HOA majority ('+B.sellN+' vs '+B.keepN+').';
+  document.getElementById('verdicts').innerHTML=`
+    <div class="verdict ${aCls}">
+      <div class="v-label ${aLabel}">A · Rental hold</div>
+      <div class="v-status ${aLabel}">${aStatus} at ${tier.l} AMI</div>
+      <div class="v-detail">${aDetail} Capital recovered ${A.paybackYr?'in Year '+A.paybackYr:'beyond Year '+p.yrs}; all 3 units stay affordable rentals${occ?' and the owner keeps a home in Unit 1 during the residency':''}.</div>
+    </div>
+    <div class="verdict ${bAhead?'':'red'}">
+      <div class="v-label ${bAhead?'gn':'rd'}">B · Condo sale</div>
+      <div class="v-status ${bAhead?'gn':'rd'}">${bAhead?'NET POSITIVE':'NET LOSS'} — ONE-TIME</div>
+      <div class="v-detail">Selling ${B.sellN} unit${B.sellN>1?'s':''} at ${fmt(B.salePrice)} (${restricted?'deed-restricted':'market'}) nets ${fmt(B.netSale)} once, ${fmt(Math.abs(netB))} ${bAhead?'ahead of':'short of'} the all-in cost. No ongoing rental income from the sold units. ${ctrlText}</div>
+    </div>
+    <div class="verdict ${cCls}">
+      <div class="v-label ${cLabel}">C · Hybrid (sell 1, hold 2)</div>
+      <div class="v-status ${cLabel}">${cStatus}</div>
+      <div class="v-detail">The sale brings ${fmt(cNetSale)} up front; the 2 held units add ${fmt(C.cfFirstFull)} in their first full year and ${fmt(C.cumTotal)} over ${p.yrs} years. Combined position at Year ${p.yrs}: ${fmt(cNet)} against the capital in.</div>
     </div>`;
-  }).join('');
-  document.getElementById('verdicts').innerHTML=vHtml;
 
   // ── Comparison table ──
   const minViable=findMinViableAMI(p);
-  const projYrs=occ?Math.max(p.yrs,p.sLife+2):p.yrs;
+  const projYrs=p.yrs;
+  const cfCls=v=>v>=10000?'pos':v>=0?'warn':'neg';
+  const netCls=v=>v>=0?'pos':'neg';
   const rows=[
-    {label:'AMI tier',vals:scenarios.map(s=>s.tier.l)},
-    {label:'Affordable rent (net of utilities)',vals:scenarios.map(s=>fmt(s.netRent)+'/mo')},
-    {label:'Discount / premium to market',vals:scenarios.map(s=>fmtMarketDelta(s.netRent,p.mktRent))},
-    {label:'Cash flow — first full operating year'+(scenarios[0].firstFullYr?' (Yr '+scenarios[0].firstFullYr+')':''),vals:scenarios.map(s=>{
-      const cls=s.viability==='optimal'?'pos':s.viability==='viable'?'warn':'neg';
-      return `<span class="${cls}">${fmt(s.cfFirstFull)}</span>`;
-    })},
-    ...(occ?[{label:'Cash flow — after transition (Yr '+(p.sLife+1)+')',vals:scenarios.map(s=>{
-      const cls=s.cfAfter>=10000?'pos':s.cfAfter>=0?'warn':'neg';
-      return `<span class="${cls}">${fmt(s.cfAfter)}</span>`;
-    })}]:[{label:'Units rented',vals:scenarios.map(()=>'3 of 3 from Year 1')}]),
-    {label:'Cumulative cash flow ('+projYrs+'yr)',vals:scenarios.map(s=>{
-      const cls=s.cumTotal>=0?'pos':'neg';
-      return `<span class="${cls}">${fmt(s.cumTotal)}</span>`;
-    })},
-    {label:'Total capital needed',vals:scenarios.map(s=>fmt(s.cap.totalWithDown))},
-    {label:'Capital recovered by',vals:scenarios.map(s=>s.paybackYr?'Year '+s.paybackYr:'Beyond yr '+projYrs)},
-    {label:'Annual return on capital',vals:scenarios.map(s=>pctFmt(s.yoc))},
-    {label:'Affordable units preserved',vals:scenarios.map(s=>{
-      if(s.isAffordable) return occ?'<span class="pos">2 of 3</span>':'<span class="pos">3 of 3</span>';
-      return '<span class="neg">0 of 3 (above market)</span>';
-    })},
-    {label:'Probate risk',vals:scenarios.map(()=>'Eliminated')},
-    {label:'Minimum viable AMI',vals:scenarios.map(()=>minViable?minViable.tier.l:'None viable')}
+    {label:'What happens',vals:['Hold all 3 units as rentals','Sell '+B.sellN+' of 3 as condos'+(B.keepN>0?', keep '+B.keepN:''),'Sell 1 as a condo, hold 2 as rentals']},
+    {label:'Rent tier (rental paths)',vals:[tier.l+' AMI · '+fmt(A.netRent)+'/mo','—',tier.l+' AMI · '+fmt(C.netRent)+'/mo']},
+    {label:'Sale price per unit',vals:['—',fmt(B.salePrice)+(restricted?' (deed-restricted)':' (market)'),fmt(C1.salePrice)+(restricted?' (deed-restricted)':' (market)')]},
+    {label:'Net sale proceeds (one-time)',vals:['—',fmt(B.netSale),fmt(cNetSale)]},
+    {label:'Total capital needed',vals:[fmt(A.cap.totalWithDown),fmt(capB),fmt(cCapital)]},
+    {label:'Cash flow — first full operating year'+(A.firstFullYr?' (Yr '+A.firstFullYr+')':''),vals:[`<span class="${cfCls(A.cfFirstFull)}">${fmt(A.cfFirstFull)}</span>`,'— (sold units earn nothing)',`<span class="${cfCls(C.cfFirstFull)}">${fmt(C.cfFirstFull)}</span>`]},
+    {label:'Cumulative rental cash flow ('+projYrs+' yrs)',vals:[`<span class="${netCls(A.cumTotal)}">${fmt(A.cumTotal)}</span>`,'—',`<span class="${netCls(C.cumTotal)}">${fmt(C.cumTotal)}</span>`]},
+    {label:'Total cash returned by Year '+projYrs,vals:[fmt(A.cumTotal),fmt(B.netSale),fmt(cReturned)]},
+    {label:'Net cash position at Year '+projYrs,vals:[`<span class="${netCls(netA)}">${fmt(netA)}</span>`,`<span class="${netCls(netB)}">${fmt(netB)}</span>`,`<span class="${netCls(cNet)}">${fmt(cNet)}</span>`]},
+    {label:'Capital recovered by',vals:[A.paybackYr?'Year '+A.paybackYr:'Beyond yr '+projYrs,'At sale (Year 1–2)',cPayback?(cPayback===1&&cNetSale>=C.cap.totalWithDown?'At sale':'Year '+cPayback):'Beyond yr '+projYrs]},
+    {label:'Return measure',vals:[pctFmt(A.yoc)+' /yr on capital',(B.netSale/Math.max(1,B.totalInvest+p.acqCost)).toFixed(2)+'x on capital (one-time)',pctFmt(C.yoc)+' /yr on capital']},
+    {label:'Affordable homes preserved',vals:[A.isAffordable?(occ?'2 of 3 rented + owner’s home':'3 of 3'):'0 of 3 (rent above market)',B.restricted?B.sellN+' sold deed-restricted':'0 — sold at market',(C1.restricted?'1 sold deed-restricted + ':'')+(A.isAffordable?'2 held affordable':'2 held (above market)')]},
+    {label:'Owner’s home',vals:occ?['Unit 1 during residency','Unit 1 kept — never sold','Unit 1 kept — never sold']:['Not in this plan','Not in this plan','Not in this plan']},
+    {label:'Building control (HOA votes)',vals:['Full — no sale',ctrlText,C1.control?'You keep the HOA majority (2 vs 1)':'Shared']},
+    {label:'Community equity preserved',vals:[A.netRent<p.mktRent?fmt((p.mktRent-A.netRent)*(occ?2:3)*12)+'/yr in rent discount':'$0 (rents at market)',B.restricted?fmt(B.equityPreserved):'$0',C1.restricted?fmt(C1.equityPreserved)+' + rent discount on held units':'Rent discount on held units']},
+    {label:'Probate risk',vals:['Eliminated','Eliminated','Eliminated']},
+    {label:'Minimum viable AMI (rental paths)',vals:[minViable?minViable.tier.l+' AMI':'None viable','—',minViable?minViable.tier.l+' AMI':'None viable']}
   ];
   document.getElementById('compBody').innerHTML=rows.map(r=>
     `<tr><td>${r.label}</td>${r.vals.map(v=>`<td>${v}</td>`).join('')}</tr>`
-  ).join('');
+  ).join('')+`<tr><td colspan="4" style="font-size:.68rem;color:var(--text3)">Net cash position counts cash only — rent and sale proceeds against all capital in. It does not value what each path still owns at Year ${projYrs}: A still owns the whole building, C owns 2 units, B owns ${B.keepN} unit${B.keepN===1?'':'s'}. Path B counts sale proceeds only; any units kept in B would earn rent as in the rental model — Path C quantifies that combination. Hybrid expenses use the whole-building operating figure for the 2 held units (conservative — no HOA offset modeled).</td></tr>`;
 
-  // ── Milestones (show scenario B) ──
-  const bScen=scenarios[1];
-  document.getElementById('ms_label_b').textContent='Scenario B · '+bScen.tier.l+' AMI';
-  document.getElementById('milestones').innerHTML=bScen.milestones.map(m=>{
+  // ── Milestones ──
+  const msGrid=scen=>scen.milestones.map(m=>{
     const cls=m.cf>=10000?'gn':m.cf>=0?'am':'rd';
     return `<div class="ms-card ${cls}">
       <div class="ms-yr">${m.label}${m.opMonths<12?' ('+m.opMonths+'mo)':''}</div>
@@ -503,62 +525,66 @@ function go(){
       <div class="ms-note">${m.opMonths===0?'under construction':'annual cash flow'}</div>
     </div>`;
   }).join('');
+  document.getElementById('ms_label_a').textContent='Path A · Rental hold · '+tier.l+' AMI';
+  document.getElementById('milestones').innerHTML=msGrid(A);
+  document.getElementById('msNoteB').innerHTML=`<div class="risk-card" style="border-left-color:var(--red)"><p style="margin:0;color:var(--text)"><strong>Path B · Condo sale</strong> has no annual cash flow — ${fmt(B.netSale)} in net proceeds arrives once, at sale. ${B.rentalN>0?'The '+B.rentalN+' unit'+(B.rentalN>1?'s':'')+' kept in B would earn rent like Path C’s held units.':''}</p></div>`;
+  document.getElementById('ms_label_c').textContent='Path C · Hybrid · '+tier.l+' AMI (plus '+fmt(cNetSale)+' from the sale)';
+  document.getElementById('milestonesC').innerHTML=msGrid(C);
 
-  // ── Transition / steady-state section — use scenario B ──
+  // ── Transition / steady-state section — Path A drives it ──
   document.getElementById('transitionHeading').textContent=occ?"Owner's Transition — Before & After":'Unit 1 — Rented From Year 1';
-  document.getElementById('transitionIntro').textContent=occ?"The owner's transition is the single biggest financial event in this model. Three things change at once.":'Unit 1 is modeled as a rental for the full projection, so there is no transition year. All three units earn from Year 1, with no care draw and no owner expense share.';
+  document.getElementById('transitionIntro').textContent=occ?"The owner's transition is the single biggest financial event in the rental paths. Three things change at once — in Path A all 3 units come online; in Path C the held units do.":'Unit 1 is modeled as a rental for the full projection, so there is no transition year. All three units earn from Year 1, with no care draw and no owner expense share.';
   if(!occ){
     document.getElementById('transitionCards').innerHTML=`
     <div class="trans-card after" style="grid-column:1/-1">
       <div class="tc-label" style="color:var(--green-text)">All units rented (Year 1+)</div>
       <div class="tc-row"><span class="tc-key">Units rented</span><span class="tc-val">3 of 3</span></div>
-      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(bScen.egiAfter)}/yr</span></div>
-      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(bScen.opexAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(A.egiAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(A.opexAfter)}/yr</span></div>
       <div class="tc-row"><span class="tc-key">Care draw</span><span class="tc-val">$0 — not included in this scenario</span></div>
       <div class="tc-row"><span class="tc-key">Owner expense contribution</span><span class="tc-val">None</span></div>
-      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${bScen.cfAfter>=0?'color:var(--green)':'color:var(--red)'}">${fmt(bScen.cfAfter)}/yr</span></div>
+      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${A.cfAfter>=0?'color:var(--green)':'color:var(--red)'}">${fmt(A.cfAfter)}/yr</span></div>
     </div>`;
     document.getElementById('transitionNote').innerHTML=`<div class="risk-card" style="border-left-color:var(--blue)">
     <p style="margin:0;color:var(--text)"><strong>Why this looks different:</strong> Compared with the owner-occupied model, the 3rd unit's rent is included from the start and the care budget is $0, so first-year cash flow is higher and there is no jump in Year ${p.sLife+1}. Turn <strong>Unit 1 occupancy</strong> back to owner-occupied above to compare against the original plan.</p>
   </div>`;
   } else {
-  // ── Owner's transition (before/after) — use scenario B ──
   document.getElementById('transitionCards').innerHTML=`
     <div class="trans-card before">
       <div class="tc-label" style="color:var(--amber-text)">While the owner occupies Unit 1 (Years 1-${p.sLife})</div>
       <div class="tc-row"><span class="tc-key">Units rented</span><span class="tc-val">2 of 3</span></div>
-      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(bScen.egiBefore)}/yr</span></div>
-      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(bScen.opexBefore)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(A.egiBefore)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(A.opexBefore)}/yr</span></div>
       <div class="tc-row"><span class="tc-key">Owner's care draw</span><span class="tc-val neg">${fmt(-p.draw)}/yr</span></div>
       <div class="tc-row"><span class="tc-key">Owner's expense contribution</span><span class="tc-val pos">${p.chip?'Pays 1/3':'None'}</span></div>
-      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${bScen.cfBefore>=0?'color:var(--green)':'color:var(--red)'}">${fmt(bScen.cfBefore)}/yr</span></div>
+      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${A.cfBefore>=0?'color:var(--green)':'color:var(--red)'}">${fmt(A.cfBefore)}/yr</span></div>
     </div>
     <div class="trans-card after">
       <div class="tc-label" style="color:var(--green-text)">After transition (Year ${p.sLife+1}+)</div>
       <div class="tc-row"><span class="tc-key">Units rented</span><span class="tc-val">3 of 3</span></div>
-      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(bScen.egiAfter)}/yr</span></div>
-      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(bScen.opexAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(A.egiAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(A.opexAfter)}/yr</span></div>
       <div class="tc-row"><span class="tc-key">Owner's care draw</span><span class="tc-val">$0</span></div>
       <div class="tc-row"><span class="tc-key">Owner's expense contribution</span><span class="tc-val">None</span></div>
-      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${bScen.cfAfter>=0?'color:var(--green)':'color:var(--red)'}">${fmt(bScen.cfAfter)}/yr</span></div>
+      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${A.cfAfter>=0?'color:var(--green)':'color:var(--red)'}">${fmt(A.cfAfter)}/yr</span></div>
     </div>`;
-  const cfDelta=bScen.cfAfter-bScen.cfBefore;
+  const cfDelta=A.cfAfter-A.cfBefore;
   document.getElementById('transitionNote').innerHTML=`<div class="risk-card" style="border-left-color:var(--blue)">
     <p style="margin:0;color:var(--text)"><strong>Net change at transition:</strong> Cash flow ${cfDelta>=0?'improves':'worsens'} by <strong>${fmt(Math.abs(cfDelta))}/yr</strong>.
     ${cfDelta>=0?'The 3rd unit adds income and the care draw stops, which more than offsets losing the owner\'s 1/3 expense contribution.':'Losing the owner\'s expense contribution outweighs the gains — review the AMI tier.'}</p>
   </div>`;
   } // end owner-occupied transition branch
 
-  // ── Construction risk (using engine.js calcCapital) ──
-  const capB=bScen.cap;
-  const stressCost=Math.round(capB.totalInvest*1.2)+capB.downExpenses;
-  const delayCarryPerMonth=Math.round(bScen.baseOpex/12)+Math.round(bScen.netRent*(occ?2:3)*(1-VAC)/1); // monthly carry (baseOpex: BASE_OPEX was undefined in the original, which stopped this section rendering)
+  // ── Construction risk (using engine.js calcCapital via Path A) ──
+  const capR=A.cap;
+  const stressCost=Math.round(capR.totalInvest*1.2)+capR.downExpenses;
+  const delayCarryPerMonth=Math.round(A.baseOpex/12)+Math.round(A.netRent*(occ?2:3)*(1-VAC)/1); // monthly carry during a delay
   const delayStress6mo=delayCarryPerMonth*6;
   document.getElementById('constructionRisk').innerHTML=`
     <div class="risk-card">
-      <div class="risk-row"><span class="risk-key">Construction (${fmt(capB.constr)}) + soft (${fmt(capB.soft)}) + financing (${fmt(capB.financing)})</span><span class="risk-val">${fmt(capB.totalInvest)}</span></div>
-      <div class="risk-row"><span class="risk-key">Carrying costs during ${p.downtime}-month build (taxes/insurance)</span><span class="risk-val">${fmt(capB.downExpenses)}</span></div>
-      <div class="risk-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px;font-weight:600"><span class="risk-key">Total capital needed</span><span class="risk-val">${fmt(capB.totalWithDown)}</span></div>
+      <div class="risk-row"><span class="risk-key">Construction (${fmt(capR.constr)}) + soft (${fmt(capR.soft)}) + financing (${fmt(capR.financing)})</span><span class="risk-val">${fmt(capR.totalInvest)}</span></div>
+      <div class="risk-row"><span class="risk-key">Carrying costs during ${p.downtime}-month build (taxes/insurance)</span><span class="risk-val">${fmt(capR.downExpenses)}</span></div>
+      <div class="risk-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px;font-weight:600"><span class="risk-key">Total capital needed</span><span class="risk-val">${fmt(capR.totalWithDown)}</span></div>
     </div>
     <div class="risk-card" style="border-left-color:var(--red)">
       <p style="margin:0 0 6px;color:var(--text);font-weight:500">Stress tests</p>
@@ -570,17 +596,26 @@ function go(){
   // ── Parameters snapshot ──
   const snapParams=[
     {l:'Market rent (2BR)',v:'$'+p.mktRent.toLocaleString()+'/mo'},
-    {l:'Acquisition cost',v:(p.acqCost===0?'$0':p.acqCost>=1000000?'$'+(p.acqCost/1000000).toFixed(2)+'M':'$'+(p.acqCost/1000).toFixed(0)+'K')+' — settles the owner\'s liabilities'},
+    {l:'Acquisition cost',v:(p.acqCost===0?'$0':fmtPriceShort(p.acqCost))+' — settles the owner\'s liabilities'},
     {l:'Construction $/sf',v:'$'+p.psf},
     {l:'Soft costs',v:Math.round(p.softP*100)+'%'},
     {l:'Financing costs',v:Math.round(p.finP*100)+'%'},
+    {l:'Rent tier (Paths A & C)',v:tier.l+' AMI · '+fmt(A.netRent)+'/mo net'},
+    {l:'Condo add-on rate (Paths B & C)',v:Math.round((p.softP+p.finP)*100)+'% of construction (soft + financing combined, as in the condo model)'},
+    {l:'Pricing approach (B & C)',v:restricted?'Deed-restricted (affordable)':'Market rate (unrestricted)'},
+    {l:'Deed-restricted price',v:fmt(drp)+' per unit'},
+    {l:'Market price',v:fmt(mkp)+' per unit'},
+    {l:'Path B sells',v:B.sellN+' of 3 units'},
+    {l:'Path C',v:'Sell 1, hold 2 as rentals'},
+    {l:'Conversion costs',v:fmt(conv)},
+    {l:'Broker commission',v:(bkr*100).toFixed(1)+'%'},
     {l:'Construction time',v:p.downtime+' months'},
     {l:'Unit 1 occupancy',v:occ?'Owner-occupied':'Available as rental — 3 of 3 rented'},
     ...(occ?[
     {l:'Owner\'s care budget',v:'$'+p.draw.toLocaleString()+'/yr'},
     {l:'Owner\'s residency',v:p.sLife+' years'},
     {l:'Owner pays 1/3 expenses',v:p.chip?'Yes':'No'}]:[]),
-    {l:'Operating expenses',v:'$'+scenarios[1].baseOpex.toLocaleString()+'/yr ('+Math.round(scenarios[1].opexPctOfIncome*100)+'% of income)'},
+    {l:'Operating expenses',v:'$'+A.baseOpex.toLocaleString()+'/yr ('+Math.round(A.opexPctOfIncome*100)+'% of income)'},
     {l:'Vacancy rate',v:'5%'},
     {l:'Management fee',v:'8%'},
     {l:'Utility allowance',v:'$'+UA+'/mo'},
@@ -606,7 +641,7 @@ function updateProgress(){
 
 function copyLink(){
   const p=new URLSearchParams();
-  ['mkt','acqCost','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','opexMode','opexPct','opexOverride','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>p.set(k,document.getElementById(k).value));
+  ['mkt','acqCost','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','opexMode','opexPct','opexOverride','ownerOcc','ami','sellN','restrict','drp','mkp','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));
   const url=location.origin+location.pathname+'?'+p.toString();
   navigator.clipboard.writeText(url).then(()=>{
     const btn=document.querySelector('.btn-p');
@@ -618,9 +653,10 @@ function copyLink(){
 // Load from URL params
 function loadFromURL(){
   const p=new URLSearchParams(location.search);
-  ['mkt','acqCost','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>{
+  ['mkt','acqCost','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ownerOcc','ami','sellN','restrict','drp','mkp','conv','bkr'].forEach(k=>{
     if(p.has(k)){const el=document.getElementById(k);if(el)el.value=p.get(k)}
   });
+  if(!p.has('ami')&&p.has('ami_b'))document.getElementById('ami').value=p.get('ami_b'); // older links picked three AMI tiers; the moderate one drives the rental paths now
   if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1'; // legacy share links keep the owner-occupied model they were created with
   if(!p.has('acqCost')&&p.has('acq')){const el=document.getElementById('acqCost');if(el)el.value=Math.max(0,1610000-(+p.get('acq')));} // legacy links stored the former contribution in 'acq'; convert to acquisition cost
 }

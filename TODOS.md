@@ -1,6 +1,7 @@
 # TODOS — 189 Hamilton St Life Care Plan Tools
 
 ## V2: Condo Decision Report
+**Status: Done 2026-11-02** — report.html now compares A · Rental hold vs. B · Condo sale vs. C · Hybrid (sell 1, hold 2) from one shared set of assumptions, all computed by engine.js (calcScenario + calcCondo).
 **What:** Add condo sale scenarios to the Decision Report, or create a unified report that compares rental hold vs. condo sale side by side in one artifact.
 **Why:** Right now the condo model (condo.html) is an island. A lawyer needs one document showing both paths — "hold vs. sell, here are the numbers." The report should answer the real question: which path best serves the owner's goals?
 **Context:** The current report.html only covers rental hold at three AMI tiers. Condo.html has its own calculation engine that also needs to be extracted into engine.js for consistency. The unified report would show: Scenario A (rental hold at X% AMI) vs. Scenario B (sell N units as condos) vs. Scenario C (hybrid: sell 1, hold 2 affordable).
@@ -30,6 +31,7 @@
 **Depends on:** Condo report integration (so the intake flow covers both paths).
 
 ## V2: Condo engine extraction to engine.js
+**Status: Done 2026-11-02** — condo.html's calculation now lives in engine.js as calcCondo; condo.html loads the shared engine and renders from it (outputs verified identical across a 10-case grid).
 **What:** Extract condo.html's calculation logic into engine.js so all three tools share one engine.
 **Why:** Same DRY principle as the rental extraction. Condo.html currently has its own inline calculation engine. When rent limits or constants change, three files need updating instead of one.
 **Context:** The eng review identified this as a maintenance risk. engine.js currently covers rental calculations only.
