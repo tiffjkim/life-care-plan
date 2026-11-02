@@ -67,7 +67,12 @@ function calcCapital(psf, softP, finP, steveContrib, downtime, netRent, baseOpex
 
 // ── Year-by-year cash flow (matches rental.html's go() loop exactly) ──
 
-function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, totalWithDown, baseOpex) {
+function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, totalWithDown, baseOpex, ownerOccupied) {
+  // ownerOccupied defaults to true for backward compatibility.
+  // When false, Unit 1 is rented from Year 1: 3 units, no care draw,
+  // no owner expense share, and no transition year.
+  const occ = ownerOccupied !== false;
+  const effSLife = occ ? sLife : 0;
   const years = [];
   let cumCF = 0, yr1Noi = 0, paybackYr = null, firstFullYr = null;
 
@@ -76,9 +81,9 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
     const opMonths = Math.max(0, Math.min(12, yrEndMonth - downtime));
     const isReno = opMonths === 0;
     const isPartial = opMonths > 0 && opMonths < 12;
-    const isTransition = y === sLife + 1;
-    const rentalUnits = y <= sLife ? 2 : 3;
-    const steveAlive = y <= sLife;
+    const isTransition = occ && y === effSLife + 1;
+    const rentalUnits = y <= effSLife ? 2 : 3;
+    const steveAlive = occ && y <= effSLife;
 
     const rm = Math.round(netRent * Math.pow(1 + rg, y - 1));
     const ga = Math.round(rm * rentalUnits * opMonths);
@@ -111,46 +116,53 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
 // Runs the full year-by-year model (same as rental.html) and extracts summary metrics
 
 function calcScenario(amiIdx, params) {
-  const { mktRent, draw, chip, sLife, psf, softP, finP, steveContrib, downtime, rg, eg, yrs, opexMode, opexPct, opexOverride } = params;
+  const { mktRent, draw, chip, sLife, psf, softP, finP, steveContrib, downtime, rg, eg, yrs, opexMode, opexPct, opexOverride, ownerOccupied } = params;
+  const occ = ownerOccupied !== false;
+  const effSLife = occ ? sLife : 0;
+  const rentalUnitsBase = occ ? 2 : 3;
   const tier = TIERS[amiIdx];
   const netRent = tier.pub - UA;
   const isAffordable = netRent <= mktRent;
   const marketDelta = mktRent > 0 ? ((netRent - mktRent) / mktRent * 100) : 0;
 
   // Resolve operating expenses: % of income or fixed override
-  const baseOpex = resolveOpex(opexMode || 'override', opexPct || 0.4, opexOverride || DEFAULT_OPEX, netRent, 2);
-  const opexPctOfIncome = (netRent * 2 * 12) > 0 ? baseOpex / (netRent * 2 * 12) : 0;
+  const baseOpex = resolveOpex(opexMode || 'override', opexPct || 0.4, opexOverride || DEFAULT_OPEX, netRent, rentalUnitsBase);
+  const opexPctOfIncome = (netRent * rentalUnitsBase * 12) > 0 ? baseOpex / (netRent * rentalUnitsBase * 12) : 0;
 
-  const projYrs = Math.max(yrs, sLife + 2);
+  const projYrs = occ ? Math.max(yrs, sLife + 2) : yrs;
   const cap = calcCapital(psf, softP, finP, steveContrib, downtime, netRent, baseOpex);
-  const flow = calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, cap.totalWithDown, baseOpex);
+  const flow = calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, cap.totalWithDown, baseOpex, occ);
 
   // First full operating year cash flow (the number that matters for viability)
   const firstFullYear = flow.years.find(y => y.opMonths === 12);
   const cfFirstFull = firstFullYear ? firstFullYear.cf : 0;
   const noiFirstFull = firstFullYear ? firstFullYear.noi : 0;
 
-  // After-transition snapshot (first year after Steve, 3 units)
-  const afterYear = flow.years.find(y => y.y === sLife + 1 && y.opMonths === 12);
+  // After-transition snapshot (first year after transition, 3 units).
+  // When owner-occupancy is off there is no transition, so this is the
+  // first full year with all 3 units rented.
+  const afterYear = occ ? flow.years.find(y => y.y === sLife + 1 && y.opMonths === 12) : firstFullYear;
   const cfAfter = afterYear ? afterYear.cf : 0;
   const noiAfter = afterYear ? afterYear.noi : 0;
   const egiAfter = afterYear ? afterYear.egi : 0;
   const opexAfter = afterYear ? afterYear.totOx : 0;
 
   // Before-transition snapshot (last full year with Steve alive)
+  // When owner-occupancy is off there is no "before", so mirror the
+  // steady-state (after) values instead of returning zeroes.
   const beforeYear = flow.years.filter(y => y.steveAlive && y.opMonths === 12).pop();
   const cfBefore = beforeYear ? beforeYear.cf : cfFirstFull;
-  const egiBefore = beforeYear ? beforeYear.egi : 0;
-  const opexBefore = beforeYear ? beforeYear.totOx : 0;
+  const egiBefore = beforeYear ? beforeYear.egi : (occ ? 0 : egiAfter);
+  const opexBefore = beforeYear ? beforeYear.totOx : (occ ? 0 : opexAfter);
 
   // Milestones: key years
-  const milestoneYears = [...new Set([1, 5, sLife, sLife + 1, 10, projYrs].filter(y => y >= 1 && y <= projYrs))].sort((a, b) => a - b);
+  const milestoneYears = [...new Set((occ ? [1, 5, sLife, sLife + 1, 10, projYrs] : [1, 5, 10, projYrs]).filter(y => y >= 1 && y <= projYrs))].sort((a, b) => a - b);
   const milestones = milestoneYears.map(yr => {
     const d = flow.years.find(y => y.y === yr);
     if (!d) return null;
     let label = 'Year ' + yr;
-    if (yr === sLife) label = 'Yr ' + yr + ' (last w/ Steve)';
-    if (yr === sLife + 1) label = 'Yr ' + yr + ' (transition)';
+    if (occ && yr === sLife) label = 'Yr ' + yr + ' (last w/ Steve)';
+    if (occ && yr === sLife + 1) label = 'Yr ' + yr + ' (transition)';
     if (yr === projYrs) label = 'Yr ' + yr + ' (end)';
     return { yr, cf: d.cf, noi: d.noi, cumCF: d.cumCF, opMonths: d.opMonths, label };
   }).filter(Boolean);
@@ -168,6 +180,7 @@ function calcScenario(amiIdx, params) {
   const yoc = cap.totalWithDown > 0 ? noiFirstFull / cap.totalWithDown : 0;
 
   return {
+    ownerOccupied: occ, effSLife,
     tier, netRent, isAffordable, marketDelta, baseOpex, opexPctOfIncome,
     cfFirstFull, noiFirstFull, viability, viable: cfFirstFull >= 0,
     cfBefore, egiBefore, opexBefore,

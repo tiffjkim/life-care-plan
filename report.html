@@ -191,12 +191,13 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
   <div class="ctrl" id="opexPctRow" style="display:none"><label class="cl" for="opexPct">OpEx as % of income</label><input type="range" min="20" max="70" step="1" value="40" id="opexPct" oninput="go()"><span class="cv" id="o_opexPct">40%</span></div>
   <div class="ctrl" id="opexOverrideRow"><label class="cl" for="opexOverride">Annual operating expenses</label><input type="range" min="10000" max="60000" step="1" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
   <div id="opexNote" style="font-size:.68rem;color:var(--text3);margin:2px 0 6px"></div>
-  <div class="ctrl"><label class="cl" for="draw">Steve's annual care budget</label><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20,000</span></div>
-  <div class="ctrl"><label class="cl" for="sLife">Steve's residency</label><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
+  <div class="ctrl"><span class="cl">Unit 1 occupancy</span><select id="ownerOcc" onchange="go()"><option value="0" selected>Available as rental — all 3 units rented</option><option value="1">Owner-occupied — Unit 1 not rented</option></select></div>
+  <div class="ctrl" id="drawRow"><label class="cl" for="draw">Steve's annual care budget</label><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20,000</span></div>
+  <div class="ctrl" id="sLifeRow"><label class="cl" for="sLife">Steve's residency</label><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
   <div class="ctrl"><label class="cl" for="rg">Rent growth (%/yr)</label><input type="range" min="0" max="8" step="0.5" value="2.5" id="rg" oninput="go()"><span class="cv" id="o_rg">2.5%</span></div>
   <div class="ctrl"><label class="cl" for="eg">Expense growth (%/yr)</label><input type="range" min="0" max="8" step="0.5" value="4" id="eg" oninput="go()"><span class="cv" id="o_eg">4.0%</span></div>
   <div class="ctrl"><label class="cl" for="yrs">Projection horizon (years)</label><input type="range" min="10" max="25" step="1" value="15" id="yrs" oninput="go()"><span class="cv" id="o_yrs">15 yrs</span></div>
-  <div class="ctrl"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No</option><option value="1" selected>Yes — pays 1/3</option></select></div>
+  <div class="ctrl" id="chipRow"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No</option><option value="1" selected>Yes — pays 1/3</option></select></div>
 
   <h2 style="margin-top:1rem;border:none;padding:0">Scenario AMI Tiers</h2>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px">
@@ -239,8 +240,8 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <h3 id="ms_label_b" class="no-print">Scenario B · Moderate</h3>
 <div class="ms-grid no-print" id="milestones"></div>
 
-<h2>Steve's Transition — Before &amp; After</h2>
-<p style="font-size:.78rem;color:var(--text2);margin-bottom:8px">Steve's transition is the single biggest financial event in this model. Three things change at once.</p>
+<h2 id="transitionHeading">Steve's Transition — Before &amp; After</h2>
+<p id="transitionIntro" style="font-size:.78rem;color:var(--text2);margin-bottom:8px">Steve's transition is the single biggest financial event in this model. Three things change at once.</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0" id="transitionCards"></div>
 <div id="transitionNote" style="margin-top:8px"></div>
 
@@ -306,7 +307,7 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
       <li><label><input type="checkbox" onchange="updateProgress()"> Get written estimate and timeline</label></li>
     </ul>
   </li>
-  <li>
+  <li id="stepCare">
     <div class="step-header"><span class="num">07</span><span class="text">Draft Steve's care plan and transition timeline</span><span class="timing">Week 4-6</span></div>
     <div class="sub">The model assumes Steve lives in Unit 1 for 7 years. His actual health, preferences, and care needs should drive this number, not an assumption.</div>
     <ul class="substeps">
@@ -387,11 +388,17 @@ function getParams(){
   const opexMode=document.getElementById('opexMode').value;
   const opexPct=+document.getElementById('opexPct').value/100;
   const opexOverride=+document.getElementById('opexOverride').value;
-  return{mktRent,psf,softP,finP,steveContrib,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride};
+  const ownerOccupied=document.getElementById('ownerOcc').value==='1';
+  return{mktRent,psf,softP,finP,steveContrib,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride,ownerOccupied};
 }
 
 function go(){
   const p=getParams();
+  const occ=p.ownerOccupied;
+  document.getElementById('drawRow').style.display=occ?'flex':'none';
+  document.getElementById('sLifeRow').style.display=occ?'flex':'none';
+  document.getElementById('chipRow').style.display=occ?'flex':'none';
+  document.getElementById('stepCare').style.display=occ?'':'none';
   const amiA=+document.getElementById('ami_a').value;
   const amiB=+document.getElementById('ami_b').value;
   const amiC=+document.getElementById('ami_c').value;
@@ -413,12 +420,12 @@ function go(){
   // Dynamic max: 110% of gross rental income at moderate scenario AMI
   const modTier=TIERS[amiB];
   const modNetRent=modTier.pub-UA;
-  const modGross=modNetRent*2*12;
+  const modGross=modNetRent*(occ?2:3)*12;
   const opexMax=Math.round(modGross*1.1);
   document.getElementById('opexOverride').max=Math.max(opexMax,10000);
   document.getElementById('opexNote').textContent=p.opexMode==='override'
     ?'= '+(modGross>0?(p.opexOverride/modGross*100).toFixed(1):'0')+'% of income (max: 110% = $'+opexMax.toLocaleString()+')'
-    :'= $'+resolveOpex('pct',p.opexPct,0,modNetRent,2).toLocaleString()+'/yr at Scenario B AMI';
+    :'= $'+resolveOpex('pct',p.opexPct,0,modNetRent,occ?2:3).toLocaleString()+'/yr at Scenario B AMI';
 
   const scenarios=[
     {key:'a',label:'A · Conservative',idx:amiA,...calcScenario(amiA,p)},
@@ -452,7 +459,7 @@ function go(){
 
   // ── Comparison table ──
   const minViable=findMinViableAMI(p);
-  const projYrs=Math.max(p.yrs,p.sLife+2);
+  const projYrs=occ?Math.max(p.yrs,p.sLife+2):p.yrs;
   const rows=[
     {label:'AMI tier',vals:scenarios.map(s=>s.tier.l)},
     {label:'Affordable rent (net of utilities)',vals:scenarios.map(s=>fmt(s.netRent)+'/mo')},
@@ -461,10 +468,10 @@ function go(){
       const cls=s.viability==='optimal'?'pos':s.viability==='viable'?'warn':'neg';
       return `<span class="${cls}">${fmt(s.cfFirstFull)}</span>`;
     })},
-    {label:'Cash flow — after transition (Yr '+(p.sLife+1)+')',vals:scenarios.map(s=>{
+    ...(occ?[{label:'Cash flow — after transition (Yr '+(p.sLife+1)+')',vals:scenarios.map(s=>{
       const cls=s.cfAfter>=10000?'pos':s.cfAfter>=0?'warn':'neg';
       return `<span class="${cls}">${fmt(s.cfAfter)}</span>`;
-    })},
+    })}]:[{label:'Units rented',vals:scenarios.map(()=>'3 of 3 from Year 1')}]),
     {label:'Cumulative cash flow ('+projYrs+'yr)',vals:scenarios.map(s=>{
       const cls=s.cumTotal>=0?'pos':'neg';
       return `<span class="${cls}">${fmt(s.cumTotal)}</span>`;
@@ -473,7 +480,7 @@ function go(){
     {label:'Capital recovered by',vals:scenarios.map(s=>s.paybackYr?'Year '+s.paybackYr:'Beyond yr '+projYrs)},
     {label:'Annual return on capital',vals:scenarios.map(s=>pctFmt(s.yoc))},
     {label:'Affordable units preserved',vals:scenarios.map(s=>{
-      if(s.isAffordable) return '<span class="pos">2 of 3</span>';
+      if(s.isAffordable) return occ?'<span class="pos">2 of 3</span>':'<span class="pos">3 of 3</span>';
       return '<span class="neg">0 of 3 (above market)</span>';
     })},
     {label:'Probate risk',vals:scenarios.map(()=>'Eliminated')},
@@ -495,6 +502,24 @@ function go(){
     </div>`;
   }).join('');
 
+  // ── Transition / steady-state section — use scenario B ──
+  document.getElementById('transitionHeading').textContent=occ?"Steve's Transition — Before & After":'Unit 1 — Rented From Year 1';
+  document.getElementById('transitionIntro').textContent=occ?"Steve's transition is the single biggest financial event in this model. Three things change at once.":'Unit 1 is modeled as a rental for the full projection, so there is no transition year. All three units earn from Year 1, with no care draw and no owner expense share.';
+  if(!occ){
+    document.getElementById('transitionCards').innerHTML=`
+    <div class="trans-card after" style="grid-column:1/-1">
+      <div class="tc-label" style="color:var(--green-text)">All units rented (Year 1+)</div>
+      <div class="tc-row"><span class="tc-key">Units rented</span><span class="tc-val">3 of 3</span></div>
+      <div class="tc-row"><span class="tc-key">Rental income (EGI)</span><span class="tc-val">${fmt(bScen.egiAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Operating expenses</span><span class="tc-val">${fmt(bScen.opexAfter)}/yr</span></div>
+      <div class="tc-row"><span class="tc-key">Care draw</span><span class="tc-val">$0 — not included in this scenario</span></div>
+      <div class="tc-row"><span class="tc-key">Owner expense contribution</span><span class="tc-val">None</span></div>
+      <div class="tc-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:6px"><span class="tc-key" style="font-weight:600">Net cash flow</span><span class="tc-val" style="font-weight:600;${bScen.cfAfter>=0?'color:var(--green)':'color:var(--red)'}">${fmt(bScen.cfAfter)}/yr</span></div>
+    </div>`;
+    document.getElementById('transitionNote').innerHTML=`<div class="risk-card" style="border-left-color:var(--blue)">
+    <p style="margin:0;color:var(--text)"><strong>Why this looks different:</strong> Compared with the owner-occupied model, the 3rd unit's rent is included from the start and the care budget is $0, so first-year cash flow is higher and there is no jump in Year ${p.sLife+1}. Turn <strong>Unit 1 occupancy</strong> back to owner-occupied above to compare against the original plan.</p>
+  </div>`;
+  } else {
   // ── Steve's transition (before/after) — use scenario B ──
   document.getElementById('transitionCards').innerHTML=`
     <div class="trans-card before">
@@ -520,11 +545,12 @@ function go(){
     <p style="margin:0;color:var(--text)"><strong>Net change at transition:</strong> Cash flow ${cfDelta>=0?'improves':'worsens'} by <strong>${fmt(Math.abs(cfDelta))}/yr</strong>.
     ${cfDelta>=0?'The 3rd unit adds income and the care draw stops, which more than offsets losing Steve\'s 1/3 expense contribution.':'Losing Steve\'s expense contribution outweighs the gains — review the AMI tier.'}</p>
   </div>`;
+  } // end owner-occupied transition branch
 
   // ── Construction risk (using engine.js calcCapital) ──
   const capB=bScen.cap;
   const stressCost=Math.round(capB.totalInvest*1.2)+capB.downExpenses;
-  const delayCarryPerMonth=Math.round(BASE_OPEX/12)+Math.round(bScen.netRent*2*(1-VAC)/1); // monthly carry
+  const delayCarryPerMonth=Math.round(bScen.baseOpex/12)+Math.round(bScen.netRent*(occ?2:3)*(1-VAC)/1); // monthly carry (baseOpex: BASE_OPEX was undefined in the original, which stopped this section rendering)
   const delayStress6mo=delayCarryPerMonth*6;
   document.getElementById('constructionRisk').innerHTML=`
     <div class="risk-card">
@@ -547,9 +573,11 @@ function go(){
     {l:'Soft costs',v:Math.round(p.softP*100)+'%'},
     {l:'Financing costs',v:Math.round(p.finP*100)+'%'},
     {l:'Construction time',v:p.downtime+' months'},
+    {l:'Unit 1 occupancy',v:occ?'Owner-occupied':'Available as rental — 3 of 3 rented'},
+    ...(occ?[
     {l:'Steve\'s care budget',v:'$'+p.draw.toLocaleString()+'/yr'},
     {l:'Steve\'s residency',v:p.sLife+' years'},
-    {l:'Steve pays 1/3 expenses',v:p.chip?'Yes':'No'},
+    {l:'Steve pays 1/3 expenses',v:p.chip?'Yes':'No'}]:[]),
     {l:'Operating expenses',v:'$'+scenarios[1].baseOpex.toLocaleString()+'/yr ('+Math.round(scenarios[1].opexPctOfIncome*100)+'% of income)'},
     {l:'Vacancy rate',v:'5%'},
     {l:'Management fee',v:'8%'},
@@ -565,17 +593,18 @@ function go(){
 }
 
 function updateProgress(){
-  const boxes=document.querySelectorAll('.substeps input[type=checkbox]');
-  const checked=document.querySelectorAll('.substeps input[type=checkbox]:checked');
+  const allBoxes=[...document.querySelectorAll('.substeps input[type=checkbox]')];
+  const boxes=allBoxes.filter(cb=>{const li=cb.closest('.checklist > li');return !li||li.style.display!=='none';});
+  const checked=boxes.filter(cb=>cb.checked);
   const pct=Math.round((checked.length/boxes.length)*100);
   document.getElementById('progressFill').style.width=pct+'%';
   document.getElementById('progressLabel').textContent=checked.length+' of '+boxes.length+' complete';
-  boxes.forEach(cb=>{cb.closest('li').classList.toggle('done',cb.checked)});
+  allBoxes.forEach(cb=>{cb.closest('li').classList.toggle('done',cb.checked)});
 }
 
 function copyLink(){
   const p=new URLSearchParams();
-  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','opexMode','opexPct','opexOverride','ami_a','ami_b','ami_c'].forEach(k=>p.set(k,document.getElementById(k).value));
+  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','opexMode','opexPct','opexOverride','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>p.set(k,document.getElementById(k).value));
   const url=location.origin+location.pathname+'?'+p.toString();
   navigator.clipboard.writeText(url).then(()=>{
     const btn=document.querySelector('.btn-p');
@@ -587,9 +616,10 @@ function copyLink(){
 // Load from URL params
 function loadFromURL(){
   const p=new URLSearchParams(location.search);
-  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c'].forEach(k=>{
+  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>{
     if(p.has(k)){const el=document.getElementById(k);if(el)el.value=p.get(k)}
   });
+  if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1'; // legacy share links keep the owner-occupied model they were created with
 }
 
 populateSelects();

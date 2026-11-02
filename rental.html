@@ -94,10 +94,13 @@ th,td{padding:2px 4px}
 </div>
 
 <div class="units">
-<div class="u dim" id="u1card"><div class="ul">Unit 1 — Steve's home</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un" id="u1note">Floor 1 · Not rented</div></div>
+<div class="u dim" id="u1card"><div class="ul" id="u1label">Unit 1 — Steve's home</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un" id="u1note">Floor 1 · Not rented</div></div>
 <div class="u"><div class="ul">Unit 2 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 2</div></div>
 <div class="u"><div class="ul">Unit 3 — Affordable rental</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor 3</div></div>
 </div>
+
+<div class="ctrl" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin:10px 0"><span class="cl">Unit 1 occupancy</span><select id="ownerOcc" onchange="go()"><option value="0" selected>Available as rental — all 3 units rented</option><option value="1">Owner-occupied — Unit 1 not rented</option></select></div>
+<p style="font-size:.72rem;color:var(--text3);margin:-4px 0 6px">This one choice drives the care budget, the expense share, and when the 3rd unit starts earning. Turn owner-occupancy on to model the original plan, or off when Unit 1 is simply a rental.</p>
 
 <div class="cd bd bl"><p><span class="pos">Green (+)</span> = money in. <span class="neg">Red (−)</span> = money out. Slide controls to test scenarios.</p></div>
 
@@ -111,7 +114,7 @@ th,td{padding:2px 4px}
 <div id="capOut"></div>
 
 <h2>Rental income</h2>
-<p>Two units rented at AMI-capped rates. The tier sets the max rent.</p>
+<p id="rentIntro">Two units rented at AMI-capped rates. The tier sets the max rent.</p>
 <div class="ctrl"><span class="cl">Affordability level (AMI)</span>
 <select id="ami" onchange="go()">
 <option value="0">50% AMI — deeply affordable</option>
@@ -136,13 +139,13 @@ th,td{padding:2px 4px}
 <h3>The affordability impact — what you're choosing to give back</h3>
 <div id="concBar"></div>
 
-<h2>Building expenses & Steve's care</h2>
+<h2>Building expenses<span id="careHeadingSuffix"> &amp; care</span></h2>
 <div class="ctrl"><span class="cl">Operating expenses</span><select id="opexMode" onchange="toggleOpex();go()"><option value="pct">% of rental income</option><option value="override" selected>Fixed amount (override)</option></select></div>
 <div class="ctrl" id="opexPctRow" style="display:none"><span class="cl">OpEx as % of income</span><input type="range" min="20" max="70" step="1" value="40" id="opexPct" oninput="go()"><span class="cv" id="o_opexPct">40%</span></div>
 <div class="ctrl" id="opexOverrideRow"><span class="cl">Annual operating expenses</span><input type="range" min="10000" max="60000" step="1" value="24368" id="opexOverride" oninput="go()"><span class="cv" id="o_opexOverride">$24,368</span></div>
 <div id="opexNote" style="font-size:.68rem;color:var(--text3);margin:2px 0 6px"></div>
-<div class="ctrl"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20K</span></div>
-<div class="ctrl"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No — building covers everything</option><option value="1" selected>Yes — he pays 1/3 of shared costs</option></select></div>
+<div class="ctrl" id="drawRow"><span class="cl">Steve's annual care budget</span><input type="range" min="0" max="40000" step="1000" value="20000" id="draw" oninput="go()"><span class="cv" id="o_draw">$20K</span></div>
+<div class="ctrl" id="chipRow"><span class="cl">Steve helps with expenses?</span><select id="chip" onchange="go()"><option value="0">No — building covers everything</option><option value="1" selected>Yes — he pays 1/3 of shared costs</option></select></div>
 <div class="ctrl"><span class="cl">Rent increase per year</span><span class="cv" id="o_rg" style="min-width:0;margin-left:auto">2.5%</span></div>
 <div class="ctrl"><span class="cl">Expense increase per year</span><span class="cv" id="o_eg" style="min-width:0;margin-left:auto">4.0%</span></div>
 
@@ -164,8 +167,8 @@ th,td{padding:2px 4px}
 <div id="gapWarn"></div>
 
 <h2>Timeline</h2>
-<p>Steve lives in Unit 1 during this period. When Unit 1 becomes available, it goes back online as a third affordable rental — increasing the building's income by roughly 50%.</p>
-<div class="ctrl"><span class="cl">Steve's residency</span><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
+<p id="timelineIntro">Steve lives in Unit 1 during this period. When Unit 1 becomes available, it goes back online as a third affordable rental — increasing the building's income by roughly 50%.</p>
+<div class="ctrl" id="sLifeRow"><span class="cl">Steve's residency</span><input type="range" min="1" max="15" step="1" value="7" id="sLife" oninput="go()"><span class="cv" id="o_sLife">7 yrs</span></div>
 <div class="ctrl"><span class="cl">Total projection</span><input type="range" min="10" max="25" step="1" value="15" id="yrs" oninput="go()"><span class="cv" id="o_yrs">15 yrs</span></div>
 <div id="timeVis"></div>
 
@@ -225,14 +228,17 @@ const yrs=+document.getElementById('yrs').value;
 const opexMode=document.getElementById('opexMode').value;
 const opexPctVal=+document.getElementById('opexPct').value/100;
 const opexOverrideVal=+document.getElementById('opexOverride').value;
+const ownerOcc=document.getElementById('ownerOcc').value==='1';
+const effSLife=ownerOcc?sLife:0;
+const baseUnits=ownerOcc?2:3;
 const tier0=TIERS[ai];
 const netRent0=tier0.pub-UA;
-const baseOpex=resolveOpex(opexMode,opexPctVal,opexOverrideVal,netRent0,2);
+const baseOpex=resolveOpex(opexMode,opexPctVal,opexOverrideVal,netRent0,baseUnits);
 
 // Show the other side: if fixed, show what % it is; if %, show what $ it equals
 document.getElementById('o_opexPct').textContent=Math.round(opexPctVal*100)+'%';
 document.getElementById('o_opexOverride').textContent='$'+opexOverrideVal.toLocaleString();
-const grossAnnual=netRent0*2*12;
+const grossAnnual=netRent0*baseUnits*12;
 const opexMax=Math.round(grossAnnual*1.1);
 document.getElementById('opexOverride').max=Math.max(opexMax,10000);
 if(opexOverrideVal>opexMax){document.getElementById('opexOverride').value=opexMax;}
@@ -271,6 +277,17 @@ escTrk.style.cssText='position:absolute;top:8px;left:'+escLoPct+'%;width:'+(escH
 document.getElementById('o_sLife').textContent=sLife+' yrs';
 document.getElementById('o_yrs').textContent=yrs+' yrs';
 
+// Occupancy toggle: show/hide the care + residency controls and Unit 1 card
+document.getElementById('drawRow').style.display=ownerOcc?'flex':'none';
+document.getElementById('chipRow').style.display=ownerOcc?'flex':'none';
+document.getElementById('sLifeRow').style.display=ownerOcc?'flex':'none';
+document.getElementById('careHeadingSuffix').textContent=ownerOcc?" & care":"";
+document.getElementById('u1card').classList.toggle('dim',ownerOcc);
+document.getElementById('u1label').textContent=ownerOcc?"Unit 1 — Steve's home":"Unit 1 — Affordable rental";
+document.getElementById('u1note').textContent=ownerOcc?"Floor 1 · Not rented":"Floor 1";
+document.getElementById('rentIntro').textContent=ownerOcc?"Two units rented at AMI-capped rates. The tier sets the max rent.":"All three units rented at AMI-capped rates. The tier sets the max rent.";
+document.getElementById('timelineIntro').textContent=ownerOcc?"Steve lives in Unit 1 during this period. When Unit 1 becomes available, it goes back online as a third affordable rental — increasing the building's income by roughly 50%.":"All three units are rented for the full projection. There is no transition year — income is at the 3-unit level from Year 1.";
+
 // Gap warning — text context (visual is now on the dual slider above)
 const gapPct=eg-rg;
 const gapWarnEl=document.getElementById('gapWarn');
@@ -283,29 +300,37 @@ gapWarnEl.innerHTML=`<div class="cd bd am" style="margin-top:4px"><p><strong>Ren
 gapWarnEl.innerHTML=`<div class="cd bd gn" style="margin-top:4px"><p><strong>Rent is growing faster than expenses.</strong> Margin improves over time. This is uncommon in affordable housing and may not hold long-term.</p></div>`;
 }
 
-// Ensure projection >= Steve's residency
-const projYrs=Math.max(yrs,sLife+2);
+// Ensure projection >= Steve's residency (only when owner-occupancy is on)
+const projYrs=ownerOcc?Math.max(yrs,sLife+2):yrs;
 const downYrs=downtime/12;
 const totalSpan=downYrs+projYrs;
 
 // Timeline visual
 const renoPct=totalSpan>0?Math.max(4,Math.round((downYrs/totalSpan)*100)):0;
-const sLifePct=totalSpan>0?Math.round((sLife/totalSpan)*100):0;
+const sLifePct=totalSpan>0?Math.round((effSLife/totalSpan)*100):0;
 const afterPct=100-renoPct-sLifePct;
 let timeHtml=`<div style="margin:10px 0 4px;font-size:.72rem;color:var(--text3)">Timeline overview — ${downtime>0?downtime+' months construction + ':''}${projYrs} years operating:</div>
 <div style="display:flex;height:32px;border-radius:var(--r);overflow:hidden;margin:4px 0">`;
 if(downtime>0){
 timeHtml+=`<div style="width:${renoPct}%;background:var(--red-bg);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:var(--red-text);border-right:2px solid var(--red);min-width:30px">Build</div>`;
 }
+if(ownerOcc){
 timeHtml+=`<div style="width:${sLifePct}%;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:var(--amber-text);border-right:2px solid var(--amber);min-width:30px">Yr 1–${sLife}</div>
-<div style="width:${afterPct}%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:var(--green-text);min-width:30px">Yr ${sLife+1}–${projYrs}</div>
-</div><div style="display:flex;margin:2px 0 8px">`;
+<div style="width:${afterPct}%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:var(--green-text);min-width:30px">Yr ${sLife+1}–${projYrs}</div>`;
+}else{
+timeHtml+=`<div style="width:${afterPct}%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:var(--green-text);min-width:30px">Yr 1–${projYrs} · 3 units</div>`;
+}
+timeHtml+=`</div><div style="display:flex;margin:2px 0 8px">`;
 if(downtime>0){
 timeHtml+=`<div style="width:${renoPct}%;font-size:.64rem;color:var(--red-text);text-align:center">No income</div>`;
 }
+if(ownerOcc){
 timeHtml+=`<div style="width:${sLifePct}%;font-size:.68rem;color:var(--amber-text);text-align:center">2 units · Steve in Unit 1</div>
-<div style="width:${afterPct}%;font-size:.68rem;color:var(--green-text);text-align:center">3 units · +50% income</div>
-</div>`;
+<div style="width:${afterPct}%;font-size:.68rem;color:var(--green-text);text-align:center">3 units · +50% income</div>`;
+}else{
+timeHtml+=`<div style="width:${afterPct}%;font-size:.68rem;color:var(--green-text);text-align:center">3 units rented throughout</div>`;
+}
+timeHtml+=`</div>`;
 document.getElementById('timeVis').innerHTML=timeHtml;
 
 const tier=TIERS[ai];
@@ -313,7 +338,7 @@ const constr=psf*GBA;
 const soft=Math.round(constr*softP);
 const financing=Math.round((constr+acqCost)*finP);
 const totalInvest=acqCost+constr+soft+financing;
-const downCost=Math.round((tier.pub-UA)*2*(downtime/12)); // lost rent during reno
+const downCost=Math.round((tier.pub-UA)*baseUnits*(downtime/12)); // lost rent during reno
 const downExpenses=Math.round(baseOpex*(downtime/12)); // taxes/ins still owed during reno
 const totalWithDown=totalInvest+downExpenses; // full cash needed including carrying costs
 
@@ -324,7 +349,7 @@ let capHtml=`<div class="ms">
 <div class="m ${steveContrib>=APPR?'gn':steveContrib>0?'am':'rd'}"><div class="ml">Steve's contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of $1.61M appraised value</div></div>
 </div>`;
 if(downtime>0){
-capHtml+=`<div class="cd bd am"><p><strong>${downtime} months of construction:</strong> -${fmt(downExpenses)} in carrying costs (taxes, insurance) and -${fmt(downCost)} in lost rent (2 rental units × ${fmt(tier.pub-UA)}/mo). Steve's unit isn't counted — it produces no rent either way.</p></div>`;
+capHtml+=`<div class="cd bd am"><p><strong>${downtime} months of construction:</strong> -${fmt(downExpenses)} in carrying costs (taxes, insurance) and -${fmt(downCost)} in lost rent (${baseUnits} rental units × ${fmt(tier.pub-UA)}/mo).${ownerOcc?" Steve's unit isn't counted — it produces no rent either way.":''}</p></div>`;
 }
 document.getElementById('capOut').innerHTML=capHtml;
 
@@ -333,7 +358,7 @@ const pubRent=tier.pub;
 const netRent=pubRent-UA;
 const concession=mktRent-netRent;
 const concPct=mktRent>0?concession/mktRent:0;
-const annConc=concession*2*12;
+const annConc=concession*baseUnits*12;
 
 document.getElementById('rentOut').innerHTML=`<div class="ms">
 <div class="m bl"><div class="ml">Affordable rent (${tier.l} AMI)</div><div class="mv">${fmt(netRent)}/mo</div><div class="mn">Published ${fmt(pubRent)} minus $${UA} utility allowance</div></div>
@@ -346,7 +371,7 @@ document.getElementById('concBar').innerHTML=`
 <div class="conc-fill" style="width:${fillPct}%;background:var(--blue-bg);color:var(--blue-text)">Rent collected: ${fmt(netRent)}</div>
 <div class="conc-fill" style="width:${100-fillPct}%;background:var(--green-bg);color:var(--green-text)">${100-fillPct>12?'Given back: '+fmt(concession):''}</div>
 </div>
-<div class="conc-labels"><span>What tenants pay</span><span>Affordability created: <strong>${fmt(annConc)}/year</strong> (2 units)</span></div>`;
+<div class="conc-labels"><span>What tenants pay</span><span>Affordability created: <strong>${fmt(annConc)}/year</strong> (${baseUnits} units)</span></div>`;
 
 // Cash flow with renovation downtime + Steve transition
 let years=[];let cumCF=0;let yr1Noi=0;let paybackYr=null;
@@ -361,9 +386,9 @@ const opMonths=Math.max(0,Math.min(12,yrEndMonth-downtime));
 const isReno=opMonths===0;
 const isPartial=opMonths>0&&opMonths<12;
 
-const isTransition=y===sLife+1;
-const rentalUnits=y<=sLife?2:3;
-const steveAlive=y<=sLife;
+const isTransition=ownerOcc&&y===effSLife+1;
+const rentalUnits=y<=effSLife?2:3;
+const steveAlive=ownerOcc&&y<=effSLife;
 const rm=Math.round(netRent*Math.pow(1+rg,y-1));
 const ga=Math.round(rm*rentalUnits*opMonths); // prorated by operating months
 const egi=Math.round(ga*(1-VAC));
@@ -390,17 +415,17 @@ const bC=v=>v>=.055?'gn':v>=.04?'am':'rd';
 
 document.getElementById('retOut').innerHTML=`<div class="ms">
 <div class="m ${bC(yoc)}"><div class="ml">Annual return on capital</div><div class="mv">${pct(yoc)}</div><div class="mn">First full operating year${firstFullYr?' (Yr '+firstFullYr+')':''}: ${fmt(yr1Noi)} ÷ ${fmt(totalWithDown)}</div></div>
-<div class="m ${years[0].cf>=0?'gn':'rd'}"><div class="ml">Year 1 net cash flow</div><div class="mv"><span class="${years[0].cf>=0?'pos':'neg'}">${fmtSign(years[0].cf)}</span></div><div class="mn">After all expenses and Steve's care</div></div>
+<div class="m ${years[0].cf>=0?'gn':'rd'}"><div class="ml">Year 1 net cash flow</div><div class="mv"><span class="${years[0].cf>=0?'pos':'neg'}">${fmtSign(years[0].cf)}</span></div><div class="mn">${ownerOcc?'After all expenses and Steve\'s care':'After all expenses'}</div></div>
 <div class="m ${paybackYr?'gn':'am'}"><div class="ml">Capital recovered by</div><div class="mv">${paybackYr?'Year '+paybackYr:'Beyond year '+projYrs}</div><div class="mn">${paybackYr?'Cumulative cash flow covers the investment':'Try higher AMI or lower construction cost'}</div></div>
 </div>
 <div class="ms">
 <div class="m bl"><div class="ml">Year ${projYrs} cumulative cash</div><div class="mv"><span class="${lastY.cumCF>=0?'pos':'neg'}">${fmtSign(lastY.cumCF)}</span></div><div class="mn">Total cash generated over ${projYrs} years</div></div>
-<div class="m gn"><div class="ml">Annual affordability impact</div><div class="mv">${fmt(annConc)}</div><div class="mn">Rent savings created for 2 families</div></div>
+<div class="m gn"><div class="ml">Annual affordability impact</div><div class="mv">${fmt(annConc)}</div><div class="mn">Rent savings created for ${baseUnits} families</div></div>
 <div class="m bl"><div class="ml">Steve's building contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of $1.61M appraised value</div></div>
 </div>`;
 
 // CF note
-document.getElementById('cfNote').innerHTML=`<div class="cd bd am"><p>${downtime>0?`Construction: ${downtime} months. Income is prorated — a 16-month build means Year 2 only has 8 operating months. `:''}★ = Unit 1 comes online as 3rd rental.</p></div>`;
+document.getElementById('cfNote').innerHTML=`<div class="cd bd am"><p>${downtime>0?`Construction: ${downtime} months. Income is prorated — a 16-month build means Year 2 only has 8 operating months. `:''}${ownerOcc?'★ = Unit 1 comes online as 3rd rental.':'All 3 units rented from Year 1 — no transition year.'}</p></div>`;
 
 // CF table - simplified
 let t='<table><tr><th style="text-align:left">Yr</th><th>Operating</th><th>Rent/mo</th><th>Income</th><th>Expenses (−)</th><th>NOI</th><th>Care (−)</th><th>Cash flow</th><th>Cumulative</th></tr>';
@@ -411,7 +436,7 @@ const label=y.y+(y.isTransition?' ★':'');
 const moLabel=y.isReno?'0 mo':y.isPartial?y.opMonths+' mo':'12 mo';
 t+=`<tr${trClass}><td style="text-align:left;font-weight:600">${label}</td><td>${moLabel}</td><td>${y.opMonths>0?fmt(y.rm):'—'}</td><td>${y.egi?fmt(y.egi):'—'}</td><td class="neg">${y.totOx?'-'+fmt(y.totOx):'—'}</td><td style="font-weight:500">${fmt(y.noi)}</td><td>${y.careDraw>0?'<span class="neg">-'+fmt(y.careDraw)+'</span>':'—'}</td><td style="font-weight:500"><span class="${y.cf>=0?'pos':'neg'}">${fmtSign(y.cf)}</span></td><td class="${rc}">${fmtSign(y.cumCF)}</td></tr>`;
 });
-document.getElementById('cfTbl').innerHTML=t+`</table><p style="font-size:.68rem;color:var(--text3);margin-top:4px">Months = operating months (earning rent). ${downtime>0?'Red rows = under construction. Amber = partial year. ':''}★ = Unit 1 online.</p>`;
+document.getElementById('cfTbl').innerHTML=t+`</table><p style="font-size:.68rem;color:var(--text3);margin-top:4px">Months = operating months (earning rent). ${downtime>0?'Red rows = under construction. Amber = partial year. ':''}${ownerOcc?'★ = Unit 1 online.':''}</p>`;
 
 // AMI table
 let a='<table><tr><th style="text-align:left">AMI level</th><th>Rent collected</th><th>Year 1 income</th><th>Annual return</th><th>Payback year</th><th>vs. market</th></tr>';
@@ -421,24 +446,24 @@ const nr=ti.pub-UA;
 const atOrAboveMkt=nr>=mktRent;
 if(!crossoverTier&&atOrAboveMkt)crossoverTier=ti;
 // Quick yr1 NOI calc for 2 units
-const egi2=Math.round(nr*2*12*(1-VAC));
-const ox2=chip?Math.round(baseOpex*(2/3)):baseOpex;
+const egi2=Math.round(nr*baseUnits*12*(1-VAC));
+const ox2=ownerOcc&&chip?Math.round(baseOpex*(2/3)):baseOpex;
 const mf2=Math.round(egi2*MGMT);
 const noi2=egi2-ox2-mf2;
 const yoc2=totalWithDown>0?noi2/totalWithDown:0;
-const cf2=noi2-draw;
+const cf2=noi2-(ownerOcc?draw:0);
 const conc2=mktRent-nr;
 // Rough payback: prorate for construction + escalation + unit 3 coming online
 let cum2=0;let pb2=null;
 for(let yy=1;yy<=25;yy++){
 const opMo2=Math.max(0,Math.min(12,yy*12-downtime));
-const u=yy<=sLife?2:3;
+const u=yy<=effSLife?2:3;
 const r=Math.round(nr*Math.pow(1+rg,yy-1));
 const g=Math.round(r*u*opMo2);const e=Math.round(g*(1-VAC));
 const o=Math.round(baseOpex*Math.pow(1+eg,yy-1));
-const ro=chip&&yy<=sLife?Math.round(o*(2/3)):o;
+const ro=ownerOcc&&chip&&yy<=effSLife?Math.round(o*(2/3)):o;
 const mf=Math.round(e*MGMT);const n=e-ro-mf;
-const d=yy<=sLife?Math.round(draw*(opMo2/12)):0;cum2+=n-d;
+const d=ownerOcc&&yy<=effSLife?Math.round(draw*(opMo2/12)):0;cum2+=n-d;
 if(pb2===null&&cum2>=totalWithDown)pb2=yy;
 }
 const sel=i===ai;
@@ -455,7 +480,7 @@ document.getElementById('amiTbl').innerHTML=a+'</table>'+crossNote;
 const lastNoi=lastY.noi;
 document.getElementById('notes').innerHTML=`
 <div class="cd bd am"><p><strong>Cost squeeze:</strong> Rent +${(rg*100).toFixed(1)}%/yr vs. expenses +${(eg*100).toFixed(1)}%/yr. Year 1 NOI: ${fmt(yr1Noi)}. Year ${projYrs} NOI: ${fmt(lastNoi)}.</p></div>
-<div class="cd bd bl"><p><strong>Unit 1 online (Year ${sLife+1}):</strong> Income jumps ~50%. Payback often lands shortly after.</p></div>
+${ownerOcc?`<div class="cd bd bl"><p><strong>Unit 1 online (Year ${sLife+1}):</strong> Income jumps ~50%. Payback often lands shortly after.</p></div>`:`<div class="cd bd bl"><p><strong>All 3 units rented from Year 1:</strong> No care draw and no owner expense share in this scenario. Income is at the full 3-unit level for the entire projection.</p></div>`}
 <div class="cd bd rd"><p><strong>Estate risk:</strong> $1.61M building may trigger MA estate tax ($2M threshold). MassHealth can lien. Structure LLC with elder law attorney first.</p></div>`;
 
 // Method comparison: Conventional vs. Steve's equity donation
@@ -492,7 +517,7 @@ document.getElementById('methodComp').innerHTML=`
 document.getElementById('glossary').innerHTML=`
 <div class="row"><dt>AMI (Area Median Income)</dt><dd>— The government's measure of middle-class income for the Boston area. "80% AMI" means the rent is set for a household earning 80% of that middle income. Lower % = more affordable, less rent collected.</dd></div>
 <div class="row"><dt>Utility allowance</dt><dd>— A deduction from the published rent because tenants pay their own utilities. Published rent minus utility allowance = what the landlord actually collects.</dd></div>
-<div class="row"><dt>Net cash flow</dt><dd>— What's left after paying all building expenses and Steve's care budget. <span class="pos">Positive (+)</span> means money is accumulating. <span class="neg">Negative (−)</span> means money is being spent faster than it comes in.</dd></div>
+<div class="row"><dt>Net cash flow</dt><dd>— What's left after paying all building expenses${ownerOcc?" and Steve's care budget":''}. <span class="pos">Positive (+)</span> means money is accumulating. <span class="neg">Negative (−)</span> means money is being spent faster than it comes in.</dd></div>
 <div class="row"><dt>Running total</dt><dd>— The sum of all net cash flows since year 1. When this number reaches the "total capital needed," the renovation investment has been fully paid back.</dd></div>
 <div class="row"><dt>Annual return on capital</dt><dd>— The building's income in its first operating year (after construction is complete and tenants move in) divided by the total capital invested. This tells you how hard the money is working once the building is up and running. 5–7% is typical for impact-oriented projects; 8%+ is market-rate.</dd></div>
 <div class="row"><dt>Concession spread</dt><dd>— The difference between what you could charge (market rent) and what you choose to charge (affordable rent). This gap is the measurable social impact of the project.</dd></div>
@@ -504,11 +529,11 @@ document.getElementById('glossary').innerHTML=`
 
 function copyLink(){
 const p=new URLSearchParams();
-['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride'].forEach(k=>p.set(k,document.getElementById(k).value));
+['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride','ownerOcc'].forEach(k=>p.set(k,document.getElementById(k).value));
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});}
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride','ownerOcc'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1';} // legacy share links (sLife but no ownerOcc) keep the owner-occupied model they were created with
 
 loadSettings();toggleOpex();go();
 </script>
