@@ -168,11 +168,9 @@ th,td{padding:2px 4px}
 </div>
 </div>
 
+<script src="engine.js"></script>
 <script>
-const GBA=3940,APPR=1610000,UNIT_SF=1313;
-function fmt(n){if(!n&&n!==0||isNaN(n))return'$0';return n<0?'−$'+Math.abs(Math.round(n)).toLocaleString():'$'+Math.round(n).toLocaleString();}
-function fmtSign(n){if(n>0)return'+$'+Math.round(n).toLocaleString();if(n<0)return'−$'+Math.abs(Math.round(n)).toLocaleString();return'$0';}
-function pct(n){return(n*100).toFixed(1)+'%';}
+const pct=pctFmt; // this page's name for the shared engine formatter
 
 function go(){
 const psf=+document.getElementById('psf').value;
@@ -181,12 +179,16 @@ let sellN=+document.getElementById('sell').value;
 const steveKeeps=+document.getElementById('steve').value;
 // The two controls must agree: if the owner keeps Unit 1, at most 2 units can be sold.
 document.querySelector('#sell option[value="3"]').disabled=!!steveKeeps;
-if(steveKeeps&&sellN>2){sellN=2;document.getElementById('sell').value='2';}
 const drp=+document.getElementById('drp').value;
 const mkp=+document.getElementById('mkp').value;
 const restricted=+document.getElementById('restrict').value;
 const conv=+document.getElementById('conv').value;
 const bkr=+document.getElementById('bkr').value/100;
+
+// All sale math lives in engine.js (calcCondo) — shared with the Decision Report.
+const R=calcCondo({psf,costsP,sellN,ownerKeeps:!!steveKeeps,drp,mkp,restricted:!!restricted,conv,bkr});
+if(R.sellN!==sellN){sellN=R.sellN;document.getElementById('sell').value=String(sellN);}
+const {keepN,rentalN,constr,addCosts,totalInvest,costPerUnit,salePrice,grossSale,commission,transferTax,totalSellCosts,netSale,profit,moic,psfSale,drpGross,mkpGross,drpCosts,mkpCosts,drpNet,mkpNet,drpProfit,mkpProfit,equityPreserved,drpMoic,mkpMoic,drpMargin,mkpMargin,drpPsf,mkpPsf,control,deadlock}=R;
 
 document.getElementById('o_psf').textContent='$'+psf;
 document.getElementById('o_costs').textContent=Math.round(costsP*100)+'%';
@@ -219,8 +221,6 @@ psEl.innerHTML=`<div class="cd bd bl" style="margin:6px 0"><p><strong>Prices are
 psEl.innerHTML=`<div class="cd bd gn" style="margin:6px 0"><p><strong>Gap: ${fmtP(spread)}/unit (${spreadPct}% below market).</strong> Across ${sellN} unit${sellN>1?'s':''}, that's <strong>${fmtP(spread*sellN)}</strong> in community equity preserved — housing value that stays affordable instead of being captured at market rate.</p></div>`;
 }
 
-const keepN=3-sellN;
-const rentalN=steveKeeps?Math.max(0,keepN-1):keepN;
 document.getElementById('sellSummary').textContent=steveKeeps
   ?`Selling ${sellN} of 3 — Unit 1 stays as the owner's home${rentalN>0?`, ${rentalN} kept as rental${rentalN>1?'s':''}`:''}. "Sell all 3" is unavailable while the owner keeps a unit.`
   :`Selling ${sellN} of 3 — ${keepN} kept${keepN>0?` as rental${keepN>1?'s':''}`:'; no units kept'}.`;
@@ -237,28 +237,10 @@ units.push(`<div class="u${dim?' dim':''}"><div class="ul">Unit ${i} — ${statu
 }
 document.getElementById('unitCards').innerHTML=units.join('');
 
-// Costs
-const constr=psf*GBA;
-const addCosts=Math.round(constr*costsP);
-const totalInvest=constr+addCosts;
-const costPerUnit=Math.round(totalInvest/3);
-
 document.getElementById('capOut').innerHTML=`<div class="ms">
 <div class="m rd"><div class="ml">Total renovation cost</div><div class="mv">${fmt(totalInvest)}</div><div class="mn">${fmt(constr)} construction + ${fmt(addCosts)} soft/financing</div></div>
 <div class="m bl"><div class="ml">Cost per unit</div><div class="mv">${fmt(costPerUnit)}</div><div class="mn">Total ÷ 3 units</div></div>
 </div>`;
-
-// Sale
-const salePrice=restricted?drp:mkp;
-const grossSale=salePrice*sellN;
-const commission=Math.round(grossSale*bkr);
-const transferTax=Math.round(grossSale/1000*4.56);
-const totalSellCosts=commission+transferTax+conv;
-const netSale=grossSale-totalSellCosts;
-const profit=netSale-totalInvest;
-const moic=totalInvest>0?netSale/totalInvest:0;
-const grossMargin=grossSale>0?profit/grossSale:0;
-const psfSale=Math.round(salePrice/UNIT_SF);
 
 document.getElementById('saleOut').innerHTML=`<div class="ms">
 <div class="m bl"><div class="ml">Gross sale (${sellN} unit${sellN>1?'s':''})</div><div class="mv">${fmt(grossSale)}</div><div class="mn">${sellN} × ${fmt(salePrice)} per unit</div></div>
@@ -270,14 +252,6 @@ document.getElementById('saleOut').innerHTML=`<div class="ms">
 <div class="m bl"><div class="ml">Multiple on capital</div><div class="mv">${moic.toFixed(2)}x</div><div class="mn">${moic>=1?'Capital returned '+(moic>=1.5?'with strong profit':'with modest return'):'Capital not fully returned from sales alone'}</div></div>
 <div class="m bl"><div class="ml">Price per sq ft</div><div class="mv">$${psfSale}/SF</div><div class="mn">Comparable renovated: $450–550/SF</div></div>
 </div>`;
-
-// Comparison
-const drpGross=drp*sellN;const mkpGross=mkp*sellN;
-const drpCosts=Math.round(drpGross*bkr)+Math.round(drpGross/1000*4.56)+conv;
-const mkpCosts=Math.round(mkpGross*bkr)+Math.round(mkpGross/1000*4.56)+conv;
-const drpNet=drpGross-drpCosts;const mkpNet=mkpGross-mkpCosts;
-const drpProfit=drpNet-totalInvest;const mkpProfit=mkpNet-totalInvest;
-const equityPreserved=mkpGross-drpGross;
 
 document.getElementById('compOut').innerHTML=`
 <div class="tw"><table>
@@ -305,7 +279,6 @@ document.getElementById('residOut').innerHTML=`<div class="cd bd bl"><p><strong>
 
 // HOA
 const llcUnits=keepN;const buyerUnits=sellN;
-const control=llcUnits>buyerUnits;const deadlock=llcUnits===buyerUnits;
 
 let hoaHtml=`<div class="ms">
 <div class="m ${control?'gn':deadlock?'am':'rd'}"><div class="ml">Who has the votes?</div><div class="mv">${control?'You: '+llcUnits+' vs '+buyerUnits:deadlock?'Tied: '+llcUnits+' vs '+buyerUnits:'Buyers: '+buyerUnits+' vs '+llcUnits}</div><div class="mn">${control?'You retain majority control':deadlock?'Neither side has majority — deadlock risk':'Buyers can outvote you on everything'}</div></div>
@@ -326,13 +299,6 @@ hoaHtml+=`<div class="cd bd gn"><p><strong>You retain control.</strong> With ${k
 document.getElementById('hoaOut').innerHTML=hoaHtml;
 
 // KPIs
-const drpMoic=totalInvest>0?drpNet/totalInvest:0;
-const mkpMoic=totalInvest>0?mkpNet/totalInvest:0;
-const drpMargin=drpGross>0?drpProfit/drpGross:0;
-const mkpMargin=mkpGross>0?mkpProfit/mkpGross:0;
-const drpPsf=Math.round(drp/UNIT_SF);
-const mkpPsf=Math.round(mkp/UNIT_SF);
-
 document.getElementById('kpiOut').innerHTML=`
 <div class="tw"><table>
 <tr><th style="text-align:left">KPI</th><th>Affordable</th><th>Market</th><th>What it means</th></tr>

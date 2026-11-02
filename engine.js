@@ -3,7 +3,7 @@
 // Single source of truth. Used by rental.html, report.html, condo.html
 // ═══════════════════════════════════════════════════════════════════
 
-const GBA = 3940, UA = 385, VAC = .05, MGMT = .08, DEFAULT_OPEX = 24368, APPR = 1610000;
+const GBA = 3940, UA = 385, VAC = .05, MGMT = .08, DEFAULT_OPEX = 24368, APPR = 1610000, UNIT_SF = 1313;
 
 // OpEx can be calculated two ways:
 // 1. As a % of gross rental income (typical underwriting)
@@ -67,7 +67,7 @@ function calcCapital(psf, softP, finP, steveContrib, downtime, netRent, baseOpex
 
 // ── Year-by-year cash flow (matches rental.html's go() loop exactly) ──
 
-function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, totalWithDown, baseOpex, ownerOccupied, ownerUnits) {
+function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, totalWithDown, baseOpex, ownerOccupied, ownerUnits, heldUnits) {
   // ownerOccupied defaults to true for backward compatibility.
   // When false, all units are rented from Year 1: no care draw,
   // no owner expense share, and no transition year.
@@ -75,6 +75,7 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
   // residency is clamped to the projection so flows never extend past it.
   const occ = ownerOccupied !== false;
   const occUnits = occ ? Math.min(3, Math.max(1, ownerUnits == null ? 1 : ownerUnits)) : 0;
+  const held = heldUnits == null ? 3 : Math.min(3, Math.max(occUnits, heldUnits));
   const effSLife = occ ? Math.min(sLife, projYrs) : 0;
   const years = [];
   let cumCF = 0, yr1Noi = 0, paybackYr = null, firstFullYr = null;
@@ -85,7 +86,7 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
     const isReno = opMonths === 0;
     const isPartial = opMonths > 0 && opMonths < 12;
     const isTransition = occ && y === effSLife + 1;
-    const rentalUnits = y <= effSLife ? 3 - occUnits : 3;
+    const rentalUnits = y <= effSLife ? held - occUnits : held;
     const steveAlive = occ && y <= effSLife;
 
     const rm = Math.round(netRent * Math.pow(1 + rg, y - 1));
@@ -119,11 +120,12 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
 // Runs the full year-by-year model (same as rental.html) and extracts summary metrics
 
 function calcScenario(amiIdx, params) {
-  const { mktRent, draw, chip, sLife, psf, softP, finP, steveContrib, downtime, rg, eg, yrs, opexMode, opexPct, opexOverride, ownerOccupied, ownerUnits } = params;
+  const { mktRent, draw, chip, sLife, psf, softP, finP, steveContrib, downtime, rg, eg, yrs, opexMode, opexPct, opexOverride, ownerOccupied, ownerUnits, heldUnits } = params;
   const occ = ownerOccupied !== false;
   const occUnits = occ ? Math.min(3, Math.max(1, ownerUnits == null ? 1 : ownerUnits)) : 0;
+  const held = heldUnits == null ? 3 : Math.min(3, Math.max(occUnits, heldUnits));
   const effSLife = occ ? Math.min(sLife, yrs) : 0;
-  const rentalUnitsBase = 3 - occUnits;
+  const rentalUnitsBase = held - occUnits;
   const tier = TIERS[amiIdx];
   const netRent = tier.pub - UA;
   const isAffordable = netRent <= mktRent;
@@ -131,12 +133,12 @@ function calcScenario(amiIdx, params) {
 
   // Resolve operating expenses: % of income or fixed override
   // % -of-income opex needs an income base; if the owner occupies all 3 units, use the post-transition (3-unit) configuration
-  const baseOpex = resolveOpex(opexMode || 'override', opexPct || 0.4, opexOverride || DEFAULT_OPEX, netRent, rentalUnitsBase > 0 ? rentalUnitsBase : 3);
+  const baseOpex = resolveOpex(opexMode || 'override', opexPct || 0.4, opexOverride || DEFAULT_OPEX, netRent, rentalUnitsBase > 0 ? rentalUnitsBase : held);
   const opexPctOfIncome = (netRent * rentalUnitsBase * 12) > 0 ? baseOpex / (netRent * rentalUnitsBase * 12) : 0;
 
   const projYrs = yrs; // never extend flows past the selected projection period
   const cap = calcCapital(psf, softP, finP, steveContrib, downtime, netRent, baseOpex, rentalUnitsBase);
-  const flow = calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, cap.totalWithDown, baseOpex, occ, occUnits);
+  const flow = calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, cap.totalWithDown, baseOpex, occ, occUnits, held);
 
   // First full operating year cash flow (the number that matters for viability)
   const firstFullYear = flow.years.find(y => y.opMonths === 12);
@@ -185,7 +187,7 @@ function calcScenario(amiIdx, params) {
   const yoc = cap.totalWithDown > 0 ? noiFirstFull / cap.totalWithDown : 0;
 
   return {
-    ownerOccupied: occ, ownerUnits: occUnits, effSLife,
+    ownerOccupied: occ, ownerUnits: occUnits, heldUnits: held, effSLife,
     tier, netRent, isAffordable, marketDelta, baseOpex, opexPctOfIncome,
     cfFirstFull, noiFirstFull, viability, viable: cfFirstFull >= 0,
     cfBefore, egiBefore, opexBefore,
@@ -214,4 +216,47 @@ function fmtMarketDelta(netRent, mktRent) {
   if (Math.abs(delta) < 0.5) return 'At market';
   if (delta > 0) return '<span class="warn">+' + delta.toFixed(1) + '% (premium)</span>';
   return '<span class="pos">' + delta.toFixed(1) + '% (discount)</span>';
+}
+
+// ── Condo sale calculation (extracted from condo.html) ──
+// Pure function of the sale inputs; condo.html and report.html both use it.
+// o: { psf, costsP, sellN, ownerKeeps, drp, mkp, restricted, conv, bkr }
+// costsP is the combined soft + financing rate on construction (condo model convention).
+
+function calcCondo(o) {
+  const ownerKeeps = !!o.ownerKeeps, restricted = !!o.restricted;
+  let sellN = Math.min(3, Math.max(1, o.sellN | 0));
+  if (ownerKeeps && sellN > 2) sellN = 2; // owner keeps Unit 1 — at most 2 can be sold
+  const keepN = 3 - sellN;
+  const rentalN = ownerKeeps ? Math.max(0, keepN - 1) : keepN;
+  const constr = o.psf * GBA;
+  const addCosts = Math.round(constr * o.costsP);
+  const totalInvest = constr + addCosts;
+  const costPerUnit = Math.round(totalInvest / 3);
+  const salePrice = restricted ? o.drp : o.mkp;
+  const grossSale = salePrice * sellN;
+  const commission = Math.round(grossSale * o.bkr);
+  const transferTax = Math.round(grossSale / 1000 * 4.56);
+  const totalSellCosts = commission + transferTax + o.conv;
+  const netSale = grossSale - totalSellCosts;
+  const profit = netSale - totalInvest;
+  const moic = totalInvest > 0 ? netSale / totalInvest : 0;
+  const grossMargin = grossSale > 0 ? profit / grossSale : 0;
+  const psfSale = Math.round(salePrice / UNIT_SF);
+  const drpGross = o.drp * sellN, mkpGross = o.mkp * sellN;
+  const drpCosts = Math.round(drpGross * o.bkr) + Math.round(drpGross / 1000 * 4.56) + o.conv;
+  const mkpCosts = Math.round(mkpGross * o.bkr) + Math.round(mkpGross / 1000 * 4.56) + o.conv;
+  const drpNet = drpGross - drpCosts, mkpNet = mkpGross - mkpCosts;
+  const drpProfit = drpNet - totalInvest, mkpProfit = mkpNet - totalInvest;
+  const equityPreserved = mkpGross - drpGross;
+  const drpMoic = totalInvest > 0 ? drpNet / totalInvest : 0;
+  const mkpMoic = totalInvest > 0 ? mkpNet / totalInvest : 0;
+  const drpMargin = drpGross > 0 ? drpProfit / drpGross : 0;
+  const mkpMargin = mkpGross > 0 ? mkpProfit / mkpGross : 0;
+  const drpPsf = Math.round(o.drp / UNIT_SF), mkpPsf = Math.round(o.mkp / UNIT_SF);
+  const control = keepN > sellN, deadlock = keepN === sellN;
+  return { sellN, keepN, rentalN, ownerKeeps, restricted, constr, addCosts, totalInvest, costPerUnit,
+    salePrice, grossSale, commission, transferTax, totalSellCosts, netSale, profit, moic, grossMargin, psfSale,
+    drpGross, mkpGross, drpCosts, mkpCosts, drpNet, mkpNet, drpProfit, mkpProfit, equityPreserved,
+    drpMoic, mkpMoic, drpMargin, mkpMargin, drpPsf, mkpPsf, control, deadlock };
 }
