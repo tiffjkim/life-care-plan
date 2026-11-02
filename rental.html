@@ -116,10 +116,14 @@ th,td{padding:2px 4px}
 <div class="ctrl"><span class="cl">Financing detail</span><button type="button" class="btn" id="finToggle" onclick="toggleFinDetail()" style="padding:5px 12px;font-size:.72rem">Show loan assumptions ▾</button></div>
 <div id="finDetail" style="display:none;border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;margin:4px 0 8px;background:var(--bg2)">
 <div class="ctrl"><span class="cl">Model an actual loan?</span><select id="finMode" onchange="go()"><option value="allowance" selected>No — keep the general allowance above</option><option value="loan">Yes — detail the loan</option></select></div>
+<div style="font-size:.7rem;font-weight:600;color:var(--text2);margin:4px 0 2px">Construction loan — interest-only while building, retired at stabilization</div>
 <div class="ctrl"><span class="cl">Loan-to-cost (LTC)</span><input type="range" min="0" max="110" step="5" value="65" id="ltc" oninput="go()"><span class="cv" id="o_ltc">65%</span></div>
-<div class="ctrl"><span class="cl">Interest rate</span><input type="range" min="3" max="12" step="0.25" value="7" id="irate" oninput="go()"><span class="cv" id="o_irate">7%</span></div>
-<div class="ctrl"><span class="cl">Interest-only term (from project start, incl. construction)</span><input type="range" min="0" max="10" step="1" value="3" id="ioterm" oninput="go()"><span class="cv" id="o_ioterm">3 yrs</span></div>
-<div class="ctrl"><span class="cl">Amortization</span><input type="range" min="10" max="30" step="5" value="30" id="amort" oninput="go()"><span class="cv" id="o_amort">30 yrs</span></div>
+<div class="ctrl"><span class="cl">Construction rate</span><input type="range" min="3" max="12" step="0.25" value="8" id="crate" oninput="go()"><span class="cv" id="o_crate">8%</span></div>
+<div style="font-size:.7rem;font-weight:600;color:var(--text2);margin:8px 0 2px">Permanent loan — takes out the construction loan once the building is stabilized</div>
+<div class="ctrl"><span class="cl">Debt service coverage (DSCR)</span><input type="range" min="1" max="1.5" step="0.05" value="1.25" id="dscr" oninput="go()"><span class="cv" id="o_dscr">1.25×</span></div>
+<div class="ctrl"><span class="cl">Permanent rate</span><input type="range" min="3" max="12" step="0.25" value="6.5" id="prate" oninput="go()"><span class="cv" id="o_prate">6.5%</span></div>
+<div class="ctrl"><span class="cl">Permanent interest-only</span><input type="range" min="0" max="5" step="1" value="0" id="pio" oninput="go()"><span class="cv" id="o_pio">0 yrs</span></div>
+<div class="ctrl"><span class="cl">Amortization</span><input type="range" min="10" max="30" step="5" value="30" id="pamort" oninput="go()"><span class="cv" id="o_pamort">30 yrs</span></div>
 <div id="loanOut" style="font-size:.72rem;color:var(--text2);line-height:1.55"></div>
 </div>
 <div class="ctrl"><span class="cl">Construction time (months)</span><input type="range" min="0" max="46" step="1" value="12" id="down" oninput="go()"><span class="cv" id="o_down">12 mo</span></div>
@@ -243,14 +247,18 @@ const softP=+document.getElementById('soft').value/100;
 const finP=+document.getElementById('fin').value/100;
 const loanOn=document.getElementById('finMode').value==='loan';
 const ltc=+document.getElementById('ltc').value/100;
-const irate=+document.getElementById('irate').value/100;
-const ioterm=+document.getElementById('ioterm').value;
-const amort=+document.getElementById('amort').value;
-const irateLbl=(irate*100).toFixed(2).replace(/\.?0+$/,'')+'%';
+const crate=+document.getElementById('crate').value/100;
+const prate=+document.getElementById('prate').value/100;
+const dscr=+document.getElementById('dscr').value;
+const pio=+document.getElementById('pio').value;
+const pamort=+document.getElementById('pamort').value;
+const rateLbl=function(x){return (x*100).toFixed(2).replace(/\.?0+$/,'')+'%';};
 document.getElementById('o_ltc').textContent=Math.round(ltc*100)+'%';
-document.getElementById('o_irate').textContent=irateLbl;
-document.getElementById('o_ioterm').textContent=ioterm+' yrs';
-document.getElementById('o_amort').textContent=amort+' yrs';
+document.getElementById('o_crate').textContent=rateLbl(crate);
+document.getElementById('o_dscr').textContent=dscr.toFixed(2)+'×';
+document.getElementById('o_prate').textContent=rateLbl(prate);
+document.getElementById('o_pio').textContent=pio+' yrs';
+document.getElementById('o_pamort').textContent=pamort+' yrs';
 document.getElementById('fin').disabled=loanOn;
 if(loanOn){document.getElementById('finDetail').style.display='block';document.getElementById('finToggle').textContent='Hide loan assumptions ▴';}
 const ai=+document.getElementById('ami').value;
@@ -390,25 +398,37 @@ const tier=TIERS[ai];
 const constr=psf*GBA;
 const soft=Math.round(constr*softP);
 const loanBase=acqCost+constr+soft; // LTC basis: acquisition + hard + soft costs
-const loanAmt=loanOn?Math.round(loanBase*ltc):0;
-const constrInterest=loanOn?Math.round(loanAmt*irate*(downtime/12)):0; // interest carried during construction
+const constrLoan=loanOn?Math.round(loanBase*ltc):0;
+const constrInterest=loanOn?Math.round(constrLoan*crate*(downtime/12)):0; // construction interest, capitalized into the loan balance
 const financing=loanOn?constrInterest:Math.round((constr+acqCost)*finP);
 const totalInvest=acqCost+constr+soft+financing;
 const downCost=Math.round((tier.pub-UA)*baseUnits*(downtime/12)); // lost rent during reno
 const downExpenses=Math.round(baseOpex*(downtime/12)); // taxes/ins still owed during reno
 const totalWithDown=totalInvest+downExpenses; // full cash needed including carrying costs
-const equityNeeded=totalWithDown-loanAmt; // what the owner actually puts in when a loan is modeled (negative if the loan exceeds cost)
+const payoff=constrLoan+constrInterest; // construction loan balance the permanent loan must retire
+// Stabilized NOI: first full operating year, all 3 units rented (how a permanent lender underwrites)
+const stabYr=Math.floor(downtime/12)+(downtime%12===0?1:2);
+const rmS=Math.round((tier.pub-UA)*Math.pow(1+rg,stabYr-1));
+const egiS=Math.round(rmS*3*12*(1-VAC));
+const oxS=Math.round(baseOpex*Math.pow(1+eg,stabYr-1));
+const noiStab=egiS-oxS-Math.round(egiS*MGMT);
+const maxDS=noiStab>0?noiStab/dscr:0; // largest debt service the stabilized NOI supports at the target DSCR
+const mrP=prate/12;
+const permLoan=loanOn&&maxDS>0?(prate>0?Math.round((maxDS/12)*(1-Math.pow(1+mrP,-pamort*12))/mrP):Math.round(maxDS*pamort)):0;
+const equityNeeded=totalWithDown-permLoan; // total equity = total cost minus permanent loan proceeds
+const cashDuringConstr=(totalWithDown-constrInterest)-constrLoan; // owner's cash out before the take-out
+const takeoutGap=payoff-permLoan; // >0: owner brings cash at take-out; <0: owner takes cash out
 const capitalBasis=loanOn?Math.max(equityNeeded,0):totalWithDown; // denominator for return + payback
-const ioAnnual=loanOn?Math.round(loanAmt*irate):0;
-const amortAnnual=loanAmt>0?(irate>0?Math.round(loanAmt*(irate/12)/(1-Math.pow(1+irate/12,-amort*12))*12):Math.round(loanAmt/amort)):0;
-const ioOpMonths=Math.max(0,ioterm*12-downtime); // interest-only months left once operations start (construction counts against the IO term)
-document.getElementById('loanOut').innerHTML=loanOn?`<strong>Loan: ${fmt(loanAmt)}</strong> = ${Math.round(ltc*100)}% of ${fmt(loanBase)} (acquisition + construction + soft costs). The interest-only period runs from project start, so it covers the ${downtime}-month construction/renovation${ioOpMonths>0?` plus the first ${ioOpMonths} months of operations`:' and ends when operations begin'}: <strong>${fmt(ioAnnual)}/yr</strong> interest-only at ${irateLbl}, then <strong>${fmt(amortAnnual)}/yr</strong> amortizing over ${amort} years. Construction-period interest (${fmt(constrInterest)}) is counted in capital; debt service is deducted from cash flow. The loan principal itself is not an expense.${equityNeeded<0?` At ${Math.round(ltc*100)}% LTC the loan exceeds total project cost by ${fmt(-equityNeeded)} — no equity is required.`:''}`:'Using the general financing allowance above — the % slider sets a one-time cost allowance and no loan is modeled.';
+const ioAnnual=loanOn?Math.round(permLoan*prate):0;
+const amortAnnual=permLoan>0?(prate>0?Math.round(permLoan*mrP/(1-Math.pow(1+mrP,-pamort*12))*12):Math.round(permLoan/pamort)):0;
+const ioOpMonths=pio*12; // permanent loan's own interest-only months, counted from take-out
+document.getElementById('loanOut').innerHTML=loanOn?`<strong>Construction loan: ${fmt(constrLoan)}</strong> = ${Math.round(ltc*100)}% of ${fmt(loanBase)} (acquisition + construction + soft costs), interest-only at ${rateLbl(crate)} during the build; its interest (${fmt(constrInterest)}) is capitalized, so the balance at stabilization is <strong>${fmt(payoff)}</strong>.<br><strong>Permanent loan: ${fmt(permLoan)}</strong> — sized to a ${dscr.toFixed(2)}× DSCR on stabilized NOI of ${fmt(noiStab)} (all 3 units rented, first full year): max debt service ${fmt(Math.round(maxDS))}/yr at ${rateLbl(prate)} over a ${pamort}-year amortization${pio>0?`, interest-only for the first ${pio} year${pio===1?'':'s'}`:''}.<br>At take-out the permanent loan retires the construction balance: ${takeoutGap>0?`the owner brings <strong>${fmt(takeoutGap)}</strong> more`:`the owner takes <strong>${fmt(-takeoutGap)}</strong> out`}. Cash needed during construction: <strong>${fmt(cashDuringConstr)}</strong>. Total equity = total cost − permanent loan.`:'Using the general financing allowance above — the % slider sets a one-time cost allowance and no loans are modeled.';
 
 // Capital section
 const acqPct=Math.round((acqCost/APPR)*100);
 let capHtml=`<div class="ms">
-${loanOn?`<div class="m rd"><div class="ml">Equity needed (after loan)</div><div class="mv">${fmt(equityNeeded)}</div><div class="mn">${fmt(totalWithDown)} total cost − ${fmt(loanAmt)} loan</div></div>
-<div class="m bl"><div class="ml">Loan amount (${Math.round(ltc*100)}% LTC)</div><div class="mv">${fmt(loanAmt)}</div><div class="mn">${irateLbl} · IO ${ioterm} yrs incl. construction · ${amort}-yr amortization</div></div>`
+${loanOn?`<div class="m rd"><div class="ml">Equity needed (after perm loan)</div><div class="mv">${fmt(equityNeeded)}</div><div class="mn">${fmt(totalWithDown)} total cost − ${fmt(permLoan)} permanent loan</div></div>
+<div class="m bl"><div class="ml">Construction loan (${Math.round(ltc*100)}% LTC)</div><div class="mv">${fmt(constrLoan)}</div><div class="mn">Balance at take-out ${fmt(payoff)} · cash during construction ${fmt(cashDuringConstr)}</div></div>`
 :`<div class="m rd"><div class="ml">Total capital needed</div><div class="mv">${fmt(totalWithDown)}</div><div class="mn">${fmt(constr)} construction + ${fmt(soft)} soft + ${fmt(financing)} financing${downtime>0?' + '+fmt(downExpenses)+' carrying':''}${acqCost>0?' + '+fmt(acqCost)+' acquisition':''}</div></div>
 <div class="m bl"><div class="ml">Acquisition cost</div><div class="mv">${fmt(acqCost)}</div><div class="mn">${acqPct}% of $1.61M appraised value · settles the owner's liabilities</div></div>`}
 </div>`;
@@ -482,7 +502,7 @@ const lastY=years[years.length-1];
 const bC=v=>v>=.055?'gn':v>=.04?'am':'rd';
 
 document.getElementById('retOut').innerHTML=`<div class="ms">
-<div class="m ${bC(yoc)}"><div class="ml">${loanOn?'Annual return on equity':'Annual return on capital'}</div><div class="mv">${loanOn&&equityNeeded<=0?'—':pct(yoc)}</div><div class="mn">${loanOn&&equityNeeded<=0?'No equity required — the loan covers all costs':('First full operating year'+(firstFullYr?' (Yr '+firstFullYr+')':'')+': '+fmt(yr1Noi)+' ÷ '+fmt(capitalBasis)+(loanOn?' equity':''))}</div></div>
+<div class="m ${bC(yoc)}"><div class="ml">${loanOn?'Annual return on equity':'Annual return on capital'}</div><div class="mv">${loanOn&&equityNeeded<=0?'—':pct(yoc)}</div><div class="mn">${loanOn&&equityNeeded<=0?'No equity required — the permanent loan covers all costs':('First full operating year'+(firstFullYr?' (Yr '+firstFullYr+')':'')+': '+fmt(yr1Noi)+' ÷ '+fmt(capitalBasis)+(loanOn?' equity':''))}</div></div>
 <div class="m ${years[0].cf>=0?'gn':'rd'}"><div class="ml">Year 1 net cash flow</div><div class="mv"><span class="${years[0].cf>=0?'pos':'neg'}">${fmtSign(years[0].cf)}</span></div><div class="mn">${ownerOcc?'After all expenses and the owner\'s care':'After all expenses'}</div></div>
 <div class="m ${paybackYr?'gn':'am'}"><div class="ml">Capital recovered by</div><div class="mv">${paybackYr?'Year '+paybackYr:'Beyond year '+projYrs}</div><div class="mn">${paybackYr?'Cumulative cash flow covers the investment':'Try higher AMI or lower construction cost'}</div></div>
 </div>
@@ -601,11 +621,11 @@ document.getElementById('glossary').innerHTML=`
 
 function copyLink(){
 const p=new URLSearchParams();
-['psf','soft','fin','finMode','ltc','irate','ioterm','amort','ami','mkt','draw','chip','rg','eg','sLife','yrs','acqCost','down','opexMode','opexPct','opexOverride','ownerOcc','ownerUnits'].forEach(k=>p.set(k,document.getElementById(k).value));
+['psf','soft','fin','finMode','ltc','crate','dscr','prate','pio','pamort','ami','mkt','draw','chip','rg','eg','sLife','yrs','acqCost','down','opexMode','opexPct','opexOverride','ownerOcc','ownerUnits'].forEach(k=>p.set(k,document.getElementById(k).value));
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','finMode','ltc','irate','ioterm','amort','ami','mkt','draw','chip','rg','eg','sLife','yrs','acqCost','down','opexMode','opexPct','opexOverride','ownerOcc','ownerUnits'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1'; if(!p.has('acqCost')&&p.has('acq'))document.getElementById('acqCost').value=Math.max(0,1610000-(+p.get('acq')));}
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','finMode','ltc','crate','dscr','prate','pio','pamort','ami','mkt','draw','chip','rg','eg','sLife','yrs','acqCost','down','opexMode','opexPct','opexOverride','ownerOcc','ownerUnits'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1'; if(!p.has('acqCost')&&p.has('acq'))document.getElementById('acqCost').value=Math.max(0,1610000-(+p.get('acq')));}
 
 loadSettings();toggleOpex();go();
 </script>
