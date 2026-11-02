@@ -116,9 +116,9 @@ th,td{padding:2px 4px}
 <div class="ctrl"><span class="cl">Financing detail</span><button type="button" class="btn" id="finToggle" onclick="toggleFinDetail()" style="padding:5px 12px;font-size:.72rem">Show loan assumptions ▾</button></div>
 <div id="finDetail" style="display:none;border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;margin:4px 0 8px;background:var(--bg2)">
 <div class="ctrl"><span class="cl">Model an actual loan?</span><select id="finMode" onchange="go()"><option value="allowance" selected>No — keep the general allowance above</option><option value="loan">Yes — detail the loan</option></select></div>
-<div class="ctrl"><span class="cl">Loan-to-cost (LTC)</span><input type="range" min="0" max="90" step="5" value="65" id="ltc" oninput="go()"><span class="cv" id="o_ltc">65%</span></div>
+<div class="ctrl"><span class="cl">Loan-to-cost (LTC)</span><input type="range" min="0" max="110" step="5" value="65" id="ltc" oninput="go()"><span class="cv" id="o_ltc">65%</span></div>
 <div class="ctrl"><span class="cl">Interest rate</span><input type="range" min="3" max="12" step="0.25" value="7" id="irate" oninput="go()"><span class="cv" id="o_irate">7%</span></div>
-<div class="ctrl"><span class="cl">Interest-only term</span><input type="range" min="0" max="10" step="1" value="3" id="ioterm" oninput="go()"><span class="cv" id="o_ioterm">3 yrs</span></div>
+<div class="ctrl"><span class="cl">Interest-only term (from project start, incl. construction)</span><input type="range" min="0" max="10" step="1" value="3" id="ioterm" oninput="go()"><span class="cv" id="o_ioterm">3 yrs</span></div>
 <div class="ctrl"><span class="cl">Amortization</span><input type="range" min="10" max="30" step="5" value="30" id="amort" oninput="go()"><span class="cv" id="o_amort">30 yrs</span></div>
 <div id="loanOut" style="font-size:.72rem;color:var(--text2);line-height:1.55"></div>
 </div>
@@ -397,17 +397,18 @@ const totalInvest=acqCost+constr+soft+financing;
 const downCost=Math.round((tier.pub-UA)*baseUnits*(downtime/12)); // lost rent during reno
 const downExpenses=Math.round(baseOpex*(downtime/12)); // taxes/ins still owed during reno
 const totalWithDown=totalInvest+downExpenses; // full cash needed including carrying costs
-const equityNeeded=totalWithDown-loanAmt; // what the owner actually puts in when a loan is modeled
-const capitalBasis=loanOn?equityNeeded:totalWithDown; // denominator for return + payback
+const equityNeeded=totalWithDown-loanAmt; // what the owner actually puts in when a loan is modeled (negative if the loan exceeds cost)
+const capitalBasis=loanOn?Math.max(equityNeeded,0):totalWithDown; // denominator for return + payback
 const ioAnnual=loanOn?Math.round(loanAmt*irate):0;
 const amortAnnual=loanAmt>0?(irate>0?Math.round(loanAmt*(irate/12)/(1-Math.pow(1+irate/12,-amort*12))*12):Math.round(loanAmt/amort)):0;
-document.getElementById('loanOut').innerHTML=loanOn?`<strong>Loan: ${fmt(loanAmt)}</strong> = ${Math.round(ltc*100)}% of ${fmt(loanBase)} (acquisition + construction + soft costs). Interest-only at ${irateLbl} = <strong>${fmt(ioAnnual)}/yr</strong> for the first ${ioterm} operating year${ioterm===1?'':'s'}, then <strong>${fmt(amortAnnual)}/yr</strong> amortizing over ${amort} years. Construction-period interest (${fmt(constrInterest)}) is counted in capital; debt service is deducted from cash flow. The loan principal itself is not an expense.`:'Using the general financing allowance above — the % slider sets a one-time cost allowance and no loan is modeled.';
+const ioOpMonths=Math.max(0,ioterm*12-downtime); // interest-only months left once operations start (construction counts against the IO term)
+document.getElementById('loanOut').innerHTML=loanOn?`<strong>Loan: ${fmt(loanAmt)}</strong> = ${Math.round(ltc*100)}% of ${fmt(loanBase)} (acquisition + construction + soft costs). The interest-only period runs from project start, so it covers the ${downtime}-month construction/renovation${ioOpMonths>0?` plus the first ${ioOpMonths} months of operations`:' and ends when operations begin'}: <strong>${fmt(ioAnnual)}/yr</strong> interest-only at ${irateLbl}, then <strong>${fmt(amortAnnual)}/yr</strong> amortizing over ${amort} years. Construction-period interest (${fmt(constrInterest)}) is counted in capital; debt service is deducted from cash flow. The loan principal itself is not an expense.${equityNeeded<0?` At ${Math.round(ltc*100)}% LTC the loan exceeds total project cost by ${fmt(-equityNeeded)} — no equity is required.`:''}`:'Using the general financing allowance above — the % slider sets a one-time cost allowance and no loan is modeled.';
 
 // Capital section
 const acqPct=Math.round((acqCost/APPR)*100);
 let capHtml=`<div class="ms">
 ${loanOn?`<div class="m rd"><div class="ml">Equity needed (after loan)</div><div class="mv">${fmt(equityNeeded)}</div><div class="mn">${fmt(totalWithDown)} total cost − ${fmt(loanAmt)} loan</div></div>
-<div class="m bl"><div class="ml">Loan amount (${Math.round(ltc*100)}% LTC)</div><div class="mv">${fmt(loanAmt)}</div><div class="mn">${irateLbl} · interest-only ${ioterm} yrs · ${amort}-yr amortization</div></div>`
+<div class="m bl"><div class="ml">Loan amount (${Math.round(ltc*100)}% LTC)</div><div class="mv">${fmt(loanAmt)}</div><div class="mn">${irateLbl} · IO ${ioterm} yrs incl. construction · ${amort}-yr amortization</div></div>`
 :`<div class="m rd"><div class="ml">Total capital needed</div><div class="mv">${fmt(totalWithDown)}</div><div class="mn">${fmt(constr)} construction + ${fmt(soft)} soft + ${fmt(financing)} financing${downtime>0?' + '+fmt(downExpenses)+' carrying':''}${acqCost>0?' + '+fmt(acqCost)+' acquisition':''}</div></div>
 <div class="m bl"><div class="ml">Acquisition cost</div><div class="mv">${fmt(acqCost)}</div><div class="mn">${acqPct}% of $1.61M appraised value · settles the owner's liabilities</div></div>`}
 </div>`;
@@ -440,7 +441,7 @@ document.getElementById('concBar').innerHTML=`
 
 // Cash flow with renovation downtime + owner transition
 let years=[];let cumCF=0;let yr1Noi=0;let paybackYr=null;
-let firstFullYr=null;let opYearIdx=0; // operating-year counter for the interest-only schedule
+let firstFullYr=null;let ioMonthsLeft=ioOpMonths; // interest-only months remaining once operations start
 
 for(let y=1;y<=projYrs;y++){
 // How many months of this year are operating (not under construction)?
@@ -464,8 +465,8 @@ const mf=Math.round(egi*MGMT);
 const totOx=buildingOx+mf;
 const noi=egi-totOx;
 const careDraw=steveAlive?Math.round(draw*(opMonths/12)):0; // prorate care too
-if(opMonths>0)opYearIdx++;
-const ds=loanOn?Math.round((opYearIdx<=ioterm?ioAnnual:amortAnnual)*(opMonths/12)):0; // debt service: interest-only first, then amortizing
+const ioMoThisYr=loanOn?Math.min(opMonths,ioMonthsLeft):0; ioMonthsLeft-=ioMoThisYr;
+const ds=loanOn?Math.round(ioAnnual*(ioMoThisYr/12)+amortAnnual*((opMonths-ioMoThisYr)/12)):0; // debt service: interest-only months first, then amortizing
 const cf=noi-ds-careDraw;
 cumCF+=cf;
 if(!firstFullYr&&opMonths===12){firstFullYr=y;yr1Noi=noi;}
@@ -481,7 +482,7 @@ const lastY=years[years.length-1];
 const bC=v=>v>=.055?'gn':v>=.04?'am':'rd';
 
 document.getElementById('retOut').innerHTML=`<div class="ms">
-<div class="m ${bC(yoc)}"><div class="ml">${loanOn?'Annual return on equity':'Annual return on capital'}</div><div class="mv">${pct(yoc)}</div><div class="mn">First full operating year${firstFullYr?' (Yr '+firstFullYr+')':''}: ${fmt(yr1Noi)} ÷ ${fmt(capitalBasis)}${loanOn?' equity':''}</div></div>
+<div class="m ${bC(yoc)}"><div class="ml">${loanOn?'Annual return on equity':'Annual return on capital'}</div><div class="mv">${loanOn&&equityNeeded<=0?'—':pct(yoc)}</div><div class="mn">${loanOn&&equityNeeded<=0?'No equity required — the loan covers all costs':('First full operating year'+(firstFullYr?' (Yr '+firstFullYr+')':'')+': '+fmt(yr1Noi)+' ÷ '+fmt(capitalBasis)+(loanOn?' equity':''))}</div></div>
 <div class="m ${years[0].cf>=0?'gn':'rd'}"><div class="ml">Year 1 net cash flow</div><div class="mv"><span class="${years[0].cf>=0?'pos':'neg'}">${fmtSign(years[0].cf)}</span></div><div class="mn">${ownerOcc?'After all expenses and the owner\'s care':'After all expenses'}</div></div>
 <div class="m ${paybackYr?'gn':'am'}"><div class="ml">Capital recovered by</div><div class="mv">${paybackYr?'Year '+paybackYr:'Beyond year '+projYrs}</div><div class="mn">${paybackYr?'Cumulative cash flow covers the investment':'Try higher AMI or lower construction cost'}</div></div>
 </div>
