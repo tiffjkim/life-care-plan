@@ -100,6 +100,7 @@ th,td{padding:2px 4px}
 <h2>What to sell</h2>
 <div class="ctrl"><span class="cl">Units to sell</span><select id="sell" onchange="go()"><option value="1">Sell 1 (keep 2)</option><option value="2" selected>Sell 2 (keep 1)</option><option value="3">Sell all 3</option></select></div>
 <div class="ctrl"><span class="cl">Steve keeps a unit?</span><select id="steve" onchange="go()"><option value="1" selected>Yes — he lives in Unit 1</option><option value="0">No — all units available</option></select></div>
+<div id="sellSummary" style="font-size:.72rem;color:var(--text3);margin:2px 0 6px"></div>
 
 <h2>Pricing</h2>
 <p>Set both prices on the same scale. When they overlap, the deal looks the same either way. When apart, the gap is community equity preserved.</p>
@@ -175,8 +176,11 @@ function pct(n){return(n*100).toFixed(1)+'%';}
 function go(){
 const psf=+document.getElementById('psf').value;
 const costsP=+document.getElementById('costs').value/100;
-const sellN=+document.getElementById('sell').value;
+let sellN=+document.getElementById('sell').value;
 const steveKeeps=+document.getElementById('steve').value;
+// The two controls must agree: if Steve keeps Unit 1, at most 2 units can be sold.
+document.querySelector('#sell option[value="3"]').disabled=!!steveKeeps;
+if(steveKeeps&&sellN>2){sellN=2;document.getElementById('sell').value='2';}
 const drp=+document.getElementById('drp').value;
 const mkp=+document.getElementById('mkp').value;
 const restricted=+document.getElementById('restrict').value;
@@ -216,6 +220,9 @@ psEl.innerHTML=`<div class="cd bd gn" style="margin:6px 0"><p><strong>Gap: ${fmt
 
 const keepN=3-sellN;
 const rentalN=steveKeeps?Math.max(0,keepN-1):keepN;
+document.getElementById('sellSummary').textContent=steveKeeps
+  ?`Selling ${sellN} of 3 — Unit 1 stays as Steve's home${rentalN>0?`, ${rentalN} kept as rental${rentalN>1?'s':''}`:''}. "Sell all 3" is unavailable while Steve keeps a unit.`
+  :`Selling ${sellN} of 3 — ${keepN} kept${keepN>0?` as rental${keepN>1?'s':''}`:'; no units kept'}.`;
 
 // Unit cards
 const units=[];
