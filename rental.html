@@ -105,8 +105,8 @@ th,td{padding:2px 4px}
 <div class="cd bd bl"><p><span class="pos">Green (+)</span> = money in. <span class="neg">Red (−)</span> = money out. Slide controls to test scenarios.</p></div>
 
 <h2>Renovation capital</h2>
-<p>Steve contributes all or part of the building. Slide to see how it changes.</p>
-<div class="ctrl"><span class="cl">Steve's building contribution</span><input type="range" min="0" max="1610000" step="10000" value="1610000" id="acq" oninput="go()"><span class="cv" id="o_acq">$1.61M</span></div>
+<p>What the incoming owner pays for the building. This money goes to settle Steve's liabilities — medical bills, and the share for his sister under his will — not to a seller. Set it to the total that needs to be covered.</p>
+<div class="ctrl"><span class="cl">Acquisition cost</span><input type="range" min="0" max="1610000" step="10000" value="0" id="acqCost" oninput="go()"><span class="cv" id="o_acqCost">$0</span></div>
 <div class="ctrl"><span class="cl">Construction cost per sq ft</span><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
 <div class="ctrl"><span class="cl">Soft costs (architect, permits)</span><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
 <div class="ctrl"><span class="cl">Financing costs</span><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
@@ -186,7 +186,7 @@ th,td{padding:2px 4px}
 <h2>Important considerations</h2>
 <div id="notes"></div>
 
-<h2>Conventional developer vs. Steve's method</h2>
+<h2>Conventional developer vs. this project</h2>
 <div id="methodComp"></div>
 
 <h2>What the terms mean</h2>
@@ -249,12 +249,12 @@ if(opexMode==='pct'){
 }else{
   document.getElementById('opexNote').textContent='= '+impliedPct+' of gross rental income (max: 110% = $'+opexMax.toLocaleString()+')';
 }
-const steveContrib=+document.getElementById('acq').value;
+const acqCost=+document.getElementById('acqCost').value; // what the new owner pays — settles Steve's liabilities (medical bills, sister's share per the will)
+const steveContrib=APPR-acqCost; // building value above the acquisition amount (engine still expects the contribution form)
 const downtime=+document.getElementById('down').value;
 
-const acqCost=APPR-steveContrib; // what outside capital pays for the building itself
 
-document.getElementById('o_acq').textContent=steveContrib>=1000000?'$'+(steveContrib/1000000).toFixed(2)+'M':'$'+(steveContrib/1000).toFixed(0)+'K';
+document.getElementById('o_acqCost').textContent=acqCost===0?'$0':acqCost>=1000000?'$'+(acqCost/1000000).toFixed(2)+'M':'$'+(acqCost/1000).toFixed(0)+'K';
 document.getElementById('o_psf').textContent='$'+psf;
 document.getElementById('o_down').textContent=downtime+' mo';
 document.getElementById('o_soft').textContent=Math.round(softP*100)+'%';
@@ -343,10 +343,10 @@ const downExpenses=Math.round(baseOpex*(downtime/12)); // taxes/ins still owed d
 const totalWithDown=totalInvest+downExpenses; // full cash needed including carrying costs
 
 // Capital section
-const contribPct=Math.round((steveContrib/APPR)*100);
+const acqPct=Math.round((acqCost/APPR)*100);
 let capHtml=`<div class="ms">
 <div class="m rd"><div class="ml">Total capital needed</div><div class="mv">${fmt(totalWithDown)}</div><div class="mn">${fmt(constr)} build + ${fmt(soft+financing)} soft/fin${downtime>0?' + '+fmt(downExpenses)+' carrying':''}${acqCost>0?' + '+fmt(acqCost)+' acquisition':''}</div></div>
-<div class="m ${steveContrib>=APPR?'gn':steveContrib>0?'am':'rd'}"><div class="ml">Steve's contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of $1.61M appraised value</div></div>
+<div class="m bl"><div class="ml">Acquisition cost</div><div class="mv">${fmt(acqCost)}</div><div class="mn">${acqPct}% of $1.61M appraised value · settles Steve's liabilities</div></div>
 </div>`;
 if(downtime>0){
 capHtml+=`<div class="cd bd am"><p><strong>${downtime} months of construction:</strong> -${fmt(downExpenses)} in carrying costs (taxes, insurance) and -${fmt(downCost)} in lost rent (${baseUnits} rental units × ${fmt(tier.pub-UA)}/mo).${ownerOcc?" Steve's unit isn't counted — it produces no rent either way.":''}</p></div>`;
@@ -421,7 +421,7 @@ document.getElementById('retOut').innerHTML=`<div class="ms">
 <div class="ms">
 <div class="m bl"><div class="ml">Year ${projYrs} cumulative cash</div><div class="mv"><span class="${lastY.cumCF>=0?'pos':'neg'}">${fmtSign(lastY.cumCF)}</span></div><div class="mn">Total cash generated over ${projYrs} years</div></div>
 <div class="m gn"><div class="ml">Annual affordability impact</div><div class="mv">${fmt(annConc)}</div><div class="mn">Rent savings created for ${baseUnits} families</div></div>
-<div class="m bl"><div class="ml">Steve's building contribution</div><div class="mv">${fmt(steveContrib)}</div><div class="mn">${contribPct}% of $1.61M appraised value</div></div>
+<div class="m bl"><div class="ml">Acquisition cost</div><div class="mv">${fmt(acqCost)}</div><div class="mn">${acqPct}% of $1.61M appraised value · settles Steve's liabilities</div></div>
 </div>`;
 
 // CF note
@@ -502,15 +502,15 @@ const convAnnualDebt=convMonthly*12;
 
 document.getElementById('methodComp').innerHTML=`
 <div class="tw"><table>
-<tr><th style="text-align:left">Cost layer</th><th>Conventional</th><th>Steve's method</th><th>Saved</th></tr>
-<tr><td style="text-align:left">Acquisition</td><td class="neg">${fmt(convAcq)}</td><td class="yg">$0</td><td class="yg">${fmt(convAcq)}</td></tr>
+<tr><th style="text-align:left">Cost layer</th><th>Conventional</th><th>This project</th><th>Saved</th></tr>
+<tr><td style="text-align:left">Acquisition</td><td class="neg">${fmt(convAcq)}</td><td>${fmt(acqCost)}</td><td class="yg">${fmt(convAcq-acqCost)}</td></tr>
 <tr><td style="text-align:left">Renovation</td><td>${fmt(convReno)}</td><td>${fmt(constr+soft+financing+downExpenses)}</td><td>—</td></tr>
 <tr><td style="text-align:left">Developer profit</td><td class="neg">${fmt(convProfit)}</td><td class="yg">$0</td><td class="yg">${fmt(convProfit)}</td></tr>
 <tr style="font-weight:600;border-top:2px solid var(--border)"><td style="text-align:left">Total</td><td class="neg">${fmt(convTotal)}</td><td>${fmt(steveTotal)}</td><td class="yg">${fmt(savings)} (${savingsPct}%)</td></tr>
 <tr><td style="text-align:left">Per unit</td><td>${fmt(convPerUnit)}</td><td>${fmt(stevePerUnit)}</td><td></td></tr>
 <tr><td style="text-align:left">Annual debt service</td><td class="neg">-${fmt(convAnnualDebt)}/yr</td><td class="yg">$0/yr</td><td class="yg">${fmt(convAnnualDebt)}/yr</td></tr>
 </table></div>
-<div class="cd bd gn"><p><strong>Same building, same renovation, ${savingsPct}% less cost.</strong> The two eliminated layers — acquisition and profit — are what make affordable rents possible. Steve's willingness to donate equity is what makes it work.</p></div>
+<div class="cd bd gn"><p><strong>Same building, same renovation, ${savingsPct}% less cost.</strong> A conventional deal pays a market acquisition price and builds in developer profit. This project pays only the amount needed to settle Steve's liabilities, and no profit — that difference is what makes affordable rents possible.</p></div>
 `;
 
 // Glossary
@@ -529,11 +529,11 @@ document.getElementById('glossary').innerHTML=`
 
 function copyLink(){
 const p=new URLSearchParams();
-['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride','ownerOcc'].forEach(k=>p.set(k,document.getElementById(k).value));
+['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acqCost','down','opexMode','opexPct','opexOverride','ownerOcc'].forEach(k=>p.set(k,document.getElementById(k).value));
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acq','down','opexMode','opexPct','opexOverride','ownerOcc'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1';} // legacy share links (sLife but no ownerOcc) keep the owner-occupied model they were created with
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','soft','fin','ami','mkt','draw','chip','rg','eg','sLife','yrs','acqCost','down','opexMode','opexPct','opexOverride','ownerOcc'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1'; if(!p.has('acqCost')&&p.has('acq'))document.getElementById('acqCost').value=Math.max(0,1610000-(+p.get('acq')));}
 
 loadSettings();toggleOpex();go();
 </script>

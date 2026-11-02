@@ -182,7 +182,8 @@ td:nth-child(n+2){text-align:right;font-family:var(--mono);font-variant-numeric:
 <div class="config">
   <h2>Shared Assumptions</h2>
   <div class="ctrl"><label class="cl" for="mkt">Post-renovation market rent</label><input type="range" min="2800" max="7500" step="50" value="3100" id="mkt" oninput="go()"><span class="cv" id="o_mkt">$3,100</span></div>
-  <div class="ctrl"><label class="cl" for="acq">Steve's building contribution</label><input type="range" min="0" max="1610000" step="10000" value="1610000" id="acq" oninput="go()"><span class="cv" id="o_acq">$1.61M</span></div>
+  <div class="ctrl"><label class="cl" for="acqCost">Acquisition cost</label><input type="range" min="0" max="1610000" step="10000" value="0" id="acqCost" oninput="go()"><span class="cv" id="o_acqCost">$0</span></div>
+  <div style="font-size:.68rem;color:var(--text3);margin:2px 0 6px">What the incoming owner pays for the building — settles Steve's liabilities (medical bills, and his sister's share under the will), not a seller's price.</div>
   <div class="ctrl"><label class="cl" for="psf">Construction cost per sq ft</label><input type="range" min="100" max="460" step="5" value="175" id="psf" oninput="go()"><span class="cv" id="o_psf">$175</span></div>
   <div class="ctrl"><label class="cl" for="soft">Soft costs (architect, permits)</label><input type="range" min="10" max="25" step="1" value="15" id="soft" oninput="go()"><span class="cv" id="o_soft">15%</span></div>
   <div class="ctrl"><label class="cl" for="fin">Financing costs</label><input type="range" min="5" max="20" step="1" value="10" id="fin" oninput="go()"><span class="cv" id="o_fin">10%</span></div>
@@ -377,7 +378,8 @@ function getParams(){
   const psf=+document.getElementById('psf').value;
   const softP=+document.getElementById('soft').value/100;
   const finP=+document.getElementById('fin').value/100;
-  const steveContrib=+document.getElementById('acq').value;
+  const acqCost=+document.getElementById('acqCost').value; // new owner's payment — settles Steve's liabilities (medical bills, sister's share per the will)
+  const steveContrib=APPR-acqCost; // engine still expects the contribution form
   const downtime=+document.getElementById('down').value;
   const draw=+document.getElementById('draw').value;
   const chip=+document.getElementById('chip').value;
@@ -389,7 +391,7 @@ function getParams(){
   const opexPct=+document.getElementById('opexPct').value/100;
   const opexOverride=+document.getElementById('opexOverride').value;
   const ownerOccupied=document.getElementById('ownerOcc').value==='1';
-  return{mktRent,psf,softP,finP,steveContrib,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride,ownerOccupied};
+  return{mktRent,psf,softP,finP,steveContrib,acqCost,downtime,draw,chip,rg,eg,sLife,yrs,opexMode,opexPct,opexOverride,ownerOccupied};
 }
 
 function go(){
@@ -405,7 +407,7 @@ function go(){
 
   // Update display values
   document.getElementById('o_mkt').textContent='$'+p.mktRent.toLocaleString();
-  document.getElementById('o_acq').textContent=p.steveContrib>=1000000?'$'+(p.steveContrib/1000000).toFixed(2)+'M':'$'+(p.steveContrib/1000).toFixed(0)+'K';
+  document.getElementById('o_acqCost').textContent=p.acqCost===0?'$0':p.acqCost>=1000000?'$'+(p.acqCost/1000000).toFixed(2)+'M':'$'+(p.acqCost/1000).toFixed(0)+'K';
   document.getElementById('o_psf').textContent='$'+p.psf;
   document.getElementById('o_soft').textContent=Math.round(p.softP*100)+'%';
   document.getElementById('o_fin').textContent=Math.round(p.finP*100)+'%';
@@ -568,7 +570,7 @@ function go(){
   // ── Parameters snapshot ──
   const snapParams=[
     {l:'Market rent (2BR)',v:'$'+p.mktRent.toLocaleString()+'/mo'},
-    {l:'Steve\'s contribution',v:p.steveContrib>=1000000?'$'+(p.steveContrib/1000000).toFixed(2)+'M':'$'+(p.steveContrib/1000).toFixed(0)+'K'},
+    {l:'Acquisition cost',v:(p.acqCost===0?'$0':p.acqCost>=1000000?'$'+(p.acqCost/1000000).toFixed(2)+'M':'$'+(p.acqCost/1000).toFixed(0)+'K')+' — settles Steve\'s liabilities'},
     {l:'Construction $/sf',v:'$'+p.psf},
     {l:'Soft costs',v:Math.round(p.softP*100)+'%'},
     {l:'Financing costs',v:Math.round(p.finP*100)+'%'},
@@ -604,7 +606,7 @@ function updateProgress(){
 
 function copyLink(){
   const p=new URLSearchParams();
-  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','opexMode','opexPct','opexOverride','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>p.set(k,document.getElementById(k).value));
+  ['mkt','acqCost','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','opexMode','opexPct','opexOverride','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>p.set(k,document.getElementById(k).value));
   const url=location.origin+location.pathname+'?'+p.toString();
   navigator.clipboard.writeText(url).then(()=>{
     const btn=document.querySelector('.btn-p');
@@ -616,10 +618,11 @@ function copyLink(){
 // Load from URL params
 function loadFromURL(){
   const p=new URLSearchParams(location.search);
-  ['mkt','acq','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>{
+  ['mkt','acqCost','psf','soft','fin','down','draw','chip','rg','eg','sLife','yrs','ami_a','ami_b','ami_c','ownerOcc'].forEach(k=>{
     if(p.has(k)){const el=document.getElementById(k);if(el)el.value=p.get(k)}
   });
   if(!p.has('ownerOcc')&&p.has('sLife'))document.getElementById('ownerOcc').value='1'; // legacy share links keep the owner-occupied model they were created with
+  if(!p.has('acqCost')&&p.has('acq')){const el=document.getElementById('acqCost');if(el)el.value=Math.max(0,1610000-(+p.get('acq')));} // legacy links stored Steve's contribution in 'acq'; convert to acquisition cost
 }
 
 populateSelects();
