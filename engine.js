@@ -75,7 +75,7 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
   // residency is clamped to the projection so flows never extend past it.
   const occ = ownerOccupied !== false;
   const occUnits = occ ? Math.min(3, Math.max(1, ownerUnits == null ? 1 : ownerUnits)) : 0;
-  const held = heldUnits == null ? 3 : Math.min(3, Math.max(occUnits, heldUnits));
+  const held = heldUnits == null ? 3 : Math.min(6, Math.max(occUnits, heldUnits));
   const effSLife = occ ? Math.min(sLife, projYrs) : 0;
   const years = [];
   let cumCF = 0, yr1Noi = 0, paybackYr = null, firstFullYr = null;
@@ -93,7 +93,7 @@ function calcYearlyFlow(netRent, rg, eg, draw, chip, sLife, projYrs, downtime, t
     const ga = Math.round(rm * rentalUnits * opMonths);
     const egi = Math.round(ga * (1 - VAC));
     const ox = Math.round(baseOpex * Math.pow(1 + eg, y - 1));
-    const steveShare = steveAlive && chip ? Math.round(ox * occUnits / 3) : 0; // owner pays 1/3 per occupied unit
+    const steveShare = steveAlive && chip ? Math.round(ox * occUnits / held) : 0; // owner pays an equal per-unit share for each occupied unit
     const buildingOx = ox - steveShare;
     const mf = Math.round(egi * MGMT);
     const totOx = buildingOx + mf;
@@ -123,7 +123,7 @@ function calcScenario(amiIdx, params) {
   const { mktRent, draw, chip, sLife, psf, softP, finP, steveContrib, downtime, rg, eg, yrs, opexMode, opexPct, opexOverride, ownerOccupied, ownerUnits, heldUnits } = params;
   const occ = ownerOccupied !== false;
   const occUnits = occ ? Math.min(3, Math.max(1, ownerUnits == null ? 1 : ownerUnits)) : 0;
-  const held = heldUnits == null ? 3 : Math.min(3, Math.max(occUnits, heldUnits));
+  const held = heldUnits == null ? 3 : Math.min(6, Math.max(occUnits, heldUnits));
   const effSLife = occ ? Math.min(sLife, yrs) : 0;
   const rentalUnitsBase = held - occUnits;
   const tier = TIERS[amiIdx];
@@ -220,19 +220,23 @@ function fmtMarketDelta(netRent, mktRent) {
 
 // ── Condo sale calculation (extracted from condo.html) ──
 // Pure function of the sale inputs; condo.html and report.html both use it.
-// o: { psf, costsP, sellN, ownerKeeps, drp, mkp, restricted, conv, bkr }
+// o: { psf, costsP, sellN, ownerKeeps, drp, mkp, restricted, conv, bkr, totalUnits }
+// totalUnits (3-6, default 3) = how many units the building is divided into,
+// within the same envelope. At 3, every result matches the original model.
 // costsP is the combined soft + financing rate on construction (condo model convention).
 
 function calcCondo(o) {
   const ownerKeeps = !!o.ownerKeeps, restricted = !!o.restricted;
-  let sellN = Math.min(3, Math.max(1, o.sellN | 0));
-  if (ownerKeeps && sellN > 2) sellN = 2; // owner keeps Unit 1 — at most 2 can be sold
-  const keepN = 3 - sellN;
+  const totalUnits = Math.min(6, Math.max(1, o.totalUnits == null ? 3 : o.totalUnits | 0));
+  const unitSf = totalUnits === 3 ? UNIT_SF : Math.round(GBA / totalUnits);
+  let sellN = Math.min(totalUnits, Math.max(1, o.sellN | 0));
+  if (ownerKeeps && sellN > totalUnits - 1) sellN = totalUnits - 1; // owner keeps Unit 1
+  const keepN = totalUnits - sellN;
   const rentalN = ownerKeeps ? Math.max(0, keepN - 1) : keepN;
   const constr = o.psf * GBA;
   const addCosts = Math.round(constr * o.costsP);
   const totalInvest = constr + addCosts;
-  const costPerUnit = Math.round(totalInvest / 3);
+  const costPerUnit = Math.round(totalInvest / totalUnits);
   const salePrice = restricted ? o.drp : o.mkp;
   const grossSale = salePrice * sellN;
   const commission = Math.round(grossSale * o.bkr);
@@ -242,7 +246,7 @@ function calcCondo(o) {
   const profit = netSale - totalInvest;
   const moic = totalInvest > 0 ? netSale / totalInvest : 0;
   const grossMargin = grossSale > 0 ? profit / grossSale : 0;
-  const psfSale = Math.round(salePrice / UNIT_SF);
+  const psfSale = Math.round(salePrice / unitSf);
   const drpGross = o.drp * sellN, mkpGross = o.mkp * sellN;
   const drpCosts = Math.round(drpGross * o.bkr) + Math.round(drpGross / 1000 * 4.56) + o.conv;
   const mkpCosts = Math.round(mkpGross * o.bkr) + Math.round(mkpGross / 1000 * 4.56) + o.conv;
@@ -253,9 +257,9 @@ function calcCondo(o) {
   const mkpMoic = totalInvest > 0 ? mkpNet / totalInvest : 0;
   const drpMargin = drpGross > 0 ? drpProfit / drpGross : 0;
   const mkpMargin = mkpGross > 0 ? mkpProfit / mkpGross : 0;
-  const drpPsf = Math.round(o.drp / UNIT_SF), mkpPsf = Math.round(o.mkp / UNIT_SF);
+  const drpPsf = Math.round(o.drp / unitSf), mkpPsf = Math.round(o.mkp / unitSf);
   const control = keepN > sellN, deadlock = keepN === sellN;
-  return { sellN, keepN, rentalN, ownerKeeps, restricted, constr, addCosts, totalInvest, costPerUnit,
+  return { totalUnits, unitSf, sellN, keepN, rentalN, ownerKeeps, restricted, constr, addCosts, totalInvest, costPerUnit,
     salePrice, grossSale, commission, transferTax, totalSellCosts, netSale, profit, moic, grossMargin, psfSale,
     drpGross, mkpGross, drpCosts, mkpCosts, drpNet, mkpNet, drpProfit, mkpProfit, equityPreserved,
     drpMoic, mkpMoic, drpMargin, mkpMargin, drpPsf, mkpPsf, control, deadlock };

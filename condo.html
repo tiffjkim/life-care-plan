@@ -98,8 +98,12 @@ th,td{padding:2px 4px}
 <div class="ctrl"><span class="cl">Soft costs + financing (%)</span><input type="range" min="15" max="40" step="1" value="25" id="costs" oninput="go()"><span class="cv" id="o_costs">25%</span></div>
 <div id="capOut"></div>
 
+<h2>Building layout</h2>
+<div class="ctrl"><span class="cl">Total units in the building</span><select id="units" onchange="go()"><option value="3" selected>3 units (current layout)</option><option value="4">4 units</option><option value="5">5 units</option><option value="6">6 units</option></select></div>
+<div style="font-size:.68rem;color:var(--text3);margin:2px 0 6px">Same 3,940 SF envelope, divided differently. More units means smaller units — the prices below are per unit, so set them for the size you are modeling.</div>
+
 <h2>What to sell</h2>
-<div class="ctrl"><span class="cl">Units to sell</span><select id="sell" onchange="go()"><option value="1">Sell 1 (keep 2)</option><option value="2" selected>Sell 2 (keep 1)</option><option value="3">Sell all 3</option></select></div>
+<div class="ctrl"><span class="cl">Units to sell</span><select id="sell" onchange="go()"></select></div>
 <div class="ctrl"><span class="cl">Owner keeps a unit?</span><select id="steve" onchange="go()"><option value="1" selected>Yes — owner lives in Unit 1</option><option value="0">No — all units available</option></select></div>
 <div id="sellSummary" style="font-size:.72rem;color:var(--text3);margin:2px 0 6px"></div>
 
@@ -149,7 +153,7 @@ th,td{padding:2px 4px}
 <div class="row"><dt>Multiple on capital (MOIC)</dt><dd>— How many times you get your money back. 1.0x = break even (got back exactly what you put in). 1.5x = 50% profit. Below 1.0x = you lost money.</dd></div>
 <div class="row"><dt>Gross margin</dt><dd>— What percentage of the sale price is profit after all costs. Higher = more profitable. 20% margin on a $400K sale = $80K profit.</dd></div>
 <div class="row"><dt>Cost per unit</dt><dd>— Total renovation cost divided by number of units. Useful for comparing against the sale price to see if you're creating or destroying value.</dd></div>
-<div class="row"><dt>Price per square foot</dt><dd>— Sale price divided by the unit's size (1,313 SF each). Comparable renovated condos in Cambridgeport sell at $450–550/SF. Below $400/SF suggests deed-restricted pricing.</dd></div>
+<div class="row"><dt>Price per square foot</dt><dd>— Sale price divided by the unit's size (3,940 SF ÷ the number of units — 1,313 SF each in the 3-unit layout). Comparable renovated condos in Cambridgeport sell at $450–550/SF. Below $400/SF suggests deed-restricted pricing.</dd></div>
 <div class="row"><dt>Community equity preserved</dt><dd>— The dollar difference between what you could sell for (market) and what you choose to sell for (deed-restricted). This money stays in the community as affordable housing rather than being captured as market profit.</dd></div>
 <div class="row"><dt>Deed restriction</dt><dd>— A legal covenant recorded on the title that limits how much the condo can be resold for. Keeps it affordable permanently. Makes the unit harder to finance (no appreciation for the buyer) but ensures the community benefit is permanent.</dd></div>
 <div class="row"><dt>HOA (condo association)</dt><dd>— When you convert to condos, all owners share common expenses (roof, insurance, hallways). Each owner pays a monthly fee based on their percentage of the building. Decisions are made by majority vote of the owners.</dd></div>
@@ -173,12 +177,14 @@ th,td{padding:2px 4px}
 const pct=pctFmt; // this page's name for the shared engine formatter
 
 function go(){
+syncSellOptions();
+const totalUnits=+document.getElementById('units').value;
 const psf=+document.getElementById('psf').value;
 const costsP=+document.getElementById('costs').value/100;
 let sellN=+document.getElementById('sell').value;
 const steveKeeps=+document.getElementById('steve').value;
 // The two controls must agree: if the owner keeps Unit 1, at most 2 units can be sold.
-document.querySelector('#sell option[value="3"]').disabled=!!steveKeeps;
+document.querySelector('#sell option[value="'+totalUnits+'"]').disabled=!!steveKeeps;
 const drp=+document.getElementById('drp').value;
 const mkp=+document.getElementById('mkp').value;
 const restricted=+document.getElementById('restrict').value;
@@ -186,7 +192,7 @@ const conv=+document.getElementById('conv').value;
 const bkr=+document.getElementById('bkr').value/100;
 
 // All sale math lives in engine.js (calcCondo) — shared with the Decision Report.
-const R=calcCondo({psf,costsP,sellN,ownerKeeps:!!steveKeeps,drp,mkp,restricted:!!restricted,conv,bkr});
+const R=calcCondo({psf,costsP,sellN,ownerKeeps:!!steveKeeps,drp,mkp,restricted:!!restricted,conv,bkr,totalUnits});
 if(R.sellN!==sellN){sellN=R.sellN;document.getElementById('sell').value=String(sellN);}
 const {keepN,rentalN,constr,addCosts,totalInvest,costPerUnit,salePrice,grossSale,commission,transferTax,totalSellCosts,netSale,profit,moic,psfSale,drpGross,mkpGross,drpCosts,mkpCosts,drpNet,mkpNet,drpProfit,mkpProfit,equityPreserved,drpMoic,mkpMoic,drpMargin,mkpMargin,drpPsf,mkpPsf,control,deadlock}=R;
 
@@ -222,24 +228,25 @@ psEl.innerHTML=`<div class="cd bd gn" style="margin:6px 0"><p><strong>Gap: ${fmt
 }
 
 document.getElementById('sellSummary').textContent=steveKeeps
-  ?`Selling ${sellN} of 3 — Unit 1 stays as the owner's home${rentalN>0?`, ${rentalN} kept as rental${rentalN>1?'s':''}`:''}. "Sell all 3" is unavailable while the owner keeps a unit.`
-  :`Selling ${sellN} of 3 — ${keepN} kept${keepN>0?` as rental${keepN>1?'s':''}`:'; no units kept'}.`;
+  ?`Selling ${sellN} of ${totalUnits} — Unit 1 stays as the owner's home${rentalN>0?`, ${rentalN} kept as rental${rentalN>1?'s':''}`:''}. "Sell all ${totalUnits}" is unavailable while the owner keeps a unit.`
+  :`Selling ${sellN} of ${totalUnits} — ${keepN} kept${keepN>0?` as rental${keepN>1?'s':''}`:'; no units kept'}.`;
 
 // Unit cards
 const units=[];
-for(let i=1;i<=3;i++){
+for(let i=1;i<=totalUnits;i++){
 let status,dim=false;
 if(steveKeeps&&i===1){status="Owner's home";dim=true;}
-else if(steveKeeps&&i<=sellN+1){status='Sell as condo';}
-else if(!steveKeeps&&i<=sellN){status='Sell as condo';}
+else if((steveKeeps?i-1:i)<=sellN){status='Sell as condo';}
 else{status='Keep as rental';}
-units.push(`<div class="u${dim?' dim':''}"><div class="ul">Unit ${i} — ${status}</div><div class="uv">2BR/1BA · 1,313sf</div><div class="un">Floor ${i}</div></div>`);
+const uv=totalUnits===3?'2BR/1BA · 1,313sf':R.unitSf.toLocaleString()+' SF';
+const un=totalUnits===3?('Floor '+i):('Floor '+Math.ceil(i/Math.ceil(totalUnits/3)));
+units.push(`<div class="u${dim?' dim':''}"><div class="ul">Unit ${i} — ${status}</div><div class="uv">${uv}</div><div class="un">${un}</div></div>`);
 }
 document.getElementById('unitCards').innerHTML=units.join('');
 
 document.getElementById('capOut').innerHTML=`<div class="ms">
 <div class="m rd"><div class="ml">Total renovation cost</div><div class="mv">${fmt(totalInvest)}</div><div class="mn">${fmt(constr)} construction + ${fmt(addCosts)} soft/financing</div></div>
-<div class="m bl"><div class="ml">Cost per unit</div><div class="mv">${fmt(costPerUnit)}</div><div class="mn">Total ÷ 3 units</div></div>
+<div class="m bl"><div class="ml">Cost per unit</div><div class="mv">${fmt(costPerUnit)}</div><div class="mn">Total ÷ ${totalUnits} units</div></div>
 </div>`;
 
 document.getElementById('saleOut').innerHTML=`<div class="ms">
@@ -257,7 +264,7 @@ document.getElementById('compOut').innerHTML=`
 <div class="tw"><table>
 <tr><th style="text-align:left">Metric</th><th>Affordable (deed-restricted)</th><th>Market rate</th><th>Difference</th></tr>
 <tr><td style="text-align:left">Price per unit</td><td>${fmt(drp)}</td><td>${fmt(mkp)}</td><td>${fmt(mkp-drp)}</td></tr>
-<tr><td style="text-align:left">Price per SF</td><td>$${Math.round(drp/UNIT_SF)}/SF</td><td>$${Math.round(mkp/UNIT_SF)}/SF</td><td></td></tr>
+<tr><td style="text-align:left">Price per SF</td><td>$${drpPsf}/SF</td><td>$${mkpPsf}/SF</td><td></td></tr>
 <tr><td style="text-align:left">Gross (${sellN} units)</td><td>${fmt(drpGross)}</td><td>${fmt(mkpGross)}</td><td>${fmt(mkpGross-drpGross)}</td></tr>
 <tr><td style="text-align:left">Net after all costs</td><td>${fmt(drpNet)}</td><td>${fmt(mkpNet)}</td><td>${fmt(mkpNet-drpNet)}</td></tr>
 <tr><td style="text-align:left;font-weight:500">Profit / (loss)</td><td style="font-weight:600"><span class="${drpProfit>=0?'pos':'neg'}">${fmtSign(drpProfit)}</span></td><td style="font-weight:600"><span class="${mkpProfit>=0?'pos':'neg'}">${fmtSign(mkpProfit)}</span></td><td></td></tr>
@@ -290,7 +297,7 @@ hoaHtml+=`<div class="cd bd ${deadlock?'am':'rd'}"><p><strong>${deadlock?'Deadlo
 <p style="font-size:.78rem;margin-top:3px">• Require unanimous consent for any expense over $5,000<br>
 • Right of first refusal on all resales (you get to buy it back first)<br>
 • Owner-occupancy requirement (no absentee landlords)<br>
-• Weight your percentage interest higher (e.g., 40% vs 30/30)<br>
+• Weight your percentage interest higher than the buyers'<br>
 • Reserve specific decisions to the original owner (declarant powers)</p>
 <p style="font-size:.78rem;margin-top:6px;color:var(--amber-text)">These must be written into the master deed before it's recorded. They cannot be added later. A Massachusetts condo attorney is essential.</p></div>`;
 }else{
@@ -311,15 +318,27 @@ document.getElementById('kpiOut').innerHTML=`
 </table></div>`;
 }
 
+function syncSellOptions(){
+const N=+document.getElementById('units').value;
+const sel=document.getElementById('sell');
+if(sel.dataset.n===String(N)&&sel.options.length)return;
+const cur=sel.value||new URLSearchParams(location.search).get('sell');
+sel.dataset.n=String(N);
+sel.innerHTML='';
+for(let k=1;k<N;k++){const o=document.createElement('option');o.value=String(k);o.textContent='Sell '+k+' (keep '+(N-k)+')';sel.appendChild(o);}
+const o=document.createElement('option');o.value=String(N);o.textContent='Sell all '+N;sel.appendChild(o);
+sel.value=(cur&&+cur>=1&&+cur<=N)?String(+cur):String(Math.min(2,N));
+}
+
 function copyLink(){
 const p=new URLSearchParams();
-['psf','costs','sell','drp','mkp','restrict','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));p.set('ownerKeeps',document.getElementById('steve').value);
+['psf','costs','units','sell','drp','mkp','restrict','conv','bkr'].forEach(k=>p.set(k,document.getElementById(k).value));p.set('ownerKeeps',document.getElementById('steve').value);
 const url=location.origin+location.pathname+'?'+p.toString();
 navigator.clipboard.writeText(url).then(()=>{document.getElementById('lm').style.display='block';setTimeout(()=>document.getElementById('lm').style.display='none',3000);}).catch(()=>prompt('Copy:',url));}
 
-function loadSettings(){const p=new URLSearchParams(location.search);['psf','costs','sell','drp','mkp','restrict','conv','bkr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(p.has('ownerKeeps'))document.getElementById('steve').value=p.get('ownerKeeps');else if(p.has('steve'))document.getElementById('steve').value=p.get('steve');} // older links used 'steve' as the param name
+function loadSettings(){const p=new URLSearchParams(location.search);['psf','costs','units','sell','drp','mkp','restrict','conv','bkr'].forEach(k=>{if(p.has(k))document.getElementById(k).value=p.get(k);});if(p.has('ownerKeeps'))document.getElementById('steve').value=p.get('ownerKeeps');else if(p.has('steve'))document.getElementById('steve').value=p.get('steve');} // older links used 'steve' as the param name
 
-loadSettings();go();
+syncSellOptions();loadSettings();go();
 </script>
 </body>
 </html>
